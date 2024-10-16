@@ -8,8 +8,8 @@ export const musicData = [
     youtubeUrl: "https://youtu.be/K7MRGydUZ_A?si=cSHwQextDL4F7yap",
   },
   {
-    name: "Video Therapy",
-    youtubeUrl: "https://youtu.be/0ShZ-R0caQU?si=HbPu9_kMHp_PB6ip",
+    name: "폭망 (I Like You)",
+    youtubeUrl: "https://youtu.be/zHUR8rEDNCE?si=GS_6aDqvqvfcvp47",
   },
   {
     name: "Moonshot",
@@ -64,8 +64,8 @@ export const musicData = [
     youtubeUrl: "https://youtu.be/YW5OWxvpoKo?si=ITNSMFbuG3nv-tLl",
   },
   {
-    name: "폭망 (I Like You)",
-    youtubeUrl: "https://youtu.be/zHUR8rEDNCE?si=GS_6aDqvqvfcvp47",
+    name: "Video Therapy",
+    youtubeUrl: "https://youtu.be/TfQ_5QLYN8k?si=E5IJ1_6aHpH5GQoK",
   },
   {
     name: "그 밤 (The Night)",
