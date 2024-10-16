@@ -35,7 +35,7 @@ const Header = () => {
       <Flex justifyContent="center" flex="1">
         <Link to="/">
           <Image
-            src="/image/nfimap.png"
+            src="/image/logo/logo.svg"
             alt="MyApp Logo"
             boxSize="50px"
             transition="transform 0.5s ease"
