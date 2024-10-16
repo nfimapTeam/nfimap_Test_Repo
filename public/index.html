@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="%PUBLIC_URL%/image/nfimap.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0597F2" />
+
+  <meta name="description"
+    content="엔피맵(N.Fimap)은 N.Flying과 관련된 콘서트 및 이벤트 정보를 제공하는 플랫폼입니다. 엔피맵을 통해 팬들은 최신 공연 정보를 빠르게 확인할 수 있습니다." />
+  <meta name="keywords"
+    content="엔피맵, 엔피아, nfia, nfimap, N.Fimap, N.Flying, 엔플라잉 콘서트, 엔플라잉콘서트, 엔플라잉, 콘서트, 공연, 팬, 이벤트, 티켓, Naver Map, Google Map" />
+  <meta name="author" content="엔피맵" />
+  <meta name="robots" content="index, follow" />
+  <!-- Open Graph -->
+  <meta property="og:title" content="엔피맵 (N.Fimap) - N.Flying 콘서트 정보" />
+  <meta property="og:description" content="엔피맵은 N.Flying과 관련된 최신 공연 및 이벤트 정보를 제공하는 플랫폼입니다." />
+  <meta property="og:image" content="%PUBLIC_URL%/image/nfimap.png" />
+  <meta property="og:url" content="https://nfimap.co.kr" />
+  <meta property="og:type" content="website" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="엔피맵 (N.Fimap) - N.Flying 콘서트 정보">
+  <meta name="twitter:description" content="N.Flying의 최신 공연 정보를 확인해보세요.">
+  <meta name="twitter:image" content="%PUBLIC_URL%/image/nfimap.png">
+
+
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/image/nfimap.png" />
+  <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="naver-site-verification" content="e7f18f022c326b51969a20204f9b2b3a3beeeb07" />
+  <meta name="google-site-verification" content="19akf3E7x0kG-K3-eKIMvRIpyrUmPQlZkMDFHtzEvyU" />
+  <link href="https://fonts.googleapis.com/css2?family=East+Sea+Dokdo&display=swap" rel="stylesheet">
+  <script type="text/javascript"
+    src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=<%=process.env.REACT_APP_NAVER_MAP_API_KEY%>"></script>
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=<%=process.env.REACT_APP_GOOGLE_MAP_API_KEY%>&callback=myMap"></script>
+
+  <title>엔피맵</title>
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MLC50RCJME"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+
+  gtag('config', 'G-MLC50RCJME');
+</script>
+<script type="text/javascript" src="//wcs.naver.net/wcslog.js"></script>
+<script type="text/javascript">
+  if (!wcs_add) var wcs_add = {};
+  wcs_add["wa"] = "8e045878a59470";
+  if (window.wcs) {
+    wcs_do();
+  }
+</script>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+  <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+</body>
+
+</html>
