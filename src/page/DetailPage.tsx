@@ -289,9 +289,8 @@ const DetailPage: React.FC = () => {
                       colorScheme="green"
                       fontSize="md"
                       alignItems="center"
-                      maxW="350px"
-                      overflow="visible" // 넘치는 내용이 보이도록 설정
-                      whiteSpace="normal" // 줄바꿈을 허용
+                      overflow="visible"
+                      whiteSpace="normal"
                     >
                       <Text>
                         {t("ticket_open")}: {concert.ticketOpen.date}{" "}
