@@ -335,9 +335,9 @@ const Home = () => {
             placeholder={t("selectConcertType")}
           >
             <Option value="">{t("all")}</Option>
-            <Option value={t("concert")}>{t("concert")}</Option>
-            <Option value={t("festival")}>{t("festival")}</Option>
-            <Option value={t("event")}>{t("event")}</Option>
+            <Option value={t("concertVal")}>{t("concert")}</Option>
+            <Option value={t("festivalVal")}>{t("festival")}</Option>
+            <Option value={t("eventVal")}>{t("event")}</Option>
           </Select>
           <Select
             value={sortOrder}

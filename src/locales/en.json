@@ -90,5 +90,8 @@
   "day": "day",
   "hour": "hour",
   "minute_later": "minutes later",
-  "loading": "loading..."
+  "loading": "loading...",
+  "concertVal": "Concert",
+  "festivalVal": "Festival",
+  "eventVal": "Event"
 }

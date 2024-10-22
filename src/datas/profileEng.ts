@@ -5,7 +5,7 @@ export const profileDataEng = {
     cover_image_url: "/image/nflying_cover_image.jpg",
     members: [
         {
-            name: "Lee Seunghyub",
+            name: "Lee Seung-hyub",
             position: ["Leader", "Lead Vocal", "Main Rapper"],
             aka: ["Seungzzang", "Milu"],
             birthdate: "1992-10-31",
@@ -37,7 +37,7 @@ export const profileDataEng = {
         {
             name: "Yoo Hwe-seung",
             position: ["Main vocal", "Guitar"],
-            aka: ["Seung-goo", "Malrangi"],
+            aka: ["Seung-goo", "Malrangi", "Hamang-e"],
             birthdate: "1995-02-28",
             imageUrl: "/image/hewseung.jpg",
             military: "2023-01-01",

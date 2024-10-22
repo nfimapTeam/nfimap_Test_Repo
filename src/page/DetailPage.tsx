@@ -88,7 +88,7 @@ const DetailPage: React.FC = () => {
   const [allConcerts, setAllConcerts] = useState<Concert[]>([]);
   const [allInfos, setAllInfos] = useState<ShowInfo[]>([]);
 
-   useEffect(() => {
+  useEffect(() => {
     if (i18n.language === "ko") {
       const combinedConcerts = [...concertsData, ...globalConcerts];
       setAllConcerts(combinedConcerts);
@@ -96,9 +96,15 @@ const DetailPage: React.FC = () => {
       const combinedConcerts = [...concertsDataEng, ...globalConcertsEng];
       setAllConcerts(combinedConcerts);
     }
-   }, [i18n.language, concertsData, globalConcerts, concertsDataEng, globalConcertsEng]);
-  
-   useEffect(() => {
+  }, [
+    i18n.language,
+    concertsData,
+    globalConcerts,
+    concertsDataEng,
+    globalConcertsEng,
+  ]);
+
+  useEffect(() => {
     if (i18n.language === "ko") {
       const combinedInfos = [...showInfos, ...globalShowInfos];
       setAllInfos(combinedInfos);
@@ -106,8 +112,13 @@ const DetailPage: React.FC = () => {
       const combinedInfos = [...showInfosEng, ...globalShowInfosEng];
       setAllInfos(combinedInfos);
     }
-   }, [i18n.language, showInfos, globalShowInfos, showInfosEng, globalShowInfosEng]);
-  
+  }, [
+    i18n.language,
+    showInfos,
+    globalShowInfos,
+    showInfosEng,
+    globalShowInfosEng,
+  ]);
 
   if (!id) {
     return <NotFound content="정보가 없습니다." />;
@@ -219,7 +230,12 @@ const DetailPage: React.FC = () => {
             </Box>
           </Flex>
 
-          <Flex flexDirection="column" justifyContent="space-between" flex={1} gap={4}>
+          <Flex
+            flexDirection="column"
+            justifyContent="space-between"
+            flex={1}
+            gap={4}
+          >
             <Box bg={cardBgColor} p={6} borderRadius="lg" boxShadow="md">
               <Badge colorScheme="red" fontSize="md" mb={2}>
                 {concert.type}
@@ -240,7 +256,8 @@ const DetailPage: React.FC = () => {
                 <HStack>
                   <Icon as={TimerIcon} color="gray.500" />
                   <Text fontSize="lg">
-                    {concert.startTime} ({t("about")} {concert.durationMinutes}{t("minutes")})
+                    {concert.startTime} ({t("about")} {concert.durationMinutes}
+                    {t("minutes")})
                   </Text>
                 </HStack>
               </VStack>
@@ -248,7 +265,7 @@ const DetailPage: React.FC = () => {
 
             <Box bg={cardBgColor} p={6} borderRadius="lg" boxShadow="md">
               <Text fontSize="xl" fontWeight="semibold" mb={3}>
-              {t("performers")}
+                {t("performers")}
               </Text>
               <Flex wrap="wrap" gap={2}>
                 {concert.artists.map((artist, index) => (
@@ -261,7 +278,9 @@ const DetailPage: React.FC = () => {
 
             <Box bg={cardBgColor} p={6} borderRadius="lg" boxShadow="md">
               <Text fontSize="xl" fontWeight="semibold" mb={3}>
-                {(concert.type === "행사" || concert.type === "Event") ? t("performanceInfo") : t("ticket_info")}
+                {concert.type === "행사" || concert.type === "Event"
+                  ? t("performanceInfo")
+                  : t("ticket_info")}
               </Text>
               <Flex flexDirection="column" gap={3}>
                 <Flex>
@@ -270,12 +289,18 @@ const DetailPage: React.FC = () => {
                       colorScheme="green"
                       fontSize="md"
                       alignItems="center"
+                      maxW="350px"
+                      overflow="visible" // 넘치는 내용이 보이도록 설정
+                      whiteSpace="normal" // 줄바꿈을 허용
                     >
-                      {t("ticket_open")}: {concert.ticketOpen.date}{" "}
-                      {concert.ticketOpen.time} ({t("korea_time")})
+                      <Text>
+                        {t("ticket_open")}: {concert.ticketOpen.date}{" "}
+                        {concert.ticketOpen.time} ({t("korea_time")})
+                      </Text>
                     </Badge>
                   )}
                 </Flex>
+
                 <Button
                   onClick={(e) => handleButtonClick(e, concert, isPastEvent)}
                   as={Link}
@@ -295,7 +320,7 @@ const DetailPage: React.FC = () => {
           <Box mt={8}>
             <Divider mb={4} />
             <Text fontSize="3xl" fontWeight="bold" mb={4} color="teal.600">
-            {t("performance_details")}
+              {t("performance_details")}
             </Text>
 
             <VStack spacing={6} align="stretch">
@@ -304,7 +329,7 @@ const DetailPage: React.FC = () => {
                   <HStack mb={3}>
                     <Icon as={InfoIcon} color="blue.600" />
                     <Text fontSize="xl" fontWeight="bold" color="gray.700">
-                    {t("basic_info")}
+                      {t("basic_info")}
                     </Text>
                   </HStack>
                   <VStack align="start" spacing={3}>
@@ -365,7 +390,7 @@ const DetailPage: React.FC = () => {
                     <HStack mb={3}>
                       <Icon as={MusicIcon} color="green.600" />
                       <Text fontSize="xl" fontWeight="bold" color="gray.700">
-                      {t("setlist")}
+                        {t("setlist")}
                       </Text>
                     </HStack>
                     <SimpleGrid columns={1} spacing={2}>
@@ -400,7 +425,7 @@ const DetailPage: React.FC = () => {
                     <HStack mb={3}>
                       <Icon as={CameraIcon} color="purple.600" />
                       <Text fontSize="xl" fontWeight="bold" color="gray.700">
-                      {t("costume")}
+                        {t("costume")}
                       </Text>
                     </HStack>
                     <SimpleGrid columns={1} spacing={4}>
@@ -460,7 +485,8 @@ const DetailPage: React.FC = () => {
               return concertDate.isSame(currentTime, "day");
             });
 
-             const isTicketOpen = concert.ticketOpen?.date === moment().format("YYYY-MM-DD");
+            const isTicketOpen =
+              concert.ticketOpen?.date === moment().format("YYYY-MM-DD");
 
             const timeRemaining = calculateTimeRemaining(
               concert.ticketOpen.date,

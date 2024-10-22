@@ -92,9 +92,9 @@ const ConcertInfo = ({
           }}
         >
           <option value="">{t("mapTypeOptions.mapAll")}</option>
-          <option value="콘서트">{t("mapTypeOptions.mapConcert")}</option>
-          <option value="페스티벌">{t("mapTypeOptions.mapFestival")}</option>
-          <option value="행사">{t("mapTypeOptions.mapEvent")}</option>
+          <option value={t("concertVal")}>{t("mapTypeOptions.mapConcert")}</option>
+          <option value={t("festivalVal")}>{t("mapTypeOptions.mapFestival")}</option>
+          <option value={t("eventVal")}>{t("mapTypeOptions.mapEvent")}</option>
         </Select>
         <Flex align="center">
           <Text fontSize="10px">{t("mapShowPastConcerts")}</Text>

@@ -128,6 +128,7 @@ const NaverMap = ({
       const map = new naverMaps.Map(mapContainer, {
         center: new naverMaps.LatLng(37.5665, 126.978),
         zoom: ZOOM_LEVEL,
+        logoControl: false,
       });
 
       mapRef.current = map;

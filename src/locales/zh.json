@@ -92,5 +92,8 @@
   "day": "天",
   "hour": "小时",
   "minute_later": "分钟后",
-  "loading": "加载中..."
+  "loading": "加载中...",
+  "concertVal": "Concert",
+  "festivalVal": "Festival",
+  "eventVal": "Event"
 }
