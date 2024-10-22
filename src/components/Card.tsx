@@ -95,6 +95,8 @@ const Card = ({
   const navigate = useNavigate();
   const { t } = useTranslation();
 
+  console.log(concert);
+
   return (
     <Box
       position="relative"
@@ -120,8 +122,8 @@ const Card = ({
           isTodayEvent
             ? `${borderGlow} 1.5s ease-in-out infinite`
             : isTicketOpen
-            ? `${lavenderGlow} 1.5s ease-in-out infinite`
-            : "none"
+              ? `${lavenderGlow} 1.5s ease-in-out infinite`
+              : "none"
         }
         position="relative"
         zIndex={1}
@@ -178,7 +180,7 @@ const Card = ({
               </Text>
 
               <HStack spacing={2}>
-                {concert.type === "콘서트" && (
+                {(concert.type === "콘서트" || concert.type === "Concert") && (
                   <Badge
                     bg="pink.100"
                     color="pink.600"
@@ -186,10 +188,11 @@ const Card = ({
                     borderRadius={4}
                     fontWeight="900"
                   >
-                    {t("concert_type_concert")} {/* 다국어 콘서트 */}
+                    {t("concert_type_concert")}
                   </Badge>
                 )}
-                {concert.type === "페스티벌" && (
+                {(concert.type === "페스티벌" ||
+                  concert.type === "Festival") && (
                   <Badge
                     bg="blue.100"
                     color="blue.600"
@@ -200,7 +203,7 @@ const Card = ({
                     {t("concert_type_festival")} {/* 다국어 페스티벌 */}
                   </Badge>
                 )}
-                {concert.type === "행사" && (
+                {(concert.type === "행사" || concert.type === "Event") && (
                   <Badge
                     bg="yellow.100"
                     color="yellow.600"
@@ -211,7 +214,8 @@ const Card = ({
                     {t("concert_type_event")} {/* 다국어 행사 */}
                   </Badge>
                 )}
-                {concert.performanceType === "단독" && (
+                {(concert.performanceType === "단독" ||
+                  concert.performanceType === "Solo") && (
                   <Badge
                     bg="purple.100"
                     color="purple.600"
@@ -222,7 +226,8 @@ const Card = ({
                     {t("performance_type_solo")} {/* 다국어 단독 */}
                   </Badge>
                 )}
-                {concert.performanceType === "합동" && (
+                {(concert.performanceType === "합동" ||
+                  concert.performanceType === "Joint") && (
                   <Badge
                     bg="teal.100"
                     color="teal.600"
@@ -233,7 +238,8 @@ const Card = ({
                     {t("performance_type_joint")} {/* 다국어 합동 */}
                   </Badge>
                 )}
-                {concert.performanceType === "출연" && (
+                {(concert.performanceType === "출연" ||
+                  concert.performanceType === "Guest") && (
                   <Badge
                     bg="orange.100"
                     color="orange.600"
