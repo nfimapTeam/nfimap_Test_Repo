@@ -37,7 +37,7 @@ export const profileData = {
     {
       name: "유회승",
       position: ["메인보컬"],
-      aka: ["승구", "말랑이"],
+      aka: ["승구", "말랑이", "하망이"],
       birthdate: "1995-02-28",
       imageUrl: "/image/hewseung.jpg",
       military: "2023-01-01",
