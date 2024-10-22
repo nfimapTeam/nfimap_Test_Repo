@@ -147,7 +147,7 @@ const ConcertInfo = ({
                 borderRadius="4px"
               >
                 <Image
-                  src={concert.poster && concert.poster.trim() !== '' ? concert.poster : '/image/nfimap.png'}
+                  src={concert.poster && concert.poster.trim() !== '' ? concert.poster : '/image/logo/logo.svg'}
                   alt={concert.name}
                   position="absolute"
                   top="0"

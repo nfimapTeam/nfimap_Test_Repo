@@ -18,6 +18,7 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { CalendarIcon, ClockIcon, MapPinIcon, UserIcon, ExternalLinkIcon, StickyNoteIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface CustomModalProps {
   item: any;
@@ -26,14 +27,15 @@ interface CustomModalProps {
 }
 
 const CustomModal = ({ item, isOpen, onClose }: CustomModalProps) => {
+  const { t, i18n } = useTranslation();
   if (!item) return null;
 
-  const isNfiLoad = !("poster" in item);
+  const isNfiRoad = !("poster" in item);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl" isCentered>
       <ModalOverlay />
-      <ModalContent maxW={isNfiLoad ? "500px" : "900px"} boxShadow="xl">
+      <ModalContent maxW={isNfiRoad ? "500px" : "900px"} boxShadow="xl">
         <ModalHeader borderBottom="1px" borderColor="gray.200" py={4} bg="blue.50">
           <Text fontSize="2xl" fontWeight="bold" color="blue.700">
             {item.name}
@@ -46,7 +48,7 @@ const CustomModal = ({ item, isOpen, onClose }: CustomModalProps) => {
             justify="space-between"
             gap={{ base: 6, md: 8 }}
           >
-            {!isNfiLoad && (
+            {!isNfiRoad && (
               <Box
                 width={{ base: "100%", md: "40%" }}
                 display="flex"
@@ -75,12 +77,12 @@ const CustomModal = ({ item, isOpen, onClose }: CustomModalProps) => {
                 </Box>
               </Box>
             )}
-            <Box width={{ base: "100%", md: isNfiLoad ? "100%" : "60%" }} bg="white" p={6} borderRadius="lg" boxShadow="md">
+            <Box width={{ base: "100%", md: isNfiRoad ? "100%" : "60%" }} bg="white" p={6} borderRadius="lg" boxShadow="md">
               <VStack align="stretch" spacing={5}>
                 <Box>
                   <HStack spacing={2} mb={2}>
-                    <Badge colorScheme={isNfiLoad ? "green" : "purple"} fontSize="md" px={2} py={1}>
-                      {isNfiLoad ? item.category : "공연"}
+                    <Badge colorScheme={isNfiRoad ? "green" : "purple"} fontSize="md" px={2} py={1}>
+                      {isNfiRoad ? item.category : t("performance")}
                     </Badge>
                   </HStack>
                 </Box>
@@ -90,7 +92,7 @@ const CustomModal = ({ item, isOpen, onClose }: CustomModalProps) => {
                     <MapPinIcon size={20} color="#3182CE" />
                     <Text fontWeight="medium">{item.location}</Text>
                   </HStack>
-                  {isNfiLoad ? (
+                  {isNfiRoad ? (
                     <>
                       {item.note && (
                         <HStack spacing={4}>
@@ -106,7 +108,7 @@ const CustomModal = ({ item, isOpen, onClose }: CustomModalProps) => {
                             size="md"
                             width="100%"
                           >
-                            네이버 지도로 이동
+                            {t("checkLocationInfo")}
                           </Button>
                         </Link>
                       )}
@@ -120,7 +122,7 @@ const CustomModal = ({ item, isOpen, onClose }: CustomModalProps) => {
                       <HStack spacing={4}>
                         <ClockIcon size={20} color="#3182CE" />
                         <Text fontWeight="medium">
-                          {item.startTime} (총 {item.durationMinutes}분)
+                            {item.startTime} {t("total")} {item.durationMinutes} {t("minutes")}
                         </Text>
                       </HStack>
                       <HStack spacing={4} alignItems="flex-start">

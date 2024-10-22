@@ -73,8 +73,8 @@ interface MusicType {
   youtubeUrl: string;
 }
 
-const Music: React.FC = () => {
-  const { t } = useTranslation();
+const Music = () => {
+  const { t, i18n } = useTranslation();
   const [albums, setAlbums] = useState<Album[]>([]);
   const [token, setToken] = useState<string>("");
   const [artistId, setArtistId] = useState<string>("");
@@ -173,7 +173,6 @@ const Music: React.FC = () => {
   }, [artistId, getAlbums]);
 
   const handleAlbumClick = async (album: Album) => {
-    console.log("Selected album:", album);
     if (!album.href) {
       console.error("No tracks URL available for the selected album");
       return;
@@ -239,7 +238,7 @@ const Music: React.FC = () => {
           property="og:description"
           content="N.Fimap의 예제 페이지입니다."
         />
-        <meta property="og:image" content="%PUBLIC_URL%/image/nfimap.png" />
+        <meta property="og:image" content="%PUBLIC_URL%/image/logo/logo.svg" />
         <meta property="og:url" content="https://nfimap.co.kr" />
       </Helmet>
       <Box p="20px">

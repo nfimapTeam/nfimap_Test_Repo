@@ -17,7 +17,7 @@ const Loading = () => {
       direction="column"
     >
       <Image
-        src="/image/nfimap.png"
+        src="/image/logo/logo.svg"
         alt="MyApp Logo"
         boxSize="150px"
         animation={`${rotate} 2s infinite linear`} 

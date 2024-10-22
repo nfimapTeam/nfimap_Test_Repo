@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useDisclosure } from "@chakra-ui/react";
 import CustomModal from "./CustomModal";
+import { useTranslation } from "react-i18next";
 
 declare global {
   interface Window {
@@ -36,6 +37,7 @@ const GoogleMap = ({
   selectedGlobalConcert,
   setSelectedGlobalConcert,
 }: GoogleMapProps) => {
+  const { t, i18n } = useTranslation();
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<any>(null);
   const markersRef = useRef<any[]>([]);
@@ -92,7 +94,9 @@ const GoogleMap = ({
         map,
         title: concert.name,
         icon: {
-          url: isPast ? "/image/nfimap_darkened.png" : "/image/nfimap.png",
+          url: isPast
+            ? "/image/pin/pin_nf01_bk.svg"
+            : "/image/pin/pin_nf01.svg",
           scaledSize: new window.google.maps.Size(30, 30),
         },
       });
@@ -101,16 +105,43 @@ const GoogleMap = ({
         <div style="width: 100%; max-width: 320px; font-family: Arial, sans-serif; padding: 10px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); border-radius: 4px;">
           <div style="display: flex; align-items: center;">
             <div style="width: 70px; height: 70px; min-width: 70px; min-height: 70px;max-width: 70px; max-height: 70px; margin-right: 15px; border-radius: 4px; overflow: hidden;">
-              <img src="${concert.poster && concert.poster.trim() !== '' ? concert.poster : '/image/nfimap.png'}" alt="${concert.name}" 
+              <img src="${concert.poster && concert.poster.trim() !== "" ? concert.poster : "/image/logo/logo.svg"}" alt="${concert.name}" 
                    style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">
             </div>
             <div style="flex-grow: 1;">
-              <h3 style="margin: 0; font-size: 16px; font-weight: bold; color: #333;">${concert.name}</h3>
-              <p style="margin: 5px 0 0; font-size: 14px; color: #666;">${concert.location}</p>
-            </div>
+            <h3
+              style="
+                margin: 0;
+                font-size: 16px;
+                font-weight: bold;
+                color: #333;
+                display: -webkit-box;
+                -webkit-line-clamp: 1;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              "
+            >
+              ${concert.name}
+            </h3>
+            <p
+              style="
+                margin: 5px 0 0;
+                font-size: 14px;
+                color: #666;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              "
+            >
+              ${concert.location}
+            </p>
           </div>
-          <button id="detailBtn-${concert.name.replace(/\s+/g, '-')}" style="margin-top: 5px; padding: 4px 8px; width: 100%; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; background-color: #0597F2; color: white; cursor: pointer; transition: background-color 0.3s, color 0.3s;">
-            상세보기
+          </div>
+          <button id="detailBtn-${concert.name.replace(/\s+/g, "-")}" style="margin-top: 5px; padding: 4px 8px; width: 100%; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; background-color: #0597F2; color: white; cursor: pointer; transition: background-color 0.3s, color 0.3s;">
+            ${t("View Details")}
           </button>
         </div>
       `;
@@ -131,7 +162,9 @@ const GoogleMap = ({
 
         // Use a more specific selector and add the listener after a short delay
         setTimeout(() => {
-          const button = document.getElementById(`detailBtn-${concert.name.replace(/\s+/g, '-')}`);
+          const button = document.getElementById(
+            `detailBtn-${concert.name.replace(/\s+/g, "-")}`
+          );
           if (button) {
             button.addEventListener("click", handleDetailClick);
           }
@@ -172,7 +205,7 @@ const GoogleMap = ({
     // Clean up function
     return () => {
       markersRef.current.forEach((marker) => {
-        window.google.maps.event.clearListeners(marker, 'click');
+        window.google.maps.event.clearListeners(marker, "click");
       });
     };
   }, [map, globalConcerts, handleDetailClick]);

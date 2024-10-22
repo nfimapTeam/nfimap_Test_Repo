@@ -1,4 +1,4 @@
-export const nfiloadData = [
+export const nfiRoadData = [
   {
     id: 1,
     name: "포항 영일대 레드립스 커피",
@@ -215,8 +215,8 @@ export const nfiloadData = [
     name: "해운대명품호떡",
     location: "부산 해운대구 중동1로 38",
     category: "맛집",
-    lat: "",
-    lng: "",
+    lat: "35.1622100514759",
+    lng: "129.163126552708",
     naverLink: "https://naver.me/GqsTrB3v",
     note : "보컬즈가 다녀간 줄서서 먹는 호떡 맛집"
   },
