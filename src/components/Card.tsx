@@ -39,6 +39,7 @@ interface CardProps {
   concert: Concert;
   isTodayEvent: boolean;
   isPastEvent: boolean;
+  isTicketOpen: boolean;
   timeRemaining: { days: number; hours: number; minutes: number } | null;
   getButtonText: (
     concert: Concert,
@@ -67,9 +68,25 @@ const borderGlow = keyframes`
   }
 `;
 
+const lavenderGlow = keyframes`
+  0% {
+    border-color: rgba(186, 85, 211, 0.5); // Lavender purple
+    box-shadow: 0 0 8px rgba(186, 85, 211, 0.5);
+  }
+  50% {
+    border-color: rgba(186, 85, 211, 0.7); // Lavender purple
+    box-shadow: 0 0 12px rgba(186, 85, 211, 0.7);
+  }
+  100% {
+    border-color: rgba(186, 85, 211, 0.5); // Lavender purple
+    box-shadow: 0 0 8px rgba(186, 85, 211, 0.5);
+  }
+`;
+
 const Card = ({
   concert,
   isTodayEvent,
+  isTicketOpen,
   isPastEvent,
   timeRemaining,
   getButtonText,
@@ -100,7 +117,11 @@ const Card = ({
         alignItems="flex-start"
         borderColor={isTodayEvent ? "brand.sub" : "gray.200"}
         animation={
-          isTodayEvent ? `${borderGlow} 1.5s ease-in-out infinite` : "none"
+          isTodayEvent
+            ? `${borderGlow} 1.5s ease-in-out infinite`
+            : isTicketOpen
+            ? `${lavenderGlow} 1.5s ease-in-out infinite`
+            : "none"
         }
         position="relative"
         zIndex={1}
@@ -123,7 +144,7 @@ const Card = ({
               objectFit="cover"
               w="100%"
               h="100%"
-              fallbackSrc="/image/nfimap.png"
+              fallbackSrc="/image/logo/logo.svg"
             />
           </Box>
           <VStack align="start" spacing={2} flex="1">

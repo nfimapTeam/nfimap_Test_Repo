@@ -17,7 +17,7 @@ export const globalConcerts = [
   },
   {
     id: 1002,
-    name: "2024 N.Flying LIVE HIDE-OUT IN JAPAN : 요코하마",
+    name: "2024 N.Flying LIVE HIDE-OUT IN JAPAN - 요코하마",
     location: "KT Zepp Yokohama",
     date: ["2024-10-29(화)"],
     startTime: "19:00",
@@ -33,7 +33,7 @@ export const globalConcerts = [
   },
   {
     id: 1003,
-    name: "2024 N.Flying LIVE HIDE-OUT IN JAPAN : 나고야",
+    name: "2024 N.Flying LIVE HIDE-OUT IN JAPAN - 나고야",
     location: "Nagoya Bottom Line",
     date: ["2024-10-31(목)"],
     startTime: "19:00",
@@ -49,7 +49,7 @@ export const globalConcerts = [
   },
   {
     id: 1004,
-    name: "2024 N.Flying LIVE HIDE-OUT IN JAPAN : 오사카",
+    name: "2024 N.Flying LIVE HIDE-OUT IN JAPAN - 오사카",
     location: "Zepp Namba",
     date: ["2024-11-01(금)"],
     startTime: "19:00",
@@ -65,7 +65,7 @@ export const globalConcerts = [
   },
   {
     id: 1005,
-    name: "2024 N.Flying LIVE 'HIDE-OUT' in ASIA : 방콕",
+    name: "2024 N.Flying LIVE 'HIDE-OUT' in ASIA - 방콕",
     location: "MCC HALL BANGKAE",
     date: ["2024-11-23(토)"],
     startTime: "18:00",
@@ -81,7 +81,7 @@ export const globalConcerts = [
   },
   {
     id: 1006,
-    name: "2024 N.Flying LIVE 'HIDE-OUT' in ASIA : 쿠알라룸푸르",
+    name: "2024 N.Flying LIVE 'HIDE-OUT' in ASIA - 쿠알라룸푸르",
     location: "ZEPP KUALA LUMPUR",
     date: ["2024-12-01(일)"],
     startTime: "18:00",
@@ -97,7 +97,7 @@ export const globalConcerts = [
   },
   {
     id: 1007,
-    name: "2024 FNC KINGDOM - SING SING SING : 일본",
+    name: "2024 FNC KINGDOM - SING SING SING - 일본",
     location: "마쿠하리 멧세 국제 전시장 9-10홀",
     date: ["2024-12-14(토)", "2024-12-15(일)"],
     startTime: "16:00",
@@ -107,13 +107,14 @@ export const globalConcerts = [
     artists: ["N.Flying"],
     poster: "/image/show/world/241214_BAND_KINGDOM_SING3_JP.png",
     ticketOpen: { date: "2024-08-01", time: "18:00" },
-    ticketLink: "https://nflying-official.jp/news/detail/728", // todo 일반티켓 오픈 시 변경
+    ticketLink: "https://t.pia.jp/pia/event/event.do?eventCd=2428444",
+    // todo 10/21 이후 일반티켓 오픈 시 변경
     lat: "35.6500363",
     lng: "140.0365264",
   },
   {
     id: 1008,
-    name: "2024 N.Flying LIVE 'HIDE-OUT' in ASIA : 마카오",
+    name: "2024 N.Flying LIVE 'HIDE-OUT' in ASIA - 마카오",
     location: "Broadway Theatre, Broadway Macau",
     date: ["2024-12-22(일)"],
     startTime: "19:00",
@@ -123,18 +124,19 @@ export const globalConcerts = [
     artists: ["N.Flying"],
     poster: "/image/show/world/241222_HIDE-OUT_MACAU.jpeg",
     ticketOpen: { date: "2024-10-29", time: "13:00" }, // 현지시각 12시 (시차 +1h)
-    ticketLink: "https://fncent.com/?m=bbs&bid=notice&p=2&where=site%3D1+and+notice%3D0+and+bbsid%3D'notice'++and+ex1%3D'1'+&uid=60294",
+    ticketLink: "https://fncent.com/?m=bbs&bid=korea&mod=view&r=NFLYING&cat=2&uid=60295",
     // todo 예매 페이지 오픈 시 변경
     lat: "22.14708",
     lng: "113.5520586",
   },
   {
     id: 1009,
-    name: "1st FNC BAND KINGDOM in TAOYUAN : 대만",
+    name: "1st FNC BAND KINGDOM in TAOYUAN - 대만",
     location: "THE TAOYUAN ARENA",
     date: ["2025-01-04(토)", "2025-01-05(일)"],
     startTime: "15:30",
-    durationMinutes: 0, // todo 공연 시간 미정
+    durationMinutes: 0,
+    // todo 공연 시간 미정
     type: "콘서트",
     performanceType: "출연",
     artists: ["N.Flying", "FTISLAND", "CNBLUE", "Hi-Fi Un!corn"],
@@ -146,7 +148,7 @@ export const globalConcerts = [
   },
   { // todo 현재 공연 상세 정보 미정
     id: 1010,
-    name: "2024 N.Flying LIVE 'HIDE-OUT' in ASIA : 대만",
+    name: "2024 N.Flying LIVE 'HIDE-OUT' in ASIA - 대만",
     location: "미정",
     date: ["2025-02-09(일)"],
     startTime: "00:00",

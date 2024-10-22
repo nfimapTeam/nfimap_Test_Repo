@@ -5,8 +5,8 @@ export const profileData = {
   cover_image_url: "/image/nflying_cover_image.jpg",
   members: [
     {
-      name: "이승협 리더",
-      position: ["리드 보컬", "메인 래퍼"],
+      name: "이승협",
+      position: ["리더", "리드 보컬", "메인 래퍼"],
       aka: ["승짱", "밀루"],
       birthdate: "1992-10-31",
       imageUrl: "/image/seunghyub.jpg",
@@ -17,7 +17,7 @@ export const profileData = {
     {
       name: "차훈",
       position: ["기타", "코러스"],
-      aka: ["고먐미", "사투리 스나이퍼"],
+      aka: ["먐미", "사투리 스나이퍼"],
       birthdate: "1994-07-12",
       imageUrl: "/image/chahun.jpg",
       military: "2024-09-19",

@@ -24,6 +24,8 @@ import { SearchIcon, CloseIcon } from "@chakra-ui/icons";
 import { Select } from "antd";
 import { Option } from "antd/es/mentions";
 import { concertsData } from "../datas/concerts";
+import { concertsDataEng } from "../datas/concertsEng";
+import { globalConcertsEng } from "../datas/globalConcertsEng";
 import { globalConcerts } from "../datas/globalConcerts";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
@@ -58,7 +60,7 @@ interface Concert {
 }
 
 const Home = () => {
-  const { t, i18n } = useTranslation();
+  const { t, i18n, } = useTranslation();
 
   const columns = useBreakpointValue({ base: 1, md: 2, lg: 3 });
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -83,9 +85,14 @@ const Home = () => {
   };
 
   useEffect(() => {
-    const combinedConcerts = [...concertsData, ...globalConcerts];
-    setAllConcerts(combinedConcerts);
-  }, [concertsData, globalConcerts]);
+    if (i18n.language === "ko") {
+      const combinedConcerts = [...concertsData, ...globalConcerts];
+      setAllConcerts(combinedConcerts);
+    } else {
+      const combinedConcerts = [...concertsDataEng, ...globalConcertsEng];
+      setAllConcerts(combinedConcerts);
+    }
+  }, [i18n.language, concertsData, globalConcerts, concertsDataEng, globalConcertsEng]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -114,13 +121,17 @@ const Home = () => {
     isPastEvent: boolean,
     timeRemaining: { days: number; hours: number; minutes: number } | null
   ) => {
-    if (isPastEvent || concert.type === t("event")) {
+    if (isPastEvent || concert.type === "행사") {
       return t("performanceInfo");
     } else if (concert.ticketOpen.date === "0000-00-00") {
       return t("waitingForTicketSchedule");
     } else if (concert.ticketLink === "") {
       return timeRemaining
-        ? t("timeUntilTicketing", { days: timeRemaining.days, hours: timeRemaining.hours, minutes: timeRemaining.minutes })
+        ? t("timeUntilTicketing", {
+            days: timeRemaining.days,
+            hours: timeRemaining.hours,
+            minutes: timeRemaining.minutes,
+          })
         : t("waitingForTicketInfo");
     } else {
       return t("buyTickets");
@@ -164,11 +175,13 @@ const Home = () => {
 
   const sortConcerts = (concerts: Concert[]) => {
     const now = moment();
+
     const upcomingConcerts = concerts.filter((concert) =>
       concert.date.some((date) =>
         moment(date.split("(")[0], "YYYY-MM-DD").isSameOrAfter(now, "day")
       )
     );
+
     const pastConcerts = concerts.filter((concert) =>
       concert.date.every((date) =>
         moment(date.split("(")[0], "YYYY-MM-DD").isBefore(now, "day")
@@ -176,6 +189,14 @@ const Home = () => {
     );
 
     const sortFunction = (a: Concert, b: Concert) => {
+      const today = moment().format("YYYY-MM-DD");
+
+      const ticketOpenA = a.ticketOpen?.date === today;
+      const ticketOpenB = b.ticketOpen?.date === today;
+
+      if (ticketOpenA && !ticketOpenB) return -1;
+      if (!ticketOpenA && ticketOpenB) return 1;
+
       if (sortOrder === t("latest")) {
         const dateA = moment(a.date[0].split("(")[0], "YYYY-MM-DD");
         const dateB = moment(b.date[0].split("(")[0], "YYYY-MM-DD");
@@ -186,7 +207,9 @@ const Home = () => {
       return 0;
     };
 
+    // Sort upcoming concerts first
     upcomingConcerts.sort(sortFunction);
+    // Sort past concerts after that
     pastConcerts.sort((a, b) => {
       if (sortOrder === t("latest")) {
         const dateA = moment(a.date[0].split("(")[0], "YYYY-MM-DD");
@@ -200,44 +223,43 @@ const Home = () => {
   };
 
   const translateType = (type: string) => {
-  switch (type) {
-    case "콘서트":
-      return t("concert");
-    case "페스티벌":
-      return t("festival");
-    case "이벤트":
-      return t("event");
-    default:
-      return type;
-  }
-};
+    switch (type) {
+      case "콘서트":
+        return t("concert");
+      case "페스티벌":
+        return t("festival");
+      case "이벤트":
+        return t("event");
+      default:
+        return type;
+    }
+  };
 
   const filteredAndSortedConcerts = sortConcerts(
-  allConcerts.filter((concert) => {
-    const matchesSearch =
-      concert.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      concert.location.toLowerCase().includes(searchQuery.toLowerCase());
+    allConcerts.filter((concert) => {
+      const matchesSearch =
+        concert.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        concert.location.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const translatedConcertType = translateType(concert.type);
-    const matchesType = selectedType === "" || translatedConcertType === selectedType;
+      const translatedConcertType = translateType(concert.type);
+      const matchesType =
+        selectedType === "" || translatedConcertType === selectedType;
 
-    if (toggle) {
-      const isPastEvent = concert.date.every((date) => {
-        const concertDate = moment(date.split("(")[0], "YYYY-MM-DD");
-        return concertDate.isBefore(currentTime, "day");
-      });
-      return matchesSearch && isPastEvent && matchesType;
-    } else {
-      const isFutureOrToday = concert.date.some((date) => {
-        const concertDate = moment(date.split("(")[0], "YYYY-MM-DD");
-        return concertDate.isSameOrAfter(currentTime, "day");
-      });
-      return matchesSearch && isFutureOrToday && matchesType;
-    }
-  })
+      if (toggle) {
+        const isPastEvent = concert.date.every((date) => {
+          const concertDate = moment(date.split("(")[0], "YYYY-MM-DD");
+          return concertDate.isBefore(currentTime, "day");
+        });
+        return matchesSearch && isPastEvent && matchesType;
+      } else {
+        const isFutureOrToday = concert.date.some((date) => {
+          const concertDate = moment(date.split("(")[0], "YYYY-MM-DD");
+          return concertDate.isSameOrAfter(currentTime, "day");
+        });
+        return matchesSearch && isFutureOrToday && matchesType;
+      }
+    })
   );
-  
-  
 
   return (
     <Box
@@ -245,7 +267,7 @@ const Home = () => {
       width="100%"
       maxWidth="1200px"
       mx="auto"
-      p="16px 16px 100px 16px"
+      p="16px 16px 70px 16px"
       overflowY="auto"
       css={{
         "&::-webkit-scrollbar": {
@@ -258,7 +280,10 @@ const Home = () => {
       <Helmet>
         <title>{t("helmettitle")}</title>
         <meta name="description" content={t("helmetdescription")} />
-        <meta property="og:image" content="https://nfimap.co.kr/image/nfimap.png" />
+        <meta
+          property="og:image"
+          content="https://nfimap.co.kr/image/nfimap.png"
+        />
         <meta property="og:url" content="https://nfimap.co.kr" />
       </Helmet>
       <Box mb={4}>
@@ -354,7 +379,8 @@ const Home = () => {
             const concertDate = moment(date.split("(")[0], "YYYY-MM-DD");
             return concertDate.isSame(currentTime, "day");
           });
-
+          const isTicketOpen =
+            concert.ticketOpen?.date === moment().format("YYYY-MM-DD");
           const timeRemaining = calculateTimeRemaining(
             concert.ticketOpen.date,
             concert.ticketOpen.time
@@ -365,6 +391,7 @@ const Home = () => {
               key={index}
               concert={concert}
               isTodayEvent={isTodayEvent}
+              isTicketOpen={isTicketOpen}
               isPastEvent={isPastEvent}
               timeRemaining={timeRemaining}
               getButtonText={getButtonText}

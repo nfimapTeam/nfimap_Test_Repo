@@ -42,7 +42,7 @@ const NotFound = ({ content }: NotFoundProps) => {
             m={2}
           />
           <Image
-            src="/image/nfimap.png"
+            src="/image/logo/logo.svg"
             alt="NFI Map Logo"
             boxSize={isMobile ? "100px" : "150px"}
             m={2}

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Box, Input, Flex, Text, VStack } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 
-type Nfiload = {
+type NfiRoad = {
   id: number;
   name: string;
   location: string;
@@ -13,28 +13,28 @@ type Nfiload = {
   note: string;
 };
 
-interface NfiLoadProps {
-  nfiload: Nfiload[];
-  setSelectedNfiLoad: (nfiload: Nfiload) => void;
-  selectedNfiLoad: Nfiload | null;
+interface NfiRoadProps {
+  nfiRoad: NfiRoad[];
+  setSelectedNfiRoad: (nfiRoad: NfiRoad) => void;
+  selectedNfiRoad: NfiRoad | null;
 }
 
-const NfiLoad = ({
-  nfiload,
-  setSelectedNfiLoad,
-  selectedNfiLoad,
-}: NfiLoadProps) => {
+const NfiRoad = ({
+  nfiRoad,
+  setSelectedNfiRoad,
+  selectedNfiRoad,
+}: NfiRoadProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const { t } = useTranslation();
 
-  const filteredNfiload = nfiload.filter(
+  const filteredNfiRoad = nfiRoad.filter(
     (data) =>
       data.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       data.location.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleNfiLoadClick = (data: Nfiload) => {
-    setSelectedNfiLoad(data);
+  const handleNfiRoadClick = (data: NfiRoad) => {
+    setSelectedNfiRoad(data);
   };
 
   return (
@@ -57,10 +57,10 @@ const NfiLoad = ({
           "scrollbar-width": "none",
         }}
       >
-        {filteredNfiload.map((data) => (
+        {filteredNfiRoad.map((data) => (
           <Flex
             key={data.id}
-            onClick={() => handleNfiLoadClick(data)}
+            onClick={() => handleNfiRoadClick(data)}
             cursor="pointer"
             p="10px"
             border="1px solid #eee"
@@ -69,13 +69,13 @@ const NfiLoad = ({
             w="100%"
             _hover={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}
             position="relative"
-            bg={selectedNfiLoad?.id === data.id ? "blue.50" : "white"}
+            bg={selectedNfiRoad?.id === data.id ? "blue.50" : "white"}
           >
             <Box flexGrow={1}>
-              <Text fontSize="16px" fontWeight="bold" mb="5px">
+              <Text fontSize="16px" fontWeight="bold" mb="5px" noOfLines={1}>
                 {data.name}
               </Text>
-              <Text fontSize="14px" color="#666">
+              <Text fontSize="14px" color="#666" noOfLines={2}>
                 {data.location}
               </Text>
             </Box>
@@ -86,4 +86,4 @@ const NfiLoad = ({
   );
 };
 
-export default NfiLoad;
+export default NfiRoad;
