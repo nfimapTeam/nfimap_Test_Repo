@@ -89,5 +89,6 @@
   "about": "About",
   "day": "day",
   "hour": "hour",
-  "minute_later": "minutes later"
+  "minute_later": "minutes later",
+  "loading": "loading..."
 }

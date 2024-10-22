@@ -90,5 +90,6 @@
   "about": "약",
   "day": "일",
   "hour": "시간",
-  "minute_later": "분 후"
+  "minute_later": "분 후",
+  "loading": "로딩 중..."
 }

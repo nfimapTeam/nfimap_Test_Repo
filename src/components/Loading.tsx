@@ -1,5 +1,6 @@
 import { Box, Flex, Image, keyframes, Text, useBreakpointValue } from "@chakra-ui/react";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const rotate = keyframes`
   from { transform: rotate(0deg); }
@@ -8,6 +9,7 @@ const rotate = keyframes`
 
 const Loading = () => {
   const isMobile = useBreakpointValue({ base: true, md: false });
+  const { t, i18n } = useTranslation();
 
   return (
     <Flex
@@ -24,7 +26,7 @@ const Loading = () => {
         mb={4}
       />
       <Text fontSize={isMobile ? "4xl" : "6xl"} fontWeight="bold">
-        로딩중...
+        {t("loading")}
       </Text>
     </Flex>
   );
