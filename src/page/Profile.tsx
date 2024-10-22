@@ -65,12 +65,10 @@ const Profile = () => {
   const [profileState, setProfileState] = useState<ProfileData>();
 
   useEffect(() => {
-    if (i18n.language === "ko") {
-      setProfileState(profileData);
-    } else {
-      setProfileState(profileDataEng);
-    }
-  }, [profileData, profileDataEng, i18n]);
+    const newProfileData =
+      i18n.language === "ko" ? profileData : profileDataEng;
+    setProfileState(newProfileData);
+  }, [i18n.language]);
 
   return (
     <Box
