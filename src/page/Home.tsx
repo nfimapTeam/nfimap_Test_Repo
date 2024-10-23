@@ -38,6 +38,7 @@ import "../style/custom.css";
 import { Helmet } from "react-helmet-async";
 import NoData from "../components/NoData";
 import { useTranslation } from "react-i18next";
+import { Member, profileData } from "../datas/profile";
 
 interface Concert {
   id: number;
@@ -72,6 +73,30 @@ const Home = () => {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [allConcerts, setAllConcerts] = useState<Concert[]>([]);
+  const [birthdayMember, setBirthdayMember] = useState<Member | null>(null); // 생일인 멤버 상태
+
+  useEffect(() => {
+    const today = new Date();
+    const todayMonthDay = `${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
+
+    // 멤버들의 생일을 검사
+    const memberWithBirthdayToday = profileData.members.find(member => {
+      const [year, month, day] = member.birthdate.split("-");
+      const memberMonthDay = `${month}-${day}`;
+      return memberMonthDay === todayMonthDay;
+    });
+
+    // 생일인 멤버가 있으면 상태에 저장
+    if (memberWithBirthdayToday) {
+      setBirthdayMember(memberWithBirthdayToday);
+    } else {
+      setBirthdayMember(null);
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log(birthdayMember);
+  }, [birthdayMember]);
 
   const handleDateChange = (date: any) => {
     if (Array.isArray(date)) {

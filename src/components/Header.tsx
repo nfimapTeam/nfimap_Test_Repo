@@ -33,7 +33,7 @@ const Header = () => {
       position="relative"
     >
       <Flex justifyContent="center" flex="1">
-        <Link to="/">
+        <Link to="/birthday">
           <Image
             src="/image/logo/logo.svg"
             alt="MyApp Logo"

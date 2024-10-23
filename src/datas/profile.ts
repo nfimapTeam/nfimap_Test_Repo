@@ -1,3 +1,14 @@
+export interface Member {
+  name: string;
+  position: string[];
+  aka: string[];
+  birthdate: string;
+  imageUrl: string;
+  military: string;
+  instagram: string;
+  mbti: string;
+};
+
 export const profileData = {
   name: "N.Flying",
   debut_date: "2015-05-20",
@@ -8,7 +19,7 @@ export const profileData = {
       name: "이승협",
       position: ["리더", "리드 보컬", "메인 래퍼"],
       aka: ["승짱", "밀루"],
-      birthdate: "1992-10-31",
+      birthdate: "1992-10-24",
       imageUrl: "/image/seunghyub.jpg",
       military: "2023-01-01",
       instagram: "https://www.instagram.com/sssn9_zzzn9/",
