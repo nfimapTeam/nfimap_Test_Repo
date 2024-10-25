@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, Modal, ModalOverlay, ModalContent, ModalBody, Image } from '@chakra-ui/react';
 import Confetti from 'react-confetti';
+import SeungHyub from './components/SeungHyub';
 
 const BirthDay = () => {
   const [isModalOpen, setIsModalOpen] = useState(true); // 모달 초기 상태를 true로 설정
@@ -46,12 +47,8 @@ const BirthDay = () => {
       {/* Confetti */}
       {showConfetti && <Confetti width={window.innerWidth} height={window.innerHeight} />}
 
-      {/* 여기에 모달이 닫힌 후 보여줄 컨텐츠를 추가 */}
       {!isModalOpen && (
-        <Box mt="20px">
-          <h1>축하합니다! 🎉</h1>
-          <p>여기에 추가적인 컨텐츠를 넣으세요.</p>
-        </Box>
+        <SeungHyub />
       )}
     </Box>
   );
