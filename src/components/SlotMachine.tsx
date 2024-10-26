@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion, Variants } from "framer-motion";
+import { AnimatePresence, motion, TargetAndTransition, Variants } from "framer-motion";
 import { RiMusic2Line } from "react-icons/ri"; // 음악 아이콘 추가
 import { Button, Text, Box, IconButton, Link } from "@chakra-ui/react"; // Chakra UI 버튼과 텍스트 컴포넌트
 import { useRecoilState } from "recoil"; // Recoil의 useRecoilState import
@@ -54,11 +54,12 @@ const SlotMachine = ({ textData, youtubeUrl }: Props) => {
   // 애니메이션 설정
   const variants: Variants = {
     initial: { scaleY: 0.8, y: "-50%", opacity: 0.5 },
-    animate: ({ isLast }) => {
-      let props: VariantProps = { scaleY: 1, y: 0, opacity: 1 };
-      if (!isLast) props["filter"] = "none"; // 블러 제거하여 가독성 개선
-      return props;
-    },
+    animate: (custom: { isLast: boolean }): TargetAndTransition => ({
+      scaleY: 1,
+      y: 0,
+      opacity: 1,
+      filter: !custom.isLast ? "none" : undefined,
+    }),
     exit: { scaleY: 0.8, y: "50%", opacity: 0.5 },
   };
 
@@ -123,7 +124,7 @@ const SlotMachine = ({ textData, youtubeUrl }: Props) => {
             <>
               <RiMusic2Line color="#3b82f6" size="20px" />
               <Text fontSize="sm" fontWeight="bold" flexShrink={0}>
-              {t("slot_machine_today_music")}
+                {t("slot_machine_today_music")}
               </Text>
             </>
           )}
