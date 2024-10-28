@@ -94,5 +94,6 @@
   "loading": "로딩 중...",
   "concertVal": "콘서트",
   "festivalVal": "페스티벌",
-  "eventVal": "행사"
+  "eventVal": "행사",
+  "today_concert": "오늘 공연"
 }

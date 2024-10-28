@@ -155,7 +155,7 @@ export const globalShowInfos = [
         ],
         capacity: "약 15,000명",
         seats: [
-            "/image/show_detail/seats/world/250104_THE TAOYUAN ARENA_SEAT.png",
+            "/image/show_detail/seats/world/250104_THE TAOYUAN ARENA_SEAT_SUB_STAGE.jpg",
         ],
         setlist: [
             ""

@@ -151,7 +151,11 @@ const Card = ({
           </Box>
           <VStack align="start" spacing={2} flex="1">
             <Box>
-              {isPastEvent ? (
+              {isTodayEvent ? (
+                <Badge colorScheme="blue" mb={2}>
+                  {t("today_concert")} {/* 다국어 오늘 공연 */}
+                </Badge>
+              ) : isPastEvent ? (
                 <Badge colorScheme="gray" mb={2}>
                   {t("concert_ended")} {/* 다국어 공연 종료 */}
                 </Badge>

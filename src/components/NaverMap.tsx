@@ -204,7 +204,7 @@ const NaverMap = ({
         });
 
         if (isToday) {
-          markerImage = "/image/heart.png";
+          markerImage = "/image/pin/pin_heart01.svg";
           markerStyle = "animation: heartbeat 0.8s ease-in-out infinite;";
         } else if (isPast) {
           markerStyle = "filter: grayscale(100%) brightness(40%);";

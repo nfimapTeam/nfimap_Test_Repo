@@ -93,5 +93,6 @@
   "loading": "loading...",
   "concertVal": "Concert",
   "festivalVal": "Festival",
-  "eventVal": "Event"
+  "eventVal": "Event",
+  "today_concert": "Today"
 }
