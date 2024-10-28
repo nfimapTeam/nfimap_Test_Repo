@@ -170,7 +170,7 @@ const SlotMachine = ({ textData, youtubeUrl }: Props) => {
           </div>
           {!isSpinning && (
             <Link href={youtubeUrl[finalIndex]} isExternal>
-              <img src="/image/youtube.png" alt="YouTube" width="30px" />
+              <img src="/image/icon/sns/youtube.png" alt="YouTube" width="30px" />
             </Link>
           )}
         </div>

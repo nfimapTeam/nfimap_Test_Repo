@@ -320,7 +320,7 @@ const Profile = () => {
                 <Link href={member.instagram} isExternal>
                   <Image
                     borderRadius="4px"
-                    src="/image/instagram.jpg"
+                    src="/image/icon/sns/instagram.jpg"
                     w="24px"
                   />
                 </Link>
@@ -355,7 +355,7 @@ const Profile = () => {
         <Flex justifyContent="center" gap="6" align="center" wrap="wrap">
           <Link href={profileState?.official_sites.x} isExternal>
             <Image
-              src="/image/x.png"
+              src="/image/icon/sns/x.png"
               w="40px"
               h="40px"
               borderRadius="8px"
@@ -366,7 +366,7 @@ const Profile = () => {
 
           <Link href={profileState?.official_sites.facebook} isExternal>
             <Image
-              src="/image/facebook.jpg"
+              src="/image/icon/sns/facebook.jpg"
               w="40px"
               h="40px"
               borderRadius="8px"
@@ -377,7 +377,7 @@ const Profile = () => {
 
           <Link href={profileState?.official_sites.instagram} isExternal>
             <Image
-              src="/image/instagram.jpg"
+              src="/image/icon/sns/instagram.jpg"
               w="40px"
               h="40px"
               borderRadius="8px"
@@ -388,7 +388,7 @@ const Profile = () => {
 
           <Link href={profileState?.official_sites.daumcafe} isExternal>
             <Image
-              src="/image/daumcafe.png"
+              src="/image/icon/sns/daumcafe.png"
               w="40px"
               h="40px"
               borderRadius="8px"
@@ -399,7 +399,7 @@ const Profile = () => {
 
           <Link href={profileState?.official_sites.youtube} isExternal>
             <Image
-              src="/image/youtube.png"
+              src="/image/icon/sns/youtube.png"
               w="40px"
               h="40px"
               borderRadius="8px"

@@ -95,5 +95,6 @@
   "loading": "加载中...",
   "concertVal": "Concert",
   "festivalVal": "Festival",
-  "eventVal": "Event"
+  "eventVal": "Event",
+  "today_concert": "今日演出"
 }

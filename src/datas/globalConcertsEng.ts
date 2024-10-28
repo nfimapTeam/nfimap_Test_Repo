@@ -107,8 +107,8 @@ export const globalConcertsEng = [
         artists: ["N.Flying"],
         poster: "/image/show/world/241214_BAND_KINGDOM_SING3_JP.png",
         ticketOpen: { date: "2024-08-01", time: "18:00" },
-        ticketLink: "https://t.pia.jp/pia/event/event.do?eventCd=2428444",
-        // todo 10/21 이후 일반티켓 오픈 시 변경
+        ticketLink: "https://pia.jp/v/fnckingdom24hp3/",
+        // todo FNC 공식 3차 선행 10/27까지
         lat: "35.6500363",
         lng: "140.0365264",
     },
