@@ -622,4 +622,20 @@ export const showInfos = [
     setlist: [""],
     ootd: ["", ""],
   },
+  {
+    id: 23,
+    name: "LOVE IN SEOUL 2024 - 엔플라잉", // 블루스퀘어 마스터카드홀
+    address: "서울 용산구 이태원로 294 블루스퀘어 마스터카드홀",
+    note: [
+      "블루스퀘어 주차장은 상시 만차되니 대중교통 이용 적극 권장 (인근주차장 : 한강진역 공영주차장)",
+      "6호선 한강진역 2번 ~ 3번 출구 사이 지하철역 통로 연결",
+    ],
+    capacity: "스탠딩형 : 최대 2,800명 수용 (1층 2,400명, 2층 381석)",
+    seats: [
+      "/image/show_detail/seats/2024/BLUE_SQUARE_MASTER_CARD_HALL_SEAT_1F.png",
+      "/image/show_detail/seats/2024/BLUE_SQUARE_MASTER_CARD_HALL_SEAT_2F.png",
+    ],
+    setlist: [""],
+    ootd: [""],
+  },
 ];

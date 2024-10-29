@@ -9,15 +9,7 @@ import {
   InputGroup,
   InputRightElement,
   Icon,
-  Button,
   SimpleGrid,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-  useDisclosure,
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { SearchIcon, CloseIcon } from "@chakra-ui/icons";
@@ -32,12 +24,12 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { toggleState } from "../atom/toggleState";
 import Card from "../components/Card";
-import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "../style/custom.css";
 import { Helmet } from "react-helmet-async";
 import NoData from "../components/NoData";
 import { useTranslation } from "react-i18next";
+import BirrthDay from "../components/BirthDay";
 
 interface Concert {
   id: number;
@@ -63,7 +55,6 @@ const Home = () => {
   const { t, i18n, } = useTranslation();
 
   const columns = useBreakpointValue({ base: 1, md: 2, lg: 3 });
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [currentTime, setCurrentTime] = useState(moment());
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState(t("latest"));
@@ -73,16 +64,6 @@ const Home = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [allConcerts, setAllConcerts] = useState<Concert[]>([]);
 
-  const handleDateChange = (date: any) => {
-    if (Array.isArray(date)) {
-      setSelectedDate(date[0] as Date);
-    } else if (date instanceof Date) {
-      setSelectedDate(date);
-    } else {
-      setSelectedDate(null);
-    }
-    onClose();
-  };
 
   useEffect(() => {
     if (i18n.language === "ko") {
@@ -293,6 +274,7 @@ const Home = () => {
         <meta property="og:url" content="https://nfimap.co.kr" />
       </Helmet>
       <Box mb={4}>
+        <BirrthDay />
         <InputGroup size="lg">
           <Input
             placeholder={t("searchPlaceholder")}
@@ -364,16 +346,7 @@ const Home = () => {
             />
           </FormControl>
 
-          <Modal isOpen={isOpen} onClose={onClose}>
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>{t("selectDate")}</ModalHeader>
-              <ModalCloseButton />
-              <ModalBody>
-                <Calendar onChange={handleDateChange} value={selectedDate} />
-              </ModalBody>
-            </ModalContent>
-          </Modal>
+         
         </Flex>
       </Box>
       {filteredAndSortedConcerts.length === 0 && <NoData />}

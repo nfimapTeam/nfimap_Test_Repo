@@ -73,14 +73,20 @@ const GoogleMap = ({
     markersRef.current.forEach((marker) => marker.setMap(null));
     markersRef.current = [];
 
-    globalConcerts.forEach((concert) => {
+     globalConcerts.forEach((concert) => {
       const today = new Date();
+      const todayString = new Date(today.getTime() + (9 * 60 * 60 * 1000))
+        .toISOString()
+        .split('T')[0];
       let isPast = false;
+      let isToday = false;
 
-      // Check if the concert is in the past
+      // Check if the concert is in the past or today
       concert.date.forEach((dateString) => {
-        const concertDate = new Date(dateString.split("(")[0]);
-        if (concertDate < today) {
+        const concertDate = dateString.split("(")[0].trim();
+        if (concertDate === todayString) {
+          isToday = true;
+        } else if (new Date(concertDate) < today) {
           isPast = true;
         }
       });
@@ -88,94 +94,132 @@ const GoogleMap = ({
       const position = {
         lat: parseFloat(concert.lat),
         lng: parseFloat(concert.lng),
-      };
-      const marker = new window.google.maps.Marker({
-        position,
-        map,
-        title: concert.name,
-        icon: {
-          url: isPast
-            ? "/image/pin/pin_nf01_bk.svg"
-            : "/image/pin/pin_nf01.svg",
-          scaledSize: new window.google.maps.Size(30, 30),
-        },
-      });
-
-      const infoWindowContent = `
-        <div style="width: 100%; max-width: 320px; font-family: Arial, sans-serif; padding: 10px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); border-radius: 4px;">
-          <div style="display: flex; align-items: center;">
-            <div style="width: 70px; height: 70px; min-width: 70px; min-height: 70px;max-width: 70px; max-height: 70px; margin-right: 15px; border-radius: 4px; overflow: hidden;">
-              <img src="${concert.poster && concert.poster.trim() !== "" ? concert.poster : "/image/logo/logo.svg"}" alt="${concert.name}" 
-                   style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">
+       };
+       
+        const infoWindowContent = `
+          <div style="width: 100%; max-width: 320px; font-family: Arial, sans-serif; padding: 10px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); border-radius: 4px;">
+            <div style="display: flex; align-items: center;">
+              <div style="width: 70px; height: 70px; min-width: 70px; min-height: 70px;max-width: 70px; max-height: 70px; margin-right: 15px; border-radius: 4px; overflow: hidden;">
+                <img src="${concert.poster && concert.poster.trim() !== "" ? concert.poster : "/image/logo/logo.svg"}" alt="${concert.name}" 
+                     style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">
+              </div>
+              <div style="flex-grow: 1;">
+              <h3
+                style="
+                  margin: 0;
+                  font-size: 16px;
+                  font-weight: bold;
+                  color: #333;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 1;
+                  -webkit-box-orient: vertical;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                "
+              >
+                ${concert.name}
+              </h3>
+              <p
+                style="
+                  margin: 5px 0 0;
+                  font-size: 14px;
+                  color: #666;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 2;
+                  -webkit-box-orient: vertical;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                "
+              >
+                ${concert.location}
+              </p>
             </div>
-            <div style="flex-grow: 1;">
-            <h3
-              style="
-                margin: 0;
-                font-size: 16px;
-                font-weight: bold;
-                color: #333;
-                display: -webkit-box;
-                -webkit-line-clamp: 1;
-                -webkit-box-orient: vertical;
-                overflow: hidden;
-                text-overflow: ellipsis;
-              "
-            >
-              ${concert.name}
-            </h3>
-            <p
-              style="
-                margin: 5px 0 0;
-                font-size: 14px;
-                color: #666;
-                display: -webkit-box;
-                -webkit-line-clamp: 2;
-                -webkit-box-orient: vertical;
-                overflow: hidden;
-                text-overflow: ellipsis;
-              "
-            >
-              ${concert.location}
-            </p>
+            </div>
+            <button id="detailBtn-${concert.name.replace(/\s+/g, "-")}" style="margin-top: 5px; padding: 4px 8px; width: 100%; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; background-color: #0597F2; color: white; cursor: pointer; transition: background-color 0.3s, color 0.3s;">
+              ${t("View Details")}
+            </button>
           </div>
-          </div>
-          <button id="detailBtn-${concert.name.replace(/\s+/g, "-")}" style="margin-top: 5px; padding: 4px 8px; width: 100%; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; background-color: #0597F2; color: white; cursor: pointer; transition: background-color 0.3s, color 0.3s;">
-            ${t("View Details")}
-          </button>
-        </div>
-      `;
+        `;
 
-      const infoWindow = new window.google.maps.InfoWindow({
-        content: infoWindowContent,
-      });
+        const infoWindow = new window.google.maps.InfoWindow({
+          content: infoWindowContent,
+        });
 
-      marker.addListener("click", () => {
-        if (currentInfoWindow) {
-          currentInfoWindow.close();
-        }
-        infoWindow.open(map, marker);
-        setCurrentInfoWindow(infoWindow);
-        setSelectedGlobalConcert(concert);
-        map.setCenter(position);
-        map.setZoom(14);
+      // Only create marker if it's not today's concert
+       if (!isToday) {
+         const marker = new window.google.maps.Marker({
+           position,
+           map,
+           title: concert.name,
+           icon: {
+             url: isPast
+               ? "/image/pin/pin_nf01_bk.svg"
+               : "/image/pin/pin_nf01.svg",
+             scaledSize: new window.google.maps.Size(30, 30),
+           },
+         });
 
-        // Use a more specific selector and add the listener after a short delay
-        setTimeout(() => {
-          const button = document.getElementById(
-            `detailBtn-${concert.name.replace(/\s+/g, "-")}`
-          );
-          if (button) {
-            button.addEventListener("click", handleDetailClick);
-          }
-        }, 100);
-      });
+       
 
-      markersRef.current.push(marker);
+         marker.addListener("click", () => {
+           if (currentInfoWindow) {
+             currentInfoWindow.close();
+           }
+           infoWindow.open(map, marker);
+           setCurrentInfoWindow(infoWindow);
+           setSelectedGlobalConcert(concert);
+           map.setCenter(position);
+           map.setZoom(14);
+
+           setTimeout(() => {
+             const button = document.getElementById(
+               `detailBtn-${concert.name.replace(/\s+/g, "-")}`
+             );
+             if (button) {
+               button.addEventListener("click", handleDetailClick);
+             }
+           }, 100);
+         });
+
+         markersRef.current.push(marker);
+       } else {
+         const marker = new window.google.maps.Marker({
+           position,
+           map,
+           title: concert.name,
+           icon: {
+             url: "/image/pin/pin_heart01.svg",
+             scaledSize: new window.google.maps.Size(30, 30),
+           },
+           animation: window.google.maps.Animation.BOUNCE,
+         });
+
+         marker.addListener("click", () => {
+           if (currentInfoWindow) {
+             currentInfoWindow.close();
+           }
+           infoWindow.open(map, marker);
+           setCurrentInfoWindow(infoWindow);
+           setSelectedGlobalConcert(concert);
+           map.setCenter(position);
+           map.setZoom(14);
+
+           setTimeout(() => {
+             const button = document.getElementById(
+               `detailBtn-${concert.name.replace(/\s+/g, "-")}`
+             );
+             if (button) {
+               button.addEventListener("click", handleDetailClick);
+             }
+           }, 100);
+         });
+
+         markersRef.current.push(marker);
+       }
     });
 
     const style = document.createElement("style");
-    style.textContent = `
+     style.textContent = `
       .gm-style-iw-c {
         padding: 0 !important;
       }
@@ -190,6 +234,24 @@ const GoogleMap = ({
       }
       .gm-style-iw {
         padding: 0 !important;
+      }
+      .custom-marker {
+        position: absolute;
+        cursor: pointer;
+      }
+      .heartbeat {
+        animation: heartbeat 0.8s ease-in-out infinite;
+      }
+      @keyframes heartbeat {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.2);
+        }
+        100% {
+          transform: scale(1);
+        }
       }
     `;
     document.head.appendChild(style);
@@ -212,9 +274,9 @@ const GoogleMap = ({
 
   useEffect(() => {
     if (!selectedGlobalConcert || !map) return;
-
+    console.log(selectedGlobalConcert);
     const marker = markersRef.current.find(
-      (marker) => marker.getTitle() === selectedGlobalConcert.name
+      (marker) => marker?.getTitle && marker.getTitle() === selectedGlobalConcert.name // Check if it's a Marker
     );
 
     if (marker) {
