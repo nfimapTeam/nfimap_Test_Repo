@@ -14,12 +14,12 @@ import {
   Icon,
   Flex,
 } from "@chakra-ui/react";
-import { RiInstagramLine, RiTwitterLine } from "@remixicon/react";
+import { RiDownloadLine, RiTwitterXLine } from "@remixicon/react";
 
 type Member = { name: string; date: string };
 
 const members: Member[] = [
-  { name: "이승협", date: "10-29" },
+  { name: "승협", date: "10-29" },
   { name: "차훈", date: "07-12" },
   { name: "김재현", date: "07-15" },
   { name: "유회승", date: "02-28" },
@@ -27,7 +27,7 @@ const members: Member[] = [
 ];
 
 const images: { [key: string]: string[] } = {
-  이승협: [
+  승협: [
     "/image/toro/생일축전_01.jpg",
     "/image/toro/생일축전_02.jpg",
     "/image/toro/생일축전_03.jpg",
@@ -60,10 +60,12 @@ const Birthday = () => {
       const member = members.find((member) => member.date === today);
       if (member) {
         setBirthdayMember(member);
-        const memberImages = images[member.name];
-        setRandomImage(
-          memberImages[Math.floor(Math.random() * memberImages.length)]
-        );
+        const memberImages = images[member.name] || []; // Default to empty array if undefined
+        if (memberImages.length > 0) {
+          setRandomImage(
+            memberImages[Math.floor(Math.random() * memberImages.length)]
+          );
+        }
         onOpen();
       }
     }
@@ -94,33 +96,6 @@ const Birthday = () => {
     );
 
     switch (platform) {
-      case "instagram":
-        try {
-          // 이미지를 Blob으로 가져오기
-          const response = await fetch(randomImage);
-          const blob = await response.blob();
-
-          // Web Share API를 사용하여 공유
-          if (navigator.share) {
-            await navigator.share({
-              files: [new File([blob], "birthday.jpg", { type: "image/jpeg" })],
-              title: `${birthdayMember?.name}님의 생일을 축하합니다!`,
-              text: "생일 축하 메시지를 공유해보세요!",
-              url: "https://nfimap.co.kr/",
-            });
-          } else {
-            // Web Share API가 지원되지 않는 경우 Instagram 앱/웹사이트로 이동
-            window.location.href = "instagram://camera";
-            setTimeout(() => {
-              window.location.href = "https://www.instagram.com";
-            }, 100);
-          }
-        } catch (error) {
-          console.error("Error sharing to Instagram:", error);
-          // 공유 실패 시 Instagram으로 이동
-          window.location.href = "https://www.instagram.com";
-        }
-        break;
       case "twitter":
         window.open(
           `https://twitter.com/intent/tweet?url=${url}&text=${text}`,
@@ -142,39 +117,21 @@ const Birthday = () => {
             <ModalCloseButton _focus={{ boxShadow: "none" }} border="none" />
             <Box p={4} textAlign="center">
               <Text fontSize="lg" fontWeight="bold" mb={4}>
-                {birthdayMember.name}님의 생일을 축하합니다! 🎉
+                {birthdayMember.name}이의 생일을 함께 축하해 주세요!🎉
               </Text>
               <Image
                 src={randomImage}
                 alt={`${birthdayMember.name} 생일 이미지`}
-                cursor="pointer"
-                onClick={handleDownloadImage}
               />
-              <Text fontSize="sm" color="gray.500" mt={2}>
-                이미지를 클릭하면 저장됩니다.
-              </Text>
-              <VStack spacing={4} mt={4}>
-                <HStack spacing={8} justify="center">
-                  <VStack>
-                    <Box
-                      as="button"
-                      w="40px"
-                      h="40px"
-                      borderRadius="full"
-                      bg="purple.500"
-                      color="white"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                      onClick={() => handleShare("instagram")}
-                      _hover={{ bg: "purple.600" }}
-                    >
-                      <Icon as={RiInstagramLine} boxSize="24px" />
-                    </Box>
-                    <Text fontSize="sm">인스타그램</Text>
-                  </VStack>
-                  <VStack>
-                    <Box
+              <Flex justifyContent="center" mt="16px">
+                <Flex alignItems="center" gap="12px">
+                  <Flex
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    gap={2}
+                  >
+                    <Flex
                       as="button"
                       w="40px"
                       h="40px"
@@ -185,15 +142,40 @@ const Birthday = () => {
                       alignItems="center"
                       justifyContent="center"
                       onClick={() => handleShare("twitter")}
-                      _hover={{ bg: "gray.900" }}
+                      _hover={{ bg: "gray.900", transform: "scale(1.1)" }} // Increase size on hover
+                      transition="transform 0.2s, bg 0.2s" // Smooth transition for hover effects
                     >
-                      <Icon as={RiTwitterLine} boxSize="24px" />
-                    </Box>
-                    <Text fontSize="sm">X</Text>
-                  </VStack>
-                </HStack>
-              </VStack>
-              <Flex justifyContent="flex-end">
+                      <Icon as={RiTwitterXLine} boxSize="24px" />
+                    </Flex>
+                    <Text fontSize="sm">공유하기</Text>
+                  </Flex>
+                  <Flex
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    gap={2}
+                  >
+                    <Flex
+                      as="button"
+                      w="40px"
+                      h="40px"
+                      borderRadius="full"
+                      bg="blue.500" // Changed background color
+                      color="white"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      onClick={handleDownloadImage}
+                      _hover={{ bg: "blue.600", transform: "scale(1.1)" }}
+                      transition="transform 0.2s, bg 0.2s"
+                    >
+                      <Icon as={RiDownloadLine} boxSize="24px" />
+                    </Flex>
+                    <Text fontSize="sm">저장하기</Text>
+                  </Flex>
+                </Flex>
+              </Flex>
+              <Flex justifyContent="flex-end" alignItems="center" gap="8px">
                 <Checkbox
                   mt={4}
                   isChecked={doNotShowToday}
