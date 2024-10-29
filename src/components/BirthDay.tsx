@@ -28,10 +28,10 @@ const members: Member[] = [
 
 const images: { [key: string]: string[] } = {
   승협: [
-    "/image/toro/생일축전_01.jpg",
-    "/image/toro/생일축전_02.jpg",
-    "/image/toro/생일축전_03.jpg",
-    "/image/toro/생일축전_03B.jpg",
+    "/image/toro/seunghyub_01.jpg",
+    "/image/toro/seunghyub_02.jpg",
+    "/image/toro/seunghyub_03.jpg",
+    "/image/toro/seunghyub_03B.jpg",
   ],
   차훈: [""],
   김재현: [""],
@@ -122,59 +122,12 @@ const Birthday = () => {
               <Image
                 src={randomImage}
                 alt={`${birthdayMember.name} 생일 이미지`}
+                cursor="pointer"
+                onClick={handleDownloadImage}
               />
-              <Flex justifyContent="center" mt="16px">
-                <Flex alignItems="center" gap="12px">
-                  <Flex
-                    flexDirection="column"
-                    alignItems="center"
-                    justifyContent="center"
-                    gap={2}
-                  >
-                    <Flex
-                      as="button"
-                      w="40px"
-                      h="40px"
-                      borderRadius="full"
-                      bg="gray.800"
-                      color="white"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                      onClick={() => handleShare("twitter")}
-                      _hover={{ bg: "gray.900", transform: "scale(1.1)" }} // Increase size on hover
-                      transition="transform 0.2s, bg 0.2s" // Smooth transition for hover effects
-                    >
-                      <Icon as={RiTwitterXLine} boxSize="24px" />
-                    </Flex>
-                    <Text fontSize="sm">공유하기</Text>
-                  </Flex>
-                  <Flex
-                    flexDirection="column"
-                    alignItems="center"
-                    justifyContent="center"
-                    gap={2}
-                  >
-                    <Flex
-                      as="button"
-                      w="40px"
-                      h="40px"
-                      borderRadius="full"
-                      bg="blue.500" // Changed background color
-                      color="white"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                      onClick={handleDownloadImage}
-                      _hover={{ bg: "blue.600", transform: "scale(1.1)" }}
-                      transition="transform 0.2s, bg 0.2s"
-                    >
-                      <Icon as={RiDownloadLine} boxSize="24px" />
-                    </Flex>
-                    <Text fontSize="sm">저장하기</Text>
-                  </Flex>
-                </Flex>
-              </Flex>
+              <Text fontSize="sm" color="gray.500" mt={2}>
+                이미지를 클릭하면 저장됩니다.
+              </Text>
               <Flex justifyContent="flex-end" alignItems="center" gap="8px">
                 <Checkbox
                   mt={4}
