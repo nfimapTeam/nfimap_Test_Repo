@@ -19,7 +19,7 @@ import { RiDownloadLine, RiTwitterXLine } from "@remixicon/react";
 type Member = { name: string; date: string };
 
 const members: Member[] = [
-  { name: "승협", date: "10-29" },
+  { name: "승협", date: "10-31" },
   { name: "차훈", date: "07-12" },
   { name: "김재현", date: "07-15" },
   { name: "유회승", date: "02-28" },
