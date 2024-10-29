@@ -428,10 +428,10 @@ const NaverMap = ({
 
         @keyframes heartbeat {
           0%, 100% {
-            transform: scale(1);
+            transform: scale(1) translateY(0);
           }
           50% {
-            transform: scale(1.3);
+            transform: scale(1) translateY(-20px);
           }
         }
 
