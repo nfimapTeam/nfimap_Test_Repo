@@ -216,9 +216,8 @@ const Music = () => {
     <Box
       h="calc(100vh - 120px)"
       width="100%"
-      maxWidth="1200px"
       mx="auto"
-      p={4}
+      p="16px 16px 100px 16px"
       overflowY="auto"
       css={{
         "&::-webkit-scrollbar": {
@@ -228,6 +227,7 @@ const Music = () => {
         "scrollbar-width": "none",
       }}
     >
+      <Box maxWidth="1200px" margin="auto">
       <Helmet>
         <title>{t("music_page_title")}</title> {/* 다국어 제목 */}
         <meta
@@ -343,6 +343,7 @@ const Music = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
+      </Box>
     </Box>
   );
 };

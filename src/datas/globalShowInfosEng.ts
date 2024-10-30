@@ -7,7 +7,14 @@ export const globalShowInfosEng = [
     note: [""],
     capacity: "Maximum capacity of 9,000 people",
     seats: [""],
-    setlist: [""],
+    setlist: [
+      "Kick-Ass",
+      "Songbird",
+      "Star",
+      "Endless Summer",
+      "옥탑방 (Rooftop)",
+      "Stand by me"
+    ],
     ootd: [
       "/image/show_detail/ootd/world/240713_KINGDOM_DAY1.jpeg",
       "/image/show_detail/ootd/world/240714_KINGDOM_DAY2.jpeg",
@@ -52,7 +59,10 @@ export const globalShowInfosEng = [
       "폭망 (I Like You)",
       "Blue Moon",
     ],
-    ootd: [""],
+    ootd: [
+      "/image/show_detail/ootd/world/241029_HIDE-OUT_JAPAN_OOTD_01.jpeg",
+      "/image/show_detail/ootd/world/241029_HIDE-OUT_JAPAN_OOTD_02.jpeg"
+    ],
   },
   {
     id: 1003,
