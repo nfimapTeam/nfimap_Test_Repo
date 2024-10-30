@@ -34,7 +34,6 @@ const BirthDay = () => {
         "scrollbar-width": "none",
       }}
     >
-      {/* 모달 */}
       <Modal isOpen={isModalOpen} onClose={handleGiftBoxClick} isCentered>
         <ModalOverlay bgColor="rgba(0, 0, 0, 0.85)" />
         <ModalContent w={300} h={300}>
@@ -44,7 +43,6 @@ const BirthDay = () => {
         </ModalContent>
       </Modal>
 
-      {/* Confetti */}
       {showConfetti && <Confetti width={window.innerWidth} height={window.innerHeight} />}
 
       {!isModalOpen && (
