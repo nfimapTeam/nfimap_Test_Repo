@@ -74,7 +74,6 @@ const Profile = () => {
     <Box
       h="calc(100vh - 120px)"
       width="100%"
-      maxWidth="1200px"
       mx="auto"
       p="16px 16px 100px 16px"
       overflowY="auto"
@@ -86,6 +85,7 @@ const Profile = () => {
         "scrollbar-width": "none",
       }}
     >
+      <Box maxWidth="1200px" margin="auto">
       <Helmet>
         <title>{t("Profile.title")}</title>
         <meta name="description" content={t("Profile.description")} />
@@ -409,6 +409,7 @@ const Profile = () => {
             />
           </Link>
         </Flex>
+      </Box>
       </Box>
     </Box>
   );

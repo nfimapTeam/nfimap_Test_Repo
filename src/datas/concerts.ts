@@ -429,7 +429,7 @@ export const concertsData = [
     artists: ["N.Flying"],
     poster: "/image/show/2024/241120_LOVE_IN_SEOUL.jpeg",
     ticketOpen: { date: "2024-10-31", time: "12:00" },
-    ticketLink: "", // 오픈공지 https://ticket.interpark.com/webzine/paper/TPNoticeView.asp?bbsno=34&pageno=1&stext=&no=53284&groupno=53284&seq=0&KindOfGoods=TICKET&Genre=&sort=WriteDate
+    ticketLink: "https://tickets.interpark.com/goods/24015828",
     lat: "37.54073220511532",
     lng: "127.00263977050781",
   },

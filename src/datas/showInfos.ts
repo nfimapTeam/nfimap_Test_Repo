@@ -476,6 +476,7 @@ export const showInfos = [
       "Sober",
       "Monster",
       "Blue Moon",
+      "옥탑방 (Rooftop)",
       "Flashback",
       "Shooting Star",
       "Stand By Me",

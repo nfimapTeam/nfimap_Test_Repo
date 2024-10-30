@@ -252,7 +252,6 @@ const Home = () => {
     <Box
       h="calc(100vh - 120px)"
       width="100%"
-      maxWidth="1200px"
       mx="auto"
       p="16px 16px 70px 16px"
       overflowY="auto"
@@ -264,6 +263,7 @@ const Home = () => {
         "scrollbar-width": "none",
       }}
     >
+      <Box maxWidth="1200px" margin="auto">
       <Helmet>
         <title>{t("helmettitle")}</title>
         <meta name="description" content={t("helmetdescription")} />
@@ -379,6 +379,7 @@ const Home = () => {
           );
         })}
       </SimpleGrid>
+      </Box>
     </Box>
   );
 };

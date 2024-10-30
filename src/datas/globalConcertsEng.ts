@@ -21,7 +21,7 @@ export const globalConcertsEng = [
         location: "KT Zepp Yokohama",
         date: ["2024-10-29(Tue)"],
         startTime: "19:00",
-        durationMinutes: 120,
+        durationMinutes: 160,
         type: "Concert",
         performanceType: "Solo",
         artists: ["N.Flying"],
