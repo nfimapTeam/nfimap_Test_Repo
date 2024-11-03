@@ -37,7 +37,7 @@ export const globalConcerts = [
     location: "Nagoya Bottom Line",
     date: ["2024-10-31(목)"],
     startTime: "19:00",
-    durationMinutes: 120,
+    durationMinutes: 160,
     type: "콘서트",
     performanceType: "단독",
     artists: ["N.Flying"],

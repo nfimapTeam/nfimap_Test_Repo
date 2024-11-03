@@ -428,7 +428,7 @@ export const concertsDataEng = [
     id: 23,
     name: "LOVE IN SEOUL 2024 - N.Flying",
     location: "Blue Square Mastercard Hall",
-    date: ["2024-11-20(수)"],
+    date: ["2024-11-20(Wed)"],
     startTime: "20:00",
     durationMinutes: 90,
     type: "Concert",

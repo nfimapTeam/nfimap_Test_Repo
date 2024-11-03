@@ -95,8 +95,6 @@ const Card = ({
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  console.log(concert);
-
   return (
     <Box
       position="relative"
@@ -119,11 +117,7 @@ const Card = ({
         alignItems="flex-start"
         borderColor={isTodayEvent ? "brand.sub" : "gray.200"}
         animation={
-          isTodayEvent
-            ? `${borderGlow} 1.5s ease-in-out infinite`
-            : isTicketOpen
-              ? `${lavenderGlow} 1.5s ease-in-out infinite`
-              : "none"
+          isTodayEvent ? `${borderGlow} 1.5s ease-in-out infinite` : "none"
         }
         position="relative"
         zIndex={1}

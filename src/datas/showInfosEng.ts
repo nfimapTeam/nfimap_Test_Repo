@@ -668,6 +668,7 @@ export const showInfosEng = [
     capacity:
       "Standing setup: Maximum 2,800 people (1F 2,400 people, 2F 381 seats)",
     seats: [
+      "/image/show_detail/seats/2024/BLUE_SQUARE_MASTER_CARD_HALL_SEAT.png",
       "/image/show_detail/seats/2024/BLUE_SQUARE_MASTER_CARD_HALL_SEAT_1F.png",
       "/image/show_detail/seats/2024/BLUE_SQUARE_MASTER_CARD_HALL_SEAT_2F.png",
     ],

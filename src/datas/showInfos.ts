@@ -633,6 +633,7 @@ export const showInfos = [
     ],
     capacity: "스탠딩형 : 최대 2,800명 수용 (1층 2,400명, 2층 381석)",
     seats: [
+      "/image/show_detail/seats/2024/BLUE_SQUARE_MASTER_CARD_HALL_SEAT.png",
       "/image/show_detail/seats/2024/BLUE_SQUARE_MASTER_CARD_HALL_SEAT_1F.png",
       "/image/show_detail/seats/2024/BLUE_SQUARE_MASTER_CARD_HALL_SEAT_2F.png",
     ],
