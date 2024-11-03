@@ -3,7 +3,12 @@
   publish = "build"
 
 [[redirects]]
+  from = "/nfimap-plus/*"
+  to = "https://nfimap-plus.netlify.app/"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  force = true
