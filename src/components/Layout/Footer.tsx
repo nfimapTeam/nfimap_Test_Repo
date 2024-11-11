@@ -26,7 +26,7 @@ const Footer = () => {
       position="fixed"
       bottom="0"
       width="100%"
-      height="50px" 
+      height="48px" 
       zIndex="2"
     >
       <Flex justify="space-between">

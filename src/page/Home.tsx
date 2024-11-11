@@ -24,7 +24,6 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { toggleState } from "../atom/toggleState";
 import Card from "../components/Card";
-import "react-calendar/dist/Calendar.css";
 import "../style/custom.css";
 import { Helmet } from "react-helmet-async";
 import NoData from "../components/NoData";
@@ -61,7 +60,6 @@ const Home = () => {
   const [toggle, setToggle] = useRecoilState(toggleState);
   const [selectedType, setSelectedType] = useState("");
   const navigate = useNavigate();
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [allConcerts, setAllConcerts] = useState<Concert[]>([]);
 
 
