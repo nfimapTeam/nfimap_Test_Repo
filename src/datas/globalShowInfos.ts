@@ -222,13 +222,12 @@ export const globalShowInfos = [
     ootd: [""],
   },
   {
-    // todo 현재 공연 상세 정보 미정
     id: 1010,
     name: "2024 N.Flying LIVE 'HIDE-OUT' in ASIA : 대만",
-    address: "",
+    address: "TICC No. 1, Section 5, Xinyi Rd, Xinyi District, Taipei City, TAIPEI 110",
     note: [""],
-    capacity: "",
-    seats: [""],
+    capacity: "약 3,000명",
+    seats: ["/image/show_detail/seats/world/250209_HIDE-OUT_TAIPEI_SEAT.jpeg"],
     setlist: [""],
     ootd: [""],
   },

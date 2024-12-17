@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, IconButton, VStack, useOutsideClick, chakra } from "@chakra-ui/react";
+import { Box, IconButton, VStack, useOutsideClick, chakra, Image } from "@chakra-ui/react";
 import { RiAddLine, RiCloseLine } from "@remixicon/react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -15,7 +15,7 @@ const FnbButton = () => {
   });
 
   const handleButtonClick = () => {
-    window.open('https://nfimap.co.kr/', '_blank');
+    window.open('https://nfimap-plus.co.kr/', '_blank');
     setIsOpen(false);
   };
 
@@ -86,12 +86,13 @@ const FnbButton = () => {
               <IconButton
                 onClick={handleButtonClick}
                 aria-label="추가 버튼 1"
-                icon={<RiAddLine size={20} />}
+                icon={<Image src="/image/logo/logo_nfi.svg" />}
                 bg="white"
                 color="teal.500"
                 isRound
-                width="48px"
-                height="48px"
+                width="56px"
+                height="56px"
+                padding="4px"
                 boxShadow="0px 4px 12px rgba(0, 0, 0, 0.1)"
                 _hover={{ 
                   transform: "scale(1.05)",
