@@ -14,11 +14,8 @@ import {
   useColorModeValue,
   SimpleGrid,
   Divider,
-  Wrap,
-  WrapItem,
 } from "@chakra-ui/react";
 import {
-  ExternalLinkIcon,
   CalendarIcon,
   TimerIcon,
   MapPinIcon,
@@ -26,7 +23,6 @@ import {
   MusicIcon,
   CameraIcon,
   UsersIcon,
-  ClipboardListIcon,
 } from "lucide-react";
 import { concertsData } from "../datas/concerts";
 import NotFound from "../components/NotFound";
@@ -35,7 +31,6 @@ import moment from "moment";
 import { globalConcerts } from "../datas/globalConcerts";
 import { showInfos } from "../datas/showInfos";
 import { globalShowInfos } from "../datas/globalShowInfos";
-import theme from "../util/theme";
 import { useTranslation } from "react-i18next";
 import { concertsDataEng } from "../datas/concertsEng";
 import { globalConcertsEng } from "../datas/globalConcertsEng";
