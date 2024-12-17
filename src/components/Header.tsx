@@ -26,7 +26,7 @@ const Header = () => {
       p="10px"
       bg="white"
       borderBottom="1px solid black"
-      height="68px"
+      height="70px"
       display="flex"
       alignItems="center"
       justifyContent="space-between"

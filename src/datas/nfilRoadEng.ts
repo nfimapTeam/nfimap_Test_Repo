@@ -217,7 +217,47 @@ export const nfiRoadDataEng = [
         category: "Food",
         lat: "35.1622100514759",
         lng: "129.163126552708",
-        naverLink: "https://maps.app.goo.gl/ZhKJYqZUK7XXaB5GA",
+        naverLink: "https://maps..app.goo.gl/ZhKJYqZUK7XXaB5GA",
         note : "A famous hotteok (Korean pancake) shop visited by Seunghyub and Hweseung."
+    },
+    {
+        id: 23,
+        name: "Song-ga-ne Gamja-tang",
+        location: "245 Donggyo-ro, Mapo-gu, Seoul, Song-ga-ne Gamja-tang",
+        category: "Food",
+        lat: "37.5618364940379",
+        lng: "126.924050688833",
+        naverLink: "https://maps.app.goo.gl/q5DCXSo9Y2tgTCyd8",
+        note : "A restaurant that Seunghyub has been visiting since his trainee days."
+    },
+    {
+        id: 24,
+        name: "Korean Fresh Raw Fish Restaurant",
+        location: "90, Seongdeokjeong-gil, Seongdong-gu, Seoul, South Korea",
+        category: "Food",
+        lat: "37.5376693827344",
+        lng: "127.053399481711",
+        naverLink: "https://maps.app.goo.gl/f8apCDEvW2fcDLeu6",
+        note : "A raw fish restaurant that N.Flying visited on the first snowy day."
+    },
+    {
+        id: 25,
+        name: "SUBJECTIVE CAFE",
+        location: "229, Gwangnaru-ro, Seongdong-gu, Seoul, South Korea",
+        category: "Cafe",
+        lat: "37.549882541627",
+        lng: "127.055690503868",
+        naverLink: "https://maps.app.goo.gl/eVmhy53ct3DtW86E6",
+        note : "The cafe from Seunghyub's Longchamp advertisement photo."
+    },
+    {
+        id: 26,
+        name: "Kumachan Onsen Seongsu",
+        location: "2F, 5, Yeonmujang 7-gil, Seongdong-gu, Seoul, South Korea",
+        category: "Food",
+        lat: "37.5432380295407",
+        lng: "127.054348975494",
+        naverLink: "https://maps.app.goo.gl/sXjW9XP4v72vjZSdA",
+        note : "The shabu-shabu restaurant where Dongsung had a meal with his father."
     },
 ];

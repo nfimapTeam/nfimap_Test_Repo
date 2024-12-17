@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import FnbButton from "./FnbButton";
@@ -8,7 +8,6 @@ interface LayoutProps {
 }
 
 const Layout = ({ children }: LayoutProps) => {
-
   return (
     <div style={{height: "100vh"}}>
       <Header />

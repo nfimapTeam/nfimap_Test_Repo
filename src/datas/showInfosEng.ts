@@ -15,7 +15,7 @@ export const showInfosEng = [
     setlist: [
       "불놀이 (Flowerwork)",
       "Video Therapy",
-      "Born to be - Unreleased song",
+      "Born to be - Unreleased",
       "Star",
       "꽃바람 (YOUTH)",
       "아 진짜요. (Oh really.)",
@@ -23,7 +23,7 @@ export const showInfosEng = [
       "옥탑방 (Rooftop)",
       "그랬나봐 (I Think I Did)",
       "FLOWER FANTASY",
-      "Love You Like That - Unreleased song",
+      "Love You Like That - Unreleased",
       "굿밤 (GOOD BAM)",
       "ANYWAY",
       "4242",
@@ -177,7 +177,7 @@ export const showInfosEng = [
   {
     id: 6,
     name: "Soundberry Festa’ 24 - Busan",
-    address: "55, APEC-ro, Haeundae-gu, Busan, South Korea", // 벡스코 제1전시장
+    address: "55, APEC-ro, Haeundae-gu, Busan, South Korea", // 부산 BEXCO 제1전시장
     note: [
       "Paid parking spaces are available on a first-come, first-served basis within BEXCO.",
     ],
@@ -220,7 +220,7 @@ export const showInfosEng = [
     setlist: [
       "Flashback",
       "Songbird",
-      "파스텔리아 (Pastelia) - Unreleased song",
+      "파스텔리아 (Pastelia) - Unreleased",
       "피었습니다. (Into Bloom)",
       "Star",
       "네가 내 마음에 자리 잡았다 (Into You)",
@@ -573,7 +573,7 @@ export const showInfosEng = [
       "이 별 저 별 (Fate)",
       "Star",
       "STARLIGHT",
-      "파스텔리아 (Pastelia) - Unreleased song",
+      "파스텔리아 (Pastelia) - Unreleased",
       "아 진짜요. (Oh really.)",
       "4242",
       "The World Is Mine",
@@ -686,7 +686,7 @@ export const showInfosEng = [
       "이 별 저 별 (Fate)",
       "Star",
       "STARLIGHT",
-      "파스텔리아 (Pastelia) - 미발매곡",
+      "파스텔리아 (Pastelia) - Unreleased",
       "아 진짜요. (Oh really.)",
       "4242",
       "The World Is Mine",
@@ -717,7 +717,64 @@ export const showInfosEng = [
       "/image/show_detail/seats/2024/BLUE_SQUARE_MASTER_CARD_HALL_SEAT_1F.png",
       "/image/show_detail/seats/2024/BLUE_SQUARE_MASTER_CARD_HALL_SEAT_2F.png",
     ],
-    setlist: [""],
-    ootd: [""],
+    setlist: [
+      "The World Is Mine",
+      "Songbird",
+      "폭망 (I Like You)",
+      "네가 내 마음에 자리 잡았다 (Into You)",
+      "Blue Moon",
+      "골목길에서 (Crossroad) - On the spot",
+      "Autumn Dream",
+      "피었습니다. (Into Bloom)",
+      "Shooting Star",
+      "Firefly",
+      "Video Therapy",
+      "Monster",
+      "Monster - Once more",
+      "그 밤 (The Night)",
+      "너에게 (To You)",
+      "옥탑방 (Rooftop)",
+      "아 진짜요. (Oh really.)",
+      "4242",
+      "ANYWAY",
+      "Preview - Encore",
+      "Sunset - Encore",
+      "굿밤 (GOOD BAM) - Double Encore",
+      "Flashback - Triple Encore",
+    ],
+    ootd: [
+      "/image/show_detail/ootd/2024/241120_LOVE_IN_SEOUL_OOTD_01.jpeg",
+      "/image/show_detail/ootd/2024/241120_LOVE_IN_SEOUL_OOTD_02.jpeg"
+    ],
+  },
+  {
+    id: 24,
+    name: "2024 Someday Christmas in Busan", // 부산 BEXCO 제1전시장
+    address: "55, APEC-ro, Haeundae-gu, Busan, South Korea",
+    note: ["Paid parking spaces are available on a first-come, first-served basis within BEXCO."],
+    capacity: "Approximately 4,000 people (varies depending on the performance)",
+    seats: [],
+    setlist: [
+      ""
+    ],
+    ootd: [
+      ""
+    ],
+  },
+  {
+    id: 25,
+    name: "2024 Someday Christmas in 부산", // 세종대학교 대양홀
+    address: "Daeyang Hall, Sejong University, 209 Neungdong-ro, Gwangjin-gu, Seoul, South Korea",
+    note: ["From Exit 6 of Children’s Grand Park Station (Line 7), walk 275 meters (4 minutes)"],
+    capacity: "Approximately 2,029 Seats",
+    seats: [
+      "/image/show_detail/seats/2024/241231_SEJONG_UNIV.png"
+    ],
+    setlist: [
+      ""
+    ],
+    ootd: [
+      ""
+    ],
   },
 ];

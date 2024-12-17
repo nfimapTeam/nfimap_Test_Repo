@@ -220,4 +220,44 @@ export const nfiRoadData = [
     naverLink: "https://naver.me/GqsTrB3v",
     note : "보컬즈가 다녀간 줄서서 먹는 호떡 맛집"
   },
+  {
+    id: 23,
+    name: "송가네감자탕 본점",
+    location: "서울 마포구 동교로 245 송가네감자탕",
+    category: "맛집",
+    lat: "37.5618364940379",
+    lng: "126.924050688833",
+    naverLink: "https://naver.me/535USHEc",
+    note : "승협 연습생 때부터 가던 감자탕 집"
+  },
+  {
+    id: 24,
+    name: "싱싱횟집",
+    location: "서울 성동구 성덕정길 90",
+    category: "맛집",
+    lat: "37.5376693827344",
+    lng: "127.053399481711",
+    naverLink: "https://naver.me/GXERlXej",
+    note : "첫눈이 내린 날 엔플라잉이 다녀간 횟집"
+  },
+  {
+    id: 25,
+    name: "서브젝티브카페",
+    location: "서울 성동구 광나루로 229",
+    category: "카페",
+    lat: "37.549882541627",
+    lng: "127.055690503868",
+    naverLink: "https://naver.me/Gxkovbpv",
+    note : "승협 롱샴 광고 사진 속 카페"
+  },
+  {
+    id: 26,
+    name: "쿠마짱온센",
+    location: "서울 성동구 연무장7길 5 2층",
+    category: "맛집",
+    lat: "37.5432380295407",
+    lng: "127.054348975494",
+    naverLink: "https://naver.me/x3qBfyKS",
+    note : "동성이가 아버지와 식사하고 간 샤브샤브 집"
+  },
 ];
