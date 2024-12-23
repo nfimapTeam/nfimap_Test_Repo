@@ -264,9 +264,9 @@ export const globalShowInfosEng = [
     capacity: "Approximately 12,000 people",
     seats: [""],
     setlist: [
-      // "스페셜 스테이지 : 군청 - 회승 & 태민", // todo 확인 후 업뎃필요
-      // "Wind (FT아일랜드) 커버 - 승협 & 정해인",
-      // "스페셜 스테이지 : 유리의 소년 - 차훈 & 이정신",
+      "Gunjou (YOASOBI) - Hweseung & Taemin",
+      "Wind (FTISLAND) - Seunghyub & Jung Hae In",
+      "Garasu no Shounen (KinKi Kids) - Hun & Lee Jung shin",
       "The World Is Mine",
       "Songbird",
       "Stand By Me",
@@ -306,7 +306,7 @@ export const globalShowInfosEng = [
     name: "2025 N.Flying LIVE 'HIDE-OUT' in ASIA - TAIPEI",
     address:
       "TICC No. 1, Section 5, Xinyi Rd, Xinyi District, Taipei City, TAIPEI 110",
-    note: [""],
+    note: ["/image/show_detail/note/2025/250209_TAIPEI_BENEFIT.jpg"],
     capacity: "Approximately 3,000 people",
     seats: ["/image/show_detail/seats/world/250209_HIDE-OUT_TAIPEI_SEAT.jpeg"],
     setlist: [""],
@@ -316,9 +316,11 @@ export const globalShowInfosEng = [
     id: 1011,
     name: "2025 N.Flying LIVE 'HIDE-OUT' in ASIA - MANILA",
     address: "NEW FRONTIER THEATER, 7 General Malvar Ave, Cubao, Quezon City, 1109 Metro Manila, Philippines",
-    note: [""],
+    note: ["/image/show_detail/note/2025/250126_MANILA_BENEFIT.jpg"],
     capacity: "2,385 Seats",
-    seats: [""], // todo 좌배도 미공개
+    seats: [
+        "/image/show_detail/seats/world/250126_MANILA_NEW_FRONTIER_THEATER.jpg"
+    ], // todo 상세 좌배도 미공개
     setlist: [""],
     ootd: [""],
   },

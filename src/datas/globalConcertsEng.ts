@@ -172,8 +172,8 @@ export const globalConcertsEng = [
         performanceType: "Solo",
         artists: ["N.Flying"],
         poster: "/image/show/world/250126_HIDE-OUT_MANILA.jpg",
-        ticketOpen: { date: "2024-12-28", time: "" }, // todo 티켓 오픈 시간 미정
-        ticketLink: "", // todo 티켓 페이지 미정
+        ticketOpen: { date: "2024-12-28", time: "13:00" }, // 현지시각 12시 (시차 +1h)
+        ticketLink: "", // todo 예매 상세 페이지 미오픈
         lat: "14.6224806",
         lng: "121.0537399",
     },
