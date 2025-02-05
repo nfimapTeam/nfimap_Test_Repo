@@ -133,8 +133,7 @@ export const globalConcerts = [
     location: "THE TAOYUAN ARENA",
     date: ["2025-01-04(토)", "2025-01-05(일)"],
     startTime: "15:30",
-    durationMinutes: 0,
-    // todo 공연 진행 시간 미정
+    durationMinutes: 270,
     type: "콘서트",
     performanceType: "출연",
     artists: ["N.Flying", "FTISLAND", "CNBLUE", "Hi-Fi Un!corn"],
@@ -160,20 +159,20 @@ export const globalConcerts = [
     lat: "25.0335925",
     lng: "121.5609091",
   },
-  {
-    id: 1011,
-    name: "2025 N.Flying LIVE 'HIDE-OUT' in ASIA - 마닐라",
-    location: "NEW FRONTIER THEATER",
-    date: ["2025-01-26(일)"],
-    startTime: "19:30",
-    durationMinutes: 120,
-    type: "콘서트",
-    performanceType: "단독",
-    artists: ["N.Flying"],
-    poster: "/image/show/world/250126_HIDE-OUT_MANILA.jpg",
-    ticketOpen: { date: "2024-12-28", time: "13:00" }, // 현지시각 12시 (시차 +1h)
-    ticketLink: "", // todo 예매 상세 페이지 미오픈 https://ticketnet.com.ph/
-    lat: "14.6224806",
-    lng: "121.0537399",
-  },
+  // {
+  //   id: 1011,
+  //   name: "2025 N.Flying LIVE 'HIDE-OUT' in ASIA - 마닐라",
+  //   location: "NEW FRONTIER THEATER",
+  //   date: ["2025-01-26(일)"],
+  //   startTime: "19:30",
+  //   durationMinutes: 120,
+  //   type: "콘서트",
+  //   performanceType: "단독",
+  //   artists: ["N.Flying"],
+  //   poster: "/image/show/world/250126_HIDE-OUT_MANILA.jpg",
+  //   ticketOpen: { date: "2024-12-28", time: "13:00" }, // 현지시각 12시 (시차 +1h)
+  //   ticketLink: "https://ticketnet.com.ph/event-detail/2025-N-FLYING-LIVE-HIDE-OUT-IN-MANILA#Tickets",
+  //   lat: "14.6224806",
+  //   lng: "121.0537399",
+  // },
 ];

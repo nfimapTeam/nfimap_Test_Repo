@@ -214,7 +214,7 @@ const Music = () => {
 
   return (
     <Box
-      h="calc(100vh - 120px)"
+      h="calc(100svh - 120px)"
       width="100%"
       mx="auto"
       p="16px 16px 100px 16px"

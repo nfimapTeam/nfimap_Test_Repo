@@ -36,6 +36,7 @@ import { concertsDataEng } from "../datas/concertsEng";
 import { globalConcertsEng } from "../datas/globalConcertsEng";
 import { showInfosEng } from "../datas/showInfosEng";
 import { globalShowInfosEng } from "../datas/globalShowInfosEng";
+import Comments from "../components/Comments";
 
 interface Concert {
   id: number;
@@ -198,7 +199,7 @@ const DetailPage: React.FC = () => {
   const randomUpcomingConcerts = shuffleArray(upcomingConcerts).slice(0, 3);
 
   return (
-    <Box height="calc(100vh - 120px)">
+    <Box height="calc(100svh - 120px)">
       <Box p="16px 16px 100px 16px" width="100%" maxWidth="1200px" mx="auto">
         <Flex direction={{ base: "column", md: "row" }} gap={8} align="stretch">
           <Flex
@@ -300,8 +301,10 @@ const DetailPage: React.FC = () => {
                   as={Link}
                   href={concert.ticketLink}
                   isExternal
-                  colorScheme="blue"
-                  _hover={{ bg: "black", color: "white" }}
+                  border="2px solid #eee"
+                  bg="brand.sub2"
+                  _hover={{ bg: "brand.main" }}
+                  color="white"
                 >
                   {getButtonText(concert, isPastEvent, timeRemaining)}
                 </Button>
@@ -353,9 +356,9 @@ const DetailPage: React.FC = () => {
                           </Text>
                           {showInfo.note.map((note, index) =>
                             note.endsWith(".png") ||
-                            note.endsWith(".jpg") ||
-                            note.endsWith(".jpeg") ||
-                            note.endsWith(".gif") ? (
+                              note.endsWith(".jpg") ||
+                              note.endsWith(".jpeg") ||
+                              note.endsWith(".gif") ? (
                               <Image
                                 key={index}
                                 src={note}
@@ -381,31 +384,48 @@ const DetailPage: React.FC = () => {
                 showInfo.setlist.length > 0 &&
                 showInfo.setlist[0] !== "" && (
                   <Box bg={cardBgColor} p={6} borderRadius="lg" boxShadow="lg">
-                    <HStack mb={3}>
-                      <Icon as={MusicIcon} color="green.600" />
-                      <Text fontSize="xl" fontWeight="bold" color="gray.700">
+                    <HStack mb={4} justify="center">
+                      <Icon as={MusicIcon} color="purple.500" boxSize={6} />
+                      <Text fontSize="2xl" fontWeight="bold" color="gray.800">
                         {t("setlist")}
                       </Text>
                     </HStack>
-                    <SimpleGrid columns={1} spacing={2}>
+                    <SimpleGrid columns={1} spacing={4}>
                       {showInfo.setlist.map((song, index) => (
                         <Box
                           key={index}
-                          p={3}
-                          bg="gray.100"
-                          borderRadius="md"
-                          boxShadow="md"
-                          border="1px solid"
-                          borderColor="gray.300"
-                          textAlign="center"
+                          p={4}
+                          bg="white"
+                          borderRadius="xl"
+                          boxShadow="0 4px 12px rgba(0,0,0,0.1)"
+                          border="2px solid"
+                          borderColor="purple.100"
+                          _hover={{
+                            transform: "translateY(-2px)",
+                            boxShadow: "0 6px 16px rgba(0,0,0,0.12)",
+                            borderColor: "purple.300",
+                          }}
+                          transition="all 0.2s"
                         >
-                          <Text
-                            fontSize="lg"
-                            fontWeight="medium"
-                            color="gray.800"
-                          >
-                            {index + 1}. {song}
-                          </Text>
+                          <Flex align="center" justify="center" gap={3}>
+                            <Text
+                              fontSize="xl"
+                              fontWeight="bold"
+                              color="purple.500"
+                              w="36px"
+                              textAlign="right"
+                            >
+                              {(index + 1).toString().padStart(2, '0')}
+                            </Text>
+                            <Text
+                              fontSize="lg"
+                              fontWeight="medium"
+                              color="gray.700"
+                              letterSpacing="wide"
+                            >
+                              {song}
+                            </Text>
+                          </Flex>
                         </Box>
                       ))}
                     </SimpleGrid>
@@ -466,40 +486,44 @@ const DetailPage: React.FC = () => {
             </VStack>
           </Box>
         )}
+        {randomUpcomingConcerts.length > 0 && (
+          <>
+            <Text fontSize="2xl" fontWeight="bold" mt={8} mb={4}>
+              {t("recommended_concert")}
+            </Text>
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} mt={8}>
+              {randomUpcomingConcerts.map((concert, index) => {
+                const isFutureOrToday = isEventTodayOrFuture(concert.date);
+                const isPastEvent = !isFutureOrToday;
+                const isTodayEvent = concert.date.some((date) => {
+                  const concertDate = moment(date.split("(")[0], "YYYY-MM-DD");
+                  return concertDate.isSame(currentTime, "day");
+                });
 
-        <Text fontSize="2xl" fontWeight="bold" mt={8} mb={4}>
-          {t("recommended_concert")}
-        </Text>
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} mt={8}>
-          {randomUpcomingConcerts.map((concert, index) => {
-            const isFutureOrToday = isEventTodayOrFuture(concert.date);
-            const isPastEvent = !isFutureOrToday;
-            const isTodayEvent = concert.date.some((date) => {
-              const concertDate = moment(date.split("(")[0], "YYYY-MM-DD");
-              return concertDate.isSame(currentTime, "day");
-            });
+                const isTicketOpen = concert.ticketOpen?.date === moment().format("YYYY-MM-DD");
 
-             const isTicketOpen = concert.ticketOpen?.date === moment().format("YYYY-MM-DD");
+                const timeRemaining = calculateTimeRemaining(
+                  concert.ticketOpen.date,
+                  concert.ticketOpen.time
+                );
 
-            const timeRemaining = calculateTimeRemaining(
-              concert.ticketOpen.date,
-              concert.ticketOpen.time
-            );
-
-            return (
-              <Card
-                key={index}
-                concert={concert}
-                isTodayEvent={isTodayEvent}
-                isTicketOpen={isTicketOpen}
-                isPastEvent={isPastEvent}
-                timeRemaining={timeRemaining}
-                getButtonText={getButtonText}
-                handleButtonClick={handleButtonClick}
-              />
-            );
-          })}
-        </SimpleGrid>
+                return (
+                  <Card
+                    key={index}
+                    concert={concert}
+                    isTodayEvent={isTodayEvent}
+                    isTicketOpen={isTicketOpen}
+                    isPastEvent={isPastEvent}
+                    timeRemaining={timeRemaining}
+                    getButtonText={getButtonText}
+                    handleButtonClick={handleButtonClick}
+                  />
+                );
+              })}
+            </SimpleGrid>
+          </>
+        )}
+        <Comments />
       </Box>
     </Box>
   );

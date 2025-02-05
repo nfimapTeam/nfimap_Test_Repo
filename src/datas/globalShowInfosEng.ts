@@ -14,8 +14,8 @@ export const globalShowInfosEng = [
       "Endless Summer",
       "옥탑방 (Rooftop)",
       "Stand by me",
-      "I'm Sorry - Hweseung with CNBLUE",
-      "바래 (I Wish) - Seunghyub with FTISLAND",
+      "[DAY1] I'm Sorry - Hweseung with CNBLUE",
+      "[DAY2] 바래 (I Wish) - Seunghyub with FTISLAND",
     ],
     ootd: [
       "/image/show_detail/ootd/world/240713_KINGDOM_DAY1.jpeg",
@@ -285,8 +285,11 @@ export const globalShowInfosEng = [
     note: [""],
     capacity: "Approximately 2,500 people",
     seats: ["/image/show_detail/seats/world/241222_HIDE-OUT_MACAU_SEAT.jpg"],
-    setlist: [""],
-    ootd: [""],
+    setlist: ["Please let me know the setlist!"], // todo 셋리 못 찾음
+    ootd: [
+      "/image/show_detail/ootd/world/241222_HIDE-OUT_MACAU_01.jpeg",
+      "/image/show_detail/ootd/world/241222_HIDE-OUT_MACAU_02.jpeg",
+    ],
   },
   {
     id: 1009,
@@ -298,8 +301,21 @@ export const globalShowInfosEng = [
     seats: [
       "/image/show_detail/seats/world/250104_THE TAOYUAN ARENA_SEAT_SUB_STAGE.jpg",
     ],
-    setlist: [""],
-    ootd: [""],
+    setlist: [
+      "Blue Moon",
+      "Songbird",
+      "Star",
+      "Sunset",
+      "옥탑방 (Rooftop)",
+      "Stand By Me",
+      "Flashback",
+      "[DAY1] I'm Sorry - 회승 with 씨엔블루",
+      "[DAY2] 바래 (I Wish) - Seunghyub with FTISLAND",
+    ],
+    ootd: [
+      "/image/show_detail/ootd/world/250104_1st_KINGDOM_TAOYUAN_DAY1_OOTD1.jpeg",
+      "/image/show_detail/ootd/world/250104_1st_KINGDOM_TAOYUAN_DAY2_OOTD.jpeg",
+    ],
   },
   {
     id: 1010,
@@ -312,16 +328,16 @@ export const globalShowInfosEng = [
     setlist: [""],
     ootd: [""],
   },
-  {
-    id: 1011,
-    name: "2025 N.Flying LIVE 'HIDE-OUT' in ASIA - MANILA",
-    address: "NEW FRONTIER THEATER, 7 General Malvar Ave, Cubao, Quezon City, 1109 Metro Manila, Philippines",
-    note: ["/image/show_detail/note/2025/250126_MANILA_BENEFIT.jpg"],
-    capacity: "2,385 Seats",
-    seats: [
-        "/image/show_detail/seats/world/250126_MANILA_NEW_FRONTIER_THEATER.jpg"
-    ], // todo 상세 좌배도 미공개
-    setlist: [""],
-    ootd: [""],
-  },
+  // {
+  //   id: 1011,
+  //   name: "2025 N.Flying LIVE 'HIDE-OUT' in ASIA - MANILA",
+  //   address: "NEW FRONTIER THEATER, 7 General Malvar Ave, Cubao, Quezon City, 1109 Metro Manila, Philippines",
+  //   note: ["/image/show_detail/note/2025/250126_MANILA_BENEFIT.jpg"],
+  //   capacity: "2,385 Seats",
+  //   seats: [
+  //       "/image/show_detail/seats/world/250126_MANILA_NEW_FRONTIER_THEATER.jpg"
+  //   ],
+  //   setlist: [""],
+  //   ootd: [""],
+  // },
 ];

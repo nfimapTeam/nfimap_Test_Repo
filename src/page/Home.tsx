@@ -30,6 +30,7 @@ import { Helmet } from "react-helmet-async";
 import NoData from "../components/NoData";
 import { useTranslation } from "react-i18next";
 import BirrthDay from "../components/BirthDay";
+import { useConcertList } from "../api/concerts/concertsApi";
 
 interface Concert {
   id: number;
@@ -64,6 +65,11 @@ const Home = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [allConcerts, setAllConcerts] = useState<Concert[]>([]);
 
+  const { data } = useConcertList();
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   useEffect(() => {
     if (i18n.language === "ko") {
@@ -109,10 +115,10 @@ const Home = () => {
     } else if (concert.ticketLink === "") {
       return timeRemaining
         ? t("timeUntilTicketing", {
-            days: timeRemaining.days,
-            hours: timeRemaining.hours,
-            minutes: timeRemaining.minutes,
-          })
+          days: timeRemaining.days,
+          hours: timeRemaining.hours,
+          minutes: timeRemaining.minutes,
+        })
         : t("waitingForTicketInfo");
     } else {
       return t("buyTickets");
@@ -250,7 +256,7 @@ const Home = () => {
 
   return (
     <Box
-      h="calc(100vh - 120px)"
+      h="calc(100svh - 120px)"
       width="100%"
       mx="auto"
       p="16px 16px 70px 16px"
@@ -264,123 +270,123 @@ const Home = () => {
       }}
     >
       <Box maxWidth="1200px" margin="auto">
-      <Helmet>
-        <title>{t("helmettitle")}</title>
-        <meta name="description" content={t("helmetdescription")} />
-        <meta
-          property="og:image"
-          content="https://nfimap.co.kr/image/nfimap.png"
-        />
-        <meta property="og:url" content="https://nfimap.co.kr" />
-      </Helmet>
-      <Box mb={4}>
-        <BirrthDay />
-        <InputGroup size="lg">
-          <Input
-            placeholder={t("searchPlaceholder")}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            mb={4}
-            focusBorderColor="#4BA4F2"
-            bg="whiteAlpha.900"
-            _hover={{ borderColor: "#79AEF2" }}
-            _placeholder={{ color: "gray.400" }}
-            size="lg"
-            borderRadius="md"
-            boxShadow="md"
+        <Helmet>
+          <title>{t("helmettitle")}</title>
+          <meta name="description" content={t("helmetdescription")} />
+          <meta
+            property="og:image"
+            content="https://nfimap.co.kr/image/nfimap.png"
           />
-          <InputRightElement width="4.5rem">
-            {searchQuery ? (
-              <Icon
-                as={CloseIcon}
-                color="gray.500"
-                cursor="pointer"
-                onClick={clearSearch}
-                boxSize="12px"
+          <meta property="og:url" content="https://nfimap.co.kr" />
+        </Helmet>
+        <Box mb={4}>
+          <BirrthDay />
+          <InputGroup size="lg">
+            <Input
+              placeholder={t("searchPlaceholder")}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              mb={4}
+              focusBorderColor="#4BA4F2"
+              bg="whiteAlpha.900"
+              _hover={{ borderColor: "#79AEF2" }}
+              _placeholder={{ color: "gray.400" }}
+              size="lg"
+              borderRadius="md"
+              boxShadow="md"
+            />
+            <InputRightElement width="4.5rem">
+              {searchQuery ? (
+                <Icon
+                  as={CloseIcon}
+                  color="gray.500"
+                  cursor="pointer"
+                  onClick={clearSearch}
+                  boxSize="12px"
+                />
+              ) : (
+                <Icon as={SearchIcon} color="gray.500" cursor="pointer" />
+              )}
+            </InputRightElement>
+          </InputGroup>
+
+          <Flex width="100%" justifyContent="space-between" gap={4}>
+            <Select
+              value={selectedType}
+              onChange={(value) => setSelectedType(value)}
+              style={{ width: 200, height: 40 }}
+              dropdownStyle={{
+                backgroundColor: "#ffffff",
+                borderColor: "#4BA4F2",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+              }}
+              placeholder={t("selectConcertType")}
+            >
+              <Option value="">{t("all")}</Option>
+              <Option value={t("concertVal")}>{t("concert")}</Option>
+              <Option value={t("festivalVal")}>{t("festival")}</Option>
+              <Option value={t("eventVal")}>{t("event")}</Option>
+            </Select>
+            <Select
+              value={sortOrder}
+              onChange={(value) => setSortOrder(value)}
+              style={{ width: 200, height: 40 }}
+              dropdownStyle={{
+                backgroundColor: "#ffffff",
+                borderColor: "#4BA4F2",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+              }}
+            >
+              <Option value={t("latest")}>{t("latest")}</Option>
+              <Option value={t("byName")}>{t("byName")}</Option>
+            </Select>
+
+            <FormControl display="flex" alignItems="center">
+              <FormLabel htmlFor="show-past-events" mb="0">
+                {t("showPastEvents")}
+              </FormLabel>
+              <Switch
+                id="show-past-events"
+                isChecked={toggle}
+                onChange={() => setToggle(!toggle)}
               />
-            ) : (
-              <Icon as={SearchIcon} color="gray.500" cursor="pointer" />
-            )}
-          </InputRightElement>
-        </InputGroup>
+            </FormControl>
 
-        <Flex width="100%" justifyContent="space-between" gap={4}>
-          <Select
-            value={selectedType}
-            onChange={(value) => setSelectedType(value)}
-            style={{ width: 200, height: 40 }}
-            dropdownStyle={{
-              backgroundColor: "#ffffff",
-              borderColor: "#4BA4F2",
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-            }}
-            placeholder={t("selectConcertType")}
-          >
-            <Option value="">{t("all")}</Option>
-            <Option value={t("concertVal")}>{t("concert")}</Option>
-            <Option value={t("festivalVal")}>{t("festival")}</Option>
-            <Option value={t("eventVal")}>{t("event")}</Option>
-          </Select>
-          <Select
-            value={sortOrder}
-            onChange={(value) => setSortOrder(value)}
-            style={{ width: 200, height: 40 }}
-            dropdownStyle={{
-              backgroundColor: "#ffffff",
-              borderColor: "#4BA4F2",
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-            }}
-          >
-            <Option value={t("latest")}>{t("latest")}</Option>
-            <Option value={t("byName")}>{t("byName")}</Option>
-          </Select>
 
-          <FormControl display="flex" alignItems="center">
-            <FormLabel htmlFor="show-past-events" mb="0">
-              {t("showPastEvents")}
-            </FormLabel>
-            <Switch
-              id="show-past-events"
-              isChecked={toggle}
-              onChange={() => setToggle(!toggle)}
-            />
-          </FormControl>
+          </Flex>
+        </Box>
+        {filteredAndSortedConcerts.length === 0 && <NoData />}
+        <SimpleGrid columns={columns} spacing={6}>
+          {filteredAndSortedConcerts.map((concert, index) => {
+            const isFutureOrToday = isEventTodayOrFuture(concert.date);
+            const isPastEvent = !isFutureOrToday;
+            const isTodayEvent = concert.date.some((date) => {
+              const concertDate = moment(date.split("(")[0], "YYYY-MM-DD");
+              return concertDate.isSame(currentTime, "day");
+            });
 
-         
-        </Flex>
-      </Box>
-      {filteredAndSortedConcerts.length === 0 && <NoData />}
-      <SimpleGrid columns={columns} spacing={6}>
-        {filteredAndSortedConcerts.map((concert, index) => {
-          const isFutureOrToday = isEventTodayOrFuture(concert.date);
-          const isPastEvent = !isFutureOrToday;
-          const isTodayEvent = concert.date.some((date) => {
-            const concertDate = moment(date.split("(")[0], "YYYY-MM-DD");
-            return concertDate.isSame(currentTime, "day");
-          });
+            // Check if the ticket open date is today
+            const isTicketOpen = concert.ticketOpen?.date === moment().format("YYYY-MM-DD");
 
-          // Check if the ticket open date is today
-          const isTicketOpen = concert.ticketOpen?.date === moment().format("YYYY-MM-DD");
+            const timeRemaining = calculateTimeRemaining(
+              concert.ticketOpen.date,
+              concert.ticketOpen.time
+            );
 
-          const timeRemaining = calculateTimeRemaining(
-            concert.ticketOpen.date,
-            concert.ticketOpen.time
-          );
-
-          return (
-            <Card
-              key={index}
-              concert={concert}
-              isTodayEvent={isTodayEvent}
-              isTicketOpen={isTicketOpen}
-              isPastEvent={isPastEvent}
-              timeRemaining={timeRemaining}
-              getButtonText={getButtonText}
-              handleButtonClick={handleButtonClick}
-            />
-          );
-        })}
-      </SimpleGrid>
+            return (
+              <Card
+                key={index}
+                concert={concert}
+                isTodayEvent={isTodayEvent}
+                isTicketOpen={isTicketOpen}
+                isPastEvent={isPastEvent}
+                timeRemaining={timeRemaining}
+                getButtonText={getButtonText}
+                handleButtonClick={handleButtonClick}
+              />
+            );
+          })}
+        </SimpleGrid>
       </Box>
     </Box>
   );
