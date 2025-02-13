@@ -95,8 +95,6 @@ const Card = ({
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  console.log(concert);
-
   return (
     <Box
       position="relative"

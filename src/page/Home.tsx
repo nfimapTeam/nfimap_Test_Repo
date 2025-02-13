@@ -15,10 +15,6 @@ import {
 import { SearchIcon, CloseIcon } from "@chakra-ui/icons";
 import { Select } from "antd";
 import { Option } from "antd/es/mentions";
-import { concertsData } from "../datas/concerts";
-import { concertsDataEng } from "../datas/concertsEng";
-import { globalConcertsEng } from "../datas/globalConcertsEng";
-import { globalConcerts } from "../datas/globalConcerts";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
@@ -62,24 +58,22 @@ const Home = () => {
   const [toggle, setToggle] = useRecoilState(toggleState);
   const [selectedType, setSelectedType] = useState("");
   const navigate = useNavigate();
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [allConcerts, setAllConcerts] = useState<Concert[]>([]);
+  const [lang, setLang] = useState("ko");
 
-  const { data } = useConcertList();
+  const { data: concertsData, refetch: refetchConcertsData } = useConcertList(lang);
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
 
   useEffect(() => {
-    if (i18n.language === "ko") {
-      const combinedConcerts = [...concertsData, ...globalConcerts];
-      setAllConcerts(combinedConcerts);
+    if(i18n.language === "ko") {
+      setLang("ko");
     } else {
-      const combinedConcerts = [...concertsDataEng, ...globalConcertsEng];
-      setAllConcerts(combinedConcerts);
+      setLang("en");
     }
-  }, [i18n.language, concertsData, globalConcerts, concertsDataEng, globalConcertsEng]);
+  }, [i18n.language]);
+
+  useEffect(() => {
+    refetchConcertsData();
+  }, [lang]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -228,31 +222,31 @@ const Home = () => {
     }
   };
 
-  const filteredAndSortedConcerts = sortConcerts(
-    allConcerts.filter((concert) => {
-      const matchesSearch =
-        concert.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        concert.location.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredAndSortedConcerts = (concertsData || []).filter((concert: any) => {
+    const matchesSearch =
+      (concert.name && concert.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (concert.location && concert.location.toLowerCase().includes(searchQuery.toLowerCase()));
 
-      const translatedConcertType = translateType(concert.type);
-      const matchesType =
-        selectedType === "" || translatedConcertType === selectedType;
+    const translatedConcertType = translateType(concert.type);
+    const matchesType =
+      selectedType === "" || translatedConcertType === selectedType;
 
-      if (toggle) {
-        const isPastEvent = concert.date.every((date) => {
-          const concertDate = moment(date.split("(")[0], "YYYY-MM-DD");
-          return concertDate.isBefore(currentTime, "day");
-        });
-        return matchesSearch && isPastEvent && matchesType;
-      } else {
-        const isFutureOrToday = concert.date.some((date) => {
-          const concertDate = moment(date.split("(")[0], "YYYY-MM-DD");
-          return concertDate.isSameOrAfter(currentTime, "day");
-        });
-        return matchesSearch && isFutureOrToday && matchesType;
-      }
-    })
-  );
+    if (toggle) {
+      const isPastEvent = concert.date && concert.date.every((date: string) => {
+        const concertDate = moment(date.split("(")[0], "YYYY-MM-DD");
+        return concertDate.isBefore(currentTime, "day");
+      });
+      return matchesSearch && isPastEvent && matchesType;
+    } else {
+      const isFutureOrToday = concert.date && concert.date.some((date: string) => {
+        const concertDate = moment(date.split("(")[0], "YYYY-MM-DD");
+        return concertDate.isSameOrAfter(currentTime, "day");
+      });
+      return matchesSearch && isFutureOrToday && matchesType;
+    }
+  });
+
+  const sortedConcerts = sortConcerts(filteredAndSortedConcerts);
 
   return (
     <Box
@@ -355,9 +349,9 @@ const Home = () => {
 
           </Flex>
         </Box>
-        {filteredAndSortedConcerts.length === 0 && <NoData />}
+        {sortedConcerts.length === 0 && <NoData />}
         <SimpleGrid columns={columns} spacing={6}>
-          {filteredAndSortedConcerts.map((concert, index) => {
+          {sortedConcerts.map((concert, index) => {
             const isFutureOrToday = isEventTodayOrFuture(concert.date);
             const isPastEvent = !isFutureOrToday;
             const isTodayEvent = concert.date.some((date) => {
