@@ -16,6 +16,7 @@ import {
   RiMusic2Line,
   RiLightbulbLine,
   RiShieldStarLine,
+  RiStarFill,
 } from "@remixicon/react";
 import { profileData } from "../datas/profile";
 import { profileDataEng } from "../datas/profileEng";
@@ -70,6 +71,20 @@ const Profile = () => {
     setProfileState(newProfileData);
   }, [i18n.language]);
 
+  const getRemainingDays = (retirementDate: string) => {
+    if (!retirementDate) return "N/A"; // 날짜가 없을 경우 안전 처리
+  
+    const today = new Date();
+    const targetDate = new Date(retirementDate);
+    
+    // 날짜 차이 계산 (밀리초 → 일 단위 변환)
+    const diffTime = targetDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+  
+    return diffDays > 0 ? diffDays : "0"; // 이미 은퇴한 경우 D-0으로 표시
+  };
+  
+
   return (
     <Box
       h="calc(100svh - 120px)"
@@ -86,330 +101,331 @@ const Profile = () => {
       }}
     >
       <Box maxWidth="1200px" margin="auto">
-      <Helmet>
-        <title>{t("Profile.title")}</title>
-        <meta name="description" content={t("Profile.description")} />
-        <meta property="og:description" content={t("Profile.og.description")} />
-        <meta property="og:image" content="%PUBLIC_URL%/image/nfimap.png" />
-        <meta property="og:url" content="https://nfimap.co.kr" />
-      </Helmet>
-      <Box width="100%" maxWidth="1200px" mx="auto" p="4">
-        <Box mb="8">
-          <Image
-            src={profileState?.cover_image_url}
-            alt={`${profileState?.name} Cover`}
-            w="100%"
-            h={{ base: "300px", md: "700px" }}
-            objectFit="cover"
-            borderRadius="md"
-            boxShadow="md"
-          />
-        </Box>
-
-        <Stack mb="8" align="center" spacing="4">
-          <Heading as="h1" size="2xl">
-            <Image src={"/image/nfLogo.png"} alt="NF Logo" />
-          </Heading>
-
-          <Grid
-            templateColumns={{
-              base: "repeat(1, 1fr)",
-              md: "repeat(2, 1fr)",
-              lg: "repeat(4, 1fr)",
-            }}
-            gap="6"
-            w="100%"
-            my="6"
-          >
-            {/* Debut Date */}
-            <Flex
-              direction="column"
-              align="center"
-              justifyContent="center"
-              p="4"
+        <Helmet>
+          <title>{t("Profile.title")}</title>
+          <meta name="description" content={t("Profile.description")} />
+          <meta property="og:description" content={t("Profile.og.description")} />
+          <meta property="og:image" content="%PUBLIC_URL%/image/nfimap.png" />
+          <meta property="og:url" content="https://nfimap.co.kr" />
+        </Helmet>
+        <Box width="100%" maxWidth="1200px" mx="auto" p="4">
+          <Box mb="8">
+            <Image
+              src={profileState?.cover_image_url}
+              alt={`${profileState?.name} Cover`}
+              w="100%"
+              h={{ base: "300px", md: "700px" }}
+              objectFit="cover"
               borderRadius="md"
               boxShadow="md"
-              gap="4"
-              border="2px solid #eee"
-              width="100%"
-            >
-              <Icon as={RiLightbulbLine} w="6" h="6" color="blue.500" />
-              <Box textAlign="center">
-                <Text fontWeight="bold" fontSize="lg" color="blue.700">
-                  {t("Profile.debut_date")}
-                </Text>
-                <Text fontSize="lg" color="gray.600" fontWeight="600">
-                  {profileState?.debut_date}
-                </Text>
-              </Box>
-            </Flex>
+            />
+          </Box>
 
-            {/* Debut Song */}
-            <Flex
-              direction="column"
-              align="center"
-              justifyContent="center"
-              p="4"
-              borderRadius="md"
-              boxShadow="md"
-              gap="4"
-              border="2px solid #eee"
-              width="100%"
-            >
-              <Icon as={RiMusic2Line} w="6" h="6" color="green.500" />
-              <Box textAlign="center">
-                <Text fontWeight="bold" fontSize="lg" color="green.700">
-                  {t("Profile.debut_song")}
-                </Text>
-                <Text fontSize="lg" color="gray.600" fontWeight="600">
-                  {profileState?.debut_song}
-                </Text>
-              </Box>
-            </Flex>
+          <Stack mb="8" align="center" spacing="4">
+            <Heading as="h1" size="2xl">
+              <Image src={"/image/nfLogo.png"} alt="NF Logo" />
+            </Heading>
 
-            {/* Fandom */}
-            <Flex
-              direction="column"
-              align="center"
-              justifyContent="center"
-              p="4"
-              borderRadius="md"
-              boxShadow="md"
-              gap="4"
-              border="2px solid #eee"
-              width="100%"
+            <Grid
+              templateColumns={{
+                base: "repeat(1, 1fr)",
+                md: "repeat(2, 1fr)",
+                lg: "repeat(4, 1fr)",
+              }}
+              gap="6"
+              w="100%"
+              my="6"
             >
-              <Icon as={RiHeart2Line} w="6" h="6" color="red.500" />
-              <Box textAlign="center">
-                <Text fontWeight="bold" fontSize="lg" color="red.700">
-                  {t("Profile.fandom")}
-                </Text>
-                <Text fontSize="lg" color="gray.600" fontWeight="600">
-                  {profileState?.fandom_name}
-                </Text>
-              </Box>
-            </Flex>
-
-            {/* Light Stick */}
-            <Flex
-              direction="column"
-              align="center"
-              justifyContent="center"
-              p="4"
-              borderRadius="md"
-              boxShadow="md"
-              gap="4"
-              border="2px solid #eee"
-              width="100%"
-            >
-              <Icon as={RiTeamLine} w="6" h="6" color="purple.500" />
-              <Box textAlign="center">
-                <Text fontWeight="bold" fontSize="lg" color="purple.700">
-                  {t("Profile.light_stick")}
-                </Text>
-                <Text fontSize="lg" color="gray.600" fontWeight="600">
-                  {profileState?.light_stick}
-                </Text>
-              </Box>
-            </Flex>
-          </Grid>
-        </Stack>
-
-        {/* Members */}
-        <Heading as="h2" size="xl" mb="4">
-          {t("Profile.members")}
-        </Heading>
-        <Grid
-          templateColumns={{ base: "repeat(1, 1fr)", md: "repeat(5, 1fr)" }}
-          gap="6"
-        >
-          {profileState?.members.map((member) => (
-            <Box
-              key={member.name}
-              position="relative"
-              textAlign="center"
-              p="4"
-              boxShadow="lg"
-              borderRadius="md"
-              bg="white"
-              border="2px solid #eee"
-            >
-              <Image
-                src={member.imageUrl}
-                alt={member.name}
+              {/* Debut Date */}
+              <Flex
+                direction="column"
+                align="center"
+                justifyContent="center"
+                p="4"
                 borderRadius="md"
-                boxSize="150px"
-                mx="auto"
-                objectFit="cover"
                 boxShadow="md"
+                gap="4"
+                border="2px solid #eee"
+                width="100%"
+              >
+                <Icon as={RiLightbulbLine} w="6" h="6" color="blue.500" />
+                <Box textAlign="center">
+                  <Text fontWeight="bold" fontSize="lg" color="blue.700">
+                    {t("Profile.debut_date")}
+                  </Text>
+                  <Text fontSize="lg" color="gray.600" fontWeight="600">
+                    {profileState?.debut_date}
+                  </Text>
+                </Box>
+              </Flex>
+
+              {/* Debut Song */}
+              <Flex
+                direction="column"
+                align="center"
+                justifyContent="center"
+                p="4"
+                borderRadius="md"
+                boxShadow="md"
+                gap="4"
+                border="2px solid #eee"
+                width="100%"
+              >
+                <Icon as={RiMusic2Line} w="6" h="6" color="green.500" />
+                <Box textAlign="center">
+                  <Text fontWeight="bold" fontSize="lg" color="green.700">
+                    {t("Profile.debut_song")}
+                  </Text>
+                  <Text fontSize="lg" color="gray.600" fontWeight="600">
+                    {profileState?.debut_song}
+                  </Text>
+                </Box>
+              </Flex>
+
+              {/* Fandom */}
+              <Flex
+                direction="column"
+                align="center"
+                justifyContent="center"
+                p="4"
+                borderRadius="md"
+                boxShadow="md"
+                gap="4"
+                border="2px solid #eee"
+                width="100%"
+              >
+                <Icon as={RiHeart2Line} w="6" h="6" color="red.500" />
+                <Box textAlign="center">
+                  <Text fontWeight="bold" fontSize="lg" color="red.700">
+                    {t("Profile.fandom")}
+                  </Text>
+                  <Text fontSize="lg" color="gray.600" fontWeight="600">
+                    {profileState?.fandom_name}
+                  </Text>
+                </Box>
+              </Flex>
+
+              {/* Light Stick */}
+              <Flex
+                direction="column"
+                align="center"
+                justifyContent="center"
+                p="4"
+                borderRadius="md"
+                boxShadow="md"
+                gap="4"
+                border="2px solid #eee"
+                width="100%"
+              >
+                <Icon as={RiTeamLine} w="6" h="6" color="purple.500" />
+                <Box textAlign="center">
+                  <Text fontWeight="bold" fontSize="lg" color="purple.700">
+                    {t("Profile.light_stick")}
+                  </Text>
+                  <Text fontSize="lg" color="gray.600" fontWeight="600">
+                    {profileState?.light_stick}
+                  </Text>
+                </Box>
+              </Flex>
+            </Grid>
+          </Stack>
+
+          {/* Members */}
+          <Heading as="h2" size="xl" mb="4">
+            {t("Profile.members")}
+          </Heading>
+          <Grid
+            templateColumns={{ base: "repeat(1, 1fr)", md: "repeat(5, 1fr)" }}
+            gap="6"
+          >
+            {profileState?.members.map((member) => (
+              <Box
+                key={member.name}
+                position="relative"
+                textAlign="center"
+                p="4"
+                boxShadow="lg"
+                borderRadius="md"
+                bg="white"
+                border="2px solid #eee"
+              >
+                <Image
+                  src={member.imageUrl}
+                  alt={member.name}
+                  borderRadius="md"
+                  boxSize="150px"
+                  mx="auto"
+                  objectFit="cover"
+                  boxShadow="md"
+                />
+                <Text fontWeight="bold" mt="4">
+                  {member.name}
+                </Text>
+
+                {/* Position Labels */}
+                <Flex justifyContent="center" wrap="wrap" gap="2" mt="2">
+                  {member.position.map((pos, index) => (
+                    <Box
+                      key={index}
+                      bg="teal.100"
+                      color="teal.900"
+                      px="2"
+                      py="1"
+                      borderRadius="md"
+                      fontSize="sm"
+                      boxShadow="md"
+                    >
+                      {pos}
+                    </Box>
+                  ))}
+                </Flex>
+
+                {/* AKA Labels */}
+                <Flex justifyContent="center" wrap="wrap" gap="2" mt="2">
+                  {member.aka.map((akaName, index) => (
+                    <Box
+                      key={index}
+                      bg="blue.100"
+                      color="blue.700"
+                      px="2"
+                      py="1"
+                      borderRadius="md"
+                      fontSize="sm"
+                      boxShadow="md"
+                    >
+                      {akaName}
+                    </Box>
+                  ))}
+                </Flex>
+
+                <Flex justifyContent="center" mt="2">
+                  <Box
+                    bg="purple.100"
+                    color="purple.700"
+                    px="3"
+                    py="1"
+                    borderRadius="md"
+                    fontSize="sm"
+                    boxShadow="md"
+                  >
+                    {member.birthdate}
+                  </Box>
+                </Flex>
+
+                {/* Military Information */}
+                {member.military && (
+                  <Box mt="2" textAlign="center">
+                    <Box
+                      bg="yellow.100"
+                      color="yellow.900"
+                      px="2"
+                      py="1"
+                      borderRadius="md"
+                      fontSize="sm"
+                      boxShadow="md"
+                      display="inline-block"
+                    >
+                      MBTI: {member.mbti}
+                    </Box>
+                  </Box>
+                )}
+
+                {/* Instagram Link */}
+                <Flex justifyContent="center" mt="2">
+                  <Link href={member.instagram} isExternal>
+                    <Image
+                      borderRadius="4px"
+                      src="/image/icon/sns/instagram.jpg"
+                      w="24px"
+                    />
+                  </Link>
+                </Flex>
+
+                {isFutureDate(member.military) && (
+                  <Box
+                    position="absolute"
+                    top="4px"
+                    right="4px"
+                    bg="linear-gradient(90deg, #63b3ed, #805ad5)"
+                    color="white"
+                    px="3"
+                    py="1"
+                    borderRadius="md"
+                    fontSize="xs"
+                    boxShadow="lg"
+                    display="flex"
+                    alignItems="center"
+                    fontWeight="bold"
+                  >
+                    <Icon as={RiStarFill} w="4" h="4" mr="1" color="yellow.300" />
+                    D-{getRemainingDays(member.military)}
+                  </Box>
+                )}
+              </Box>
+            ))}
+          </Grid>
+
+          <Heading as="h2" size="xl" mt="8" mb="4">
+            SNS
+          </Heading>
+          <Flex justifyContent="center" gap="6" align="center" wrap="wrap">
+            <Link href={profileState?.official_sites.x} isExternal>
+              <Image
+                src="/image/icon/sns/x.png"
+                w="40px"
+                h="40px"
+                borderRadius="8px"
+                transition="all 0.2s"
+                _hover={{ transform: "scale(1.1)", boxShadow: "lg" }}
               />
-              <Text fontWeight="bold" mt="4">
-                {member.name}
-              </Text>
+            </Link>
 
-              {/* Position Labels */}
-              <Flex justifyContent="center" wrap="wrap" gap="2" mt="2">
-                {member.position.map((pos, index) => (
-                  <Box
-                    key={index}
-                    bg="teal.100"
-                    color="teal.900"
-                    px="2"
-                    py="1"
-                    borderRadius="md"
-                    fontSize="sm"
-                    boxShadow="md"
-                  >
-                    {pos}
-                  </Box>
-                ))}
-              </Flex>
+            <Link href={profileState?.official_sites.facebook} isExternal>
+              <Image
+                src="/image/icon/sns/facebook.jpg"
+                w="40px"
+                h="40px"
+                borderRadius="8px"
+                transition="all 0.2s"
+                _hover={{ transform: "scale(1.1)", boxShadow: "lg" }}
+              />
+            </Link>
 
-              {/* AKA Labels */}
-              <Flex justifyContent="center" wrap="wrap" gap="2" mt="2">
-                {member.aka.map((akaName, index) => (
-                  <Box
-                    key={index}
-                    bg="blue.100"
-                    color="blue.700"
-                    px="2"
-                    py="1"
-                    borderRadius="md"
-                    fontSize="sm"
-                    boxShadow="md"
-                  >
-                    {akaName}
-                  </Box>
-                ))}
-              </Flex>
+            <Link href={profileState?.official_sites.instagram} isExternal>
+              <Image
+                src="/image/icon/sns/instagram.jpg"
+                w="40px"
+                h="40px"
+                borderRadius="8px"
+                transition="all 0.2s"
+                _hover={{ transform: "scale(1.1)", boxShadow: "lg" }}
+              />
+            </Link>
 
-              <Flex justifyContent="center" mt="2">
-                <Box
-                  bg="purple.100"
-                  color="purple.700"
-                  px="3"
-                  py="1"
-                  borderRadius="md"
-                  fontSize="sm"
-                  boxShadow="md"
-                >
-                  {member.birthdate}
-                </Box>
-              </Flex>
+            <Link href={profileState?.official_sites.daumcafe} isExternal>
+              <Image
+                src="/image/icon/sns/daumcafe.png"
+                w="40px"
+                h="40px"
+                borderRadius="8px"
+                transition="all 0.2s"
+                _hover={{ transform: "scale(1.1)", boxShadow: "lg" }}
+              />
+            </Link>
 
-              {/* Military Information */}
-              {member.military && (
-                <Box mt="2" textAlign="center">
-                  <Box
-                    bg="yellow.100"
-                    color="yellow.900"
-                    px="2"
-                    py="1"
-                    borderRadius="md"
-                    fontSize="sm"
-                    boxShadow="md"
-                    display="inline-block"
-                  >
-                    MBTI: {member.mbti}
-                  </Box>
-                </Box>
-              )}
-
-              {/* Instagram Link */}
-              <Flex justifyContent="center" mt="2">
-                <Link href={member.instagram} isExternal>
-                  <Image
-                    borderRadius="4px"
-                    src="/image/icon/sns/instagram.jpg"
-                    w="24px"
-                  />
-                </Link>
-              </Flex>
-
-              {isFutureDate(member.military) && (
-                <Box
-                  position="absolute"
-                  top="4px"
-                  right="4px"
-                  bg="green.900"
-                  color="white"
-                  px="3"
-                  py="1"
-                  borderRadius="md"
-                  fontSize="xs"
-                  boxShadow="md"
-                  display="flex"
-                  alignItems="center"
-                >
-                  <Icon as={RiShieldStarLine} w="4" h="4" mr="1" />
-                  {t("military")}: {member.military}
-                </Box>
-              )}
-            </Box>
-          ))}
-        </Grid>
-
-        <Heading as="h2" size="xl" mt="8" mb="4">
-          SNS
-        </Heading>
-        <Flex justifyContent="center" gap="6" align="center" wrap="wrap">
-          <Link href={profileState?.official_sites.x} isExternal>
-            <Image
-              src="/image/icon/sns/x.png"
-              w="40px"
-              h="40px"
-              borderRadius="8px"
-              transition="all 0.2s"
-              _hover={{ transform: "scale(1.1)", boxShadow: "lg" }}
-            />
-          </Link>
-
-          <Link href={profileState?.official_sites.facebook} isExternal>
-            <Image
-              src="/image/icon/sns/facebook.jpg"
-              w="40px"
-              h="40px"
-              borderRadius="8px"
-              transition="all 0.2s"
-              _hover={{ transform: "scale(1.1)", boxShadow: "lg" }}
-            />
-          </Link>
-
-          <Link href={profileState?.official_sites.instagram} isExternal>
-            <Image
-              src="/image/icon/sns/instagram.jpg"
-              w="40px"
-              h="40px"
-              borderRadius="8px"
-              transition="all 0.2s"
-              _hover={{ transform: "scale(1.1)", boxShadow: "lg" }}
-            />
-          </Link>
-
-          <Link href={profileState?.official_sites.daumcafe} isExternal>
-            <Image
-              src="/image/icon/sns/daumcafe.png"
-              w="40px"
-              h="40px"
-              borderRadius="8px"
-              transition="all 0.2s"
-              _hover={{ transform: "scale(1.1)", boxShadow: "lg" }}
-            />
-          </Link>
-
-          <Link href={profileState?.official_sites.youtube} isExternal>
-            <Image
-              src="/image/icon/sns/youtube.png"
-              w="40px"
-              h="40px"
-              borderRadius="8px"
-              border="1px solid #eee"
-              transition="all 0.2s"
-              _hover={{ transform: "scale(1.1)", boxShadow: "lg" }}
-            />
-          </Link>
-        </Flex>
-      </Box>
+            <Link href={profileState?.official_sites.youtube} isExternal>
+              <Image
+                src="/image/icon/sns/youtube.png"
+                w="40px"
+                h="40px"
+                borderRadius="8px"
+                border="1px solid #eee"
+                transition="all 0.2s"
+                _hover={{ transform: "scale(1.1)", boxShadow: "lg" }}
+              />
+            </Link>
+          </Flex>
+        </Box>
       </Box>
     </Box>
   );
