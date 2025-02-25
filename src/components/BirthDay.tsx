@@ -23,7 +23,7 @@ const members: Member[] = [
   { name: "이승협", date: "10-31" },
   { name: "차훈", date: "07-12" },
   { name: "김재현", date: "07-15" },
-  { name: "유회승", date: "02-25" },
+  { name: "유회승", date: "02-26" },
   { name: "서동성", date: "04-09" },
 ];
 
@@ -35,7 +35,7 @@ const images: { [key: string]: string[] } = {
   ],
   차훈: [""],
   김재현: [""],
-  유회승: ["/image/toro/유회승생일축전_완전최종.jpg"],
+  유회승: ["/image/toro/hs.jpg"],
   서동성: [""],
 };
 
