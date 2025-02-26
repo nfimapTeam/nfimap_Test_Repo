@@ -35,7 +35,7 @@ const images: { [key: string]: string[] } = {
   ],
   차훈: [""],
   김재현: [""],
-  유회승: ["/image/toro/hs.jpg"],
+  유회승: ["/image/toro/hs.jpeg"],
   서동성: [""],
 };
 
