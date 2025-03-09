@@ -5,20 +5,35 @@ import NfiRoad from "./NfiRoad";
 import NoData from "./NoData";
 import { useTranslation } from "react-i18next";
 
-type Concert = {
+interface ConcertDate {
+  date: string;
+  start_time: string;
+  duration_minutes: number;
+}
+
+interface TicketOpen {
+  date: string;
+  time: string;
+}
+
+interface Concert {
+  id: number;
   name: string;
   location: string;
-  type: string;
-  durationMinutes: number;
-  date: string[];
   startTime: string;
+  concertDate: ConcertDate[];
+  type: string;
+  performanceType: string;
   artists: string[];
-  ticketLink: string;
   poster: string;
-  lat: string;
-  lng: string;
-  ticketOpen?: any;
-};
+  EventState: number;
+  ticketOpen: TicketOpen;
+  ticketLink: string;
+  lat: number;
+  lng: number;
+  globals: boolean;
+  isTicketOpenDate: boolean;
+}
 
 type NfiRoadType = {
   id: number;

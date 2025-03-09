@@ -95,5 +95,6 @@
   "concertVal": "Concert",
   "festivalVal": "Festival",
   "eventVal": "Event",
-  "today_concert": "本日の公演"
+  "today_concert": "本日の公演",
+  "no_setlist_available": "まだ公演前です"
 }

@@ -28,28 +28,33 @@ import { useTranslation } from "react-i18next";
 import BirrthDay from "../components/BirthDay";
 import { useConcertList } from "../api/concerts/concertsApi";
 
-interface Concert {
+// RawConcert: API에서 오는 원시 데이터 타입
+interface RawConcert {
   id: number;
   name: string;
   location: string;
   type: string;
   performanceType: string;
-  durationMinutes: number;
-  date: string[];
+  concertDate: { date: string; start_time: string; duration_minutes: number }[];
   startTime: string;
   artists: string[];
   ticketLink: string;
   poster: string;
-  lat: string;
-  lng: string;
+  lat: string | number;
+  lng: string | number;
   ticketOpen: {
     date: string;
     time: string;
   };
 }
 
+// Concert: 변환 후 Card에 전달될 타입
+interface Concert extends RawConcert {
+  date: string[];
+}
+
 const Home = () => {
-  const { t, i18n, } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const columns = useBreakpointValue({ base: 1, md: 2, lg: 3 });
   const [currentTime, setCurrentTime] = useState(moment());
@@ -62,9 +67,8 @@ const Home = () => {
 
   const { data: concertsData, refetch: refetchConcertsData } = useConcertList(lang);
 
-
   useEffect(() => {
-    if(i18n.language === "ko") {
+    if (i18n.language === "ko") {
       setLang("ko");
     } else {
       setLang("en");
@@ -109,10 +113,10 @@ const Home = () => {
     } else if (concert.ticketLink === "") {
       return timeRemaining
         ? t("timeUntilTicketing", {
-          days: timeRemaining.days,
-          hours: timeRemaining.hours,
-          minutes: timeRemaining.minutes,
-        })
+            days: timeRemaining.days,
+            hours: timeRemaining.hours,
+            minutes: timeRemaining.minutes,
+          })
         : t("waitingForTicketInfo");
     } else {
       return t("buyTickets");
@@ -148,25 +152,20 @@ const Home = () => {
   };
 
   const isEventTodayOrFuture = (dates: string[]) => {
-    return dates.some((date) => {
-      const concertDate = moment(date.split("(")[0], "YYYY-MM-DD");
-      return concertDate.isSameOrAfter(currentTime, "day");
-    });
+    const lastDate = dates[dates.length - 1];
+    const concertDate = moment(lastDate, "YYYY-MM-DD");
+    return concertDate.isSameOrAfter(currentTime, "day");
   };
 
   const sortConcerts = (concerts: Concert[]) => {
     const now = moment();
 
     const upcomingConcerts = concerts.filter((concert) =>
-      concert.date.some((date) =>
-        moment(date.split("(")[0], "YYYY-MM-DD").isSameOrAfter(now, "day")
-      )
+      isEventTodayOrFuture(concert.date)
     );
 
-    const pastConcerts = concerts.filter((concert) =>
-      concert.date.every((date) =>
-        moment(date.split("(")[0], "YYYY-MM-DD").isBefore(now, "day")
-      )
+    const pastConcerts = concerts.filter(
+      (concert) => !isEventTodayOrFuture(concert.date)
     );
 
     const sortFunction = (a: Concert, b: Concert) => {
@@ -179,8 +178,8 @@ const Home = () => {
       if (!ticketOpenA && ticketOpenB) return 1;
 
       if (sortOrder === t("latest")) {
-        const dateA = moment(a.date[0].split("(")[0], "YYYY-MM-DD");
-        const dateB = moment(b.date[0].split("(")[0], "YYYY-MM-DD");
+        const dateA = moment(a.date[a.date.length - 1], "YYYY-MM-DD");
+        const dateB = moment(b.date[b.date.length - 1], "YYYY-MM-DD");
         return dateA.diff(dateB);
       } else if (sortOrder === t("byName")) {
         return a.name.localeCompare(b.name);
@@ -188,13 +187,11 @@ const Home = () => {
       return 0;
     };
 
-    // Sort upcoming concerts first
     upcomingConcerts.sort(sortFunction);
-    // Sort past concerts after that
     pastConcerts.sort((a, b) => {
       if (sortOrder === t("latest")) {
-        const dateA = moment(a.date[0].split("(")[0], "YYYY-MM-DD");
-        const dateB = moment(b.date[0].split("(")[0], "YYYY-MM-DD");
+        const dateA = moment(a.date[a.date.length - 1], "YYYY-MM-DD");
+        const dateB = moment(b.date[b.date.length - 1], "YYYY-MM-DD");
         return dateB.diff(dateA);
       }
       return sortFunction(a, b);
@@ -222,29 +219,28 @@ const Home = () => {
     }
   };
 
-  const filteredAndSortedConcerts = (concertsData || []).filter((concert: any) => {
+  const filteredAndSortedConcerts = (concertsData || []).filter((concert: RawConcert) => {
     const matchesSearch =
       (concert.name && concert.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (concert.location && concert.location.toLowerCase().includes(searchQuery.toLowerCase()));
 
     const translatedConcertType = translateType(concert.type);
-    const matchesType =
-      selectedType === "" || translatedConcertType === selectedType;
+    const matchesType = selectedType === "" || translatedConcertType === selectedType;
+
+    const lastConcertDate = concert.concertDate[concert.concertDate.length - 1].date;
+    const concertDateMoment = moment(lastConcertDate, "YYYY-MM-DD");
+    const isPastEvent = concertDateMoment.isBefore(currentTime, "day");
 
     if (toggle) {
-      const isPastEvent = concert.date && concert.date.every((date: string) => {
-        const concertDate = moment(date.split("(")[0], "YYYY-MM-DD");
-        return concertDate.isBefore(currentTime, "day");
-      });
       return matchesSearch && isPastEvent && matchesType;
     } else {
-      const isFutureOrToday = concert.date && concert.date.some((date: string) => {
-        const concertDate = moment(date.split("(")[0], "YYYY-MM-DD");
-        return concertDate.isSameOrAfter(currentTime, "day");
-      });
+      const isFutureOrToday = concertDateMoment.isSameOrAfter(currentTime, "day");
       return matchesSearch && isFutureOrToday && matchesType;
     }
-  });
+  }).map((concert: RawConcert): Concert => ({
+    ...concert,
+    date: concert.concertDate.map((d: { date: string }) => d.date),
+  }));
 
   const sortedConcerts = sortConcerts(filteredAndSortedConcerts);
 
@@ -345,23 +341,17 @@ const Home = () => {
                 onChange={() => setToggle(!toggle)}
               />
             </FormControl>
-
-
           </Flex>
         </Box>
         {sortedConcerts.length === 0 && <NoData />}
         <SimpleGrid columns={columns} spacing={6}>
           {sortedConcerts.map((concert, index) => {
-            const isFutureOrToday = isEventTodayOrFuture(concert.date);
+            const lastConcertDate = concert.date[concert.date.length - 1];
+            const isFutureOrToday = moment(lastConcertDate, "YYYY-MM-DD").isSameOrAfter(currentTime, "day");
             const isPastEvent = !isFutureOrToday;
-            const isTodayEvent = concert.date.some((date) => {
-              const concertDate = moment(date.split("(")[0], "YYYY-MM-DD");
-              return concertDate.isSame(currentTime, "day");
-            });
+            const isTodayEvent = moment(lastConcertDate, "YYYY-MM-DD").isSame(currentTime, "day");
 
-            // Check if the ticket open date is today
             const isTicketOpen = concert.ticketOpen?.date === moment().format("YYYY-MM-DD");
-
             const timeRemaining = calculateTimeRemaining(
               concert.ticketOpen.date,
               concert.ticketOpen.time

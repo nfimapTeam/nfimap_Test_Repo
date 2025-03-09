@@ -1,4 +1,3 @@
-// components/Card.tsx
 import React from "react";
 import {
   Box,
@@ -15,24 +14,25 @@ import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
+// Concert 타입 정의 (Home과 동일)
 interface Concert {
   id: number;
   name: string;
   location: string;
-  type: string; // 콘서트 | 페스티벌 | 행사
-  performanceType: string; // 단독 | 합동 | 출연
-  durationMinutes: number;
-  date: string[];
+  type: string; // "콘서트" | "페스티벌" | "행사" 등
+  performanceType: string; // "단독" | "합동" | "출연" 등
+  concertDate: { date: string; start_time: string; duration_minutes: number }[];
   startTime: string;
   artists: string[];
   ticketLink: string;
   poster: string;
-  lat: string;
-  lng: string;
+  lat: string | number;
+  lng: string | number;
   ticketOpen: {
     date: string;
     time: string;
   };
+  date: string[]; // Home에서 map으로 추가된 속성
 }
 
 interface CardProps {
@@ -120,8 +120,8 @@ const Card = ({
           isTodayEvent
             ? `${borderGlow} 1.5s ease-in-out infinite`
             : isTicketOpen
-              ? `${lavenderGlow} 1.5s ease-in-out infinite`
-              : "none"
+            ? `${lavenderGlow} 1.5s ease-in-out infinite`
+            : "none"
         }
         position="relative"
         zIndex={1}
@@ -151,15 +151,15 @@ const Card = ({
             <Box>
               {isTodayEvent ? (
                 <Badge colorScheme="blue" mb={2}>
-                  {t("today_concert")} {/* 다국어 오늘 공연 */}
+                  {t("today_concert")}
                 </Badge>
               ) : isPastEvent ? (
                 <Badge colorScheme="gray" mb={2}>
-                  {t("concert_ended")} {/* 다국어 공연 종료 */}
+                  {t("concert_ended")}
                 </Badge>
               ) : (
                 <Badge colorScheme="green" mb={2}>
-                  {t("concert_upcoming")} {/* 다국어 공연 예정 */}
+                  {t("concert_upcoming")}
                 </Badge>
               )}
 
@@ -202,7 +202,7 @@ const Card = ({
                     borderRadius={4}
                     fontWeight="900"
                   >
-                    {t("concert_type_festival")} {/* 다국어 페스티벌 */}
+                    {t("concert_type_festival")}
                   </Badge>
                 )}
                 {(concert.type === "행사" || concert.type === "Event") && (
@@ -213,7 +213,7 @@ const Card = ({
                     borderRadius={4}
                     fontWeight="900"
                   >
-                    {t("concert_type_event")} {/* 다국어 행사 */}
+                    {t("concert_type_event")}
                   </Badge>
                 )}
                 {(concert.performanceType === "단독" ||
@@ -225,7 +225,7 @@ const Card = ({
                     borderRadius={4}
                     fontWeight="900"
                   >
-                    {t("performance_type_solo")} {/* 다국어 단독 */}
+                    {t("performance_type_solo")}
                   </Badge>
                 )}
                 {(concert.performanceType === "합동" ||
@@ -237,7 +237,7 @@ const Card = ({
                     borderRadius={4}
                     fontWeight="900"
                   >
-                    {t("performance_type_joint")} {/* 다국어 합동 */}
+                    {t("performance_type_joint")}
                   </Badge>
                 )}
                 {(concert.performanceType === "출연" ||
@@ -249,7 +249,7 @@ const Card = ({
                     borderRadius={4}
                     fontWeight="900"
                   >
-                    {t("performance_type_guest")} {/* 다국어 출연 */}
+                    {t("performance_type_guest")}
                   </Badge>
                 )}
               </HStack>

@@ -3,20 +3,35 @@ import { useDisclosure } from "@chakra-ui/react";
 import CustomModal from "./CustomModal";
 import { useTranslation } from "react-i18next";
 
-type Concert = {
+interface ConcertDate {
+  date: string;
+  start_time: string;
+  duration_minutes: number;
+}
+
+interface TicketOpen {
+  date: string;
+  time: string;
+}
+
+interface Concert {
+  id: number;
   name: string;
   location: string;
-  type: string;
-  durationMinutes: number;
-  date: string[];
   startTime: string;
+  concertDate: ConcertDate[];
+  type: string;
+  performanceType: string;
   artists: string[];
-  ticketLink: string;
   poster: string;
-  lat: string;
-  lng: string;
-  ticketOpen?: any;
-};
+  EventState: number;
+  ticketOpen: TicketOpen;
+  ticketLink: string;
+  lat: number;
+  lng: number;
+  globals: boolean;
+  isTicketOpenDate: boolean;
+}
 
 type NfiRoad = {
   id: number;
@@ -194,8 +209,9 @@ const NaverMap = ({
         let isToday = false;
         let isPast = false;
 
-        (item as Concert).date.forEach((dateString) => {
-          const concertDate = new Date(dateString.split("(")[0]);
+        (item as Concert).concertDate.forEach((concertDateItem: ConcertDate) => {
+          const concertDate: Date = new Date(concertDateItem.date);
+          concertDate.setHours(0, 0, 0, 0); // 시간 초기화
           if (concertDate.toDateString() === today.toDateString()) {
             isToday = true;
           } else if (concertDate < today) {
@@ -369,8 +385,9 @@ const NaverMap = ({
         let isToday = false;
         let isPast = false;
 
-        (selectedItem as Concert).date.forEach((dateString) => {
-          const concertDate = new Date(dateString.split("(")[0]);
+        (selectedItem as Concert).concertDate.forEach((concertDateItem: ConcertDate) => {
+          const concertDate: Date = new Date(concertDateItem.date);
+          concertDate.setHours(0, 0, 0, 0); // 시간 초기화
           if (concertDate.toDateString() === today.toDateString()) {
             isToday = true;
           } else if (concertDate < today) {

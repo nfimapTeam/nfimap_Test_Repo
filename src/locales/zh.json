@@ -96,5 +96,6 @@
   "concertVal": "Concert",
   "festivalVal": "Festival",
   "eventVal": "Event",
-  "today_concert": "今日演出"
+  "today_concert": "今日演出",
+  "no_setlist_available": "演出尚未开始"
 }

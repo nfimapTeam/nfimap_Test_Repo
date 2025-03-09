@@ -9,20 +9,35 @@ declare global {
   }
 }
 
-type Concert = {
+interface ConcertDate {
+  date: string;
+  start_time: string;
+  duration_minutes: number;
+}
+
+interface TicketOpen {
+  date: string;
+  time: string;
+}
+
+interface Concert {
+  id: number;
   name: string;
   location: string;
-  type: string;
-  durationMinutes: number;
-  date: string[];
   startTime: string;
+  concertDate: ConcertDate[];
+  type: string;
+  performanceType: string;
   artists: string[];
-  ticketLink: string;
   poster: string;
-  lat: string;
-  lng: string;
-  ticketOpen?: any;
-};
+  EventState: number;
+  ticketOpen: TicketOpen;
+  ticketLink: string;
+  lat: number;
+  lng: number;
+  globals: boolean;
+  isTicketOpenDate: boolean;
+}
 
 interface GoogleMapProps {
   globalConcerts: Concert[];
@@ -81,19 +96,22 @@ const GoogleMap = ({
       let isPast = false;
       let isToday = false;
 
-      // Check if the concert is in the past or today
-      concert.date.forEach((dateString) => {
-        const concertDate = dateString.split("(")[0].trim();
-        if (concertDate === todayString) {
-          isToday = true;
-        } else if (new Date(concertDate) < today) {
-          isPast = true;
+      
+      concert.concertDate.forEach((concertDateItem: ConcertDate) => {
+        const concertDate: Date = new Date(concertDateItem.date);
+        concertDate.setHours(0, 0, 0, 0); // 콘서트 날짜의 시간 초기화
+  
+        if (concertDateItem.date === todayString) {
+          isToday = true; // 오늘 날짜와 일치하면 isToday를 true로 설정
+        }
+        if (concertDate >= today) {
+          isPast = false; // 미래 또는 오늘 날짜가 있으면 isPast는 false
         }
       });
 
       const position = {
-        lat: parseFloat(concert.lat),
-        lng: parseFloat(concert.lng),
+        lat: concert.lat,
+        lng: concert.lng,
        };
        
         const infoWindowContent = `

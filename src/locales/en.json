@@ -94,5 +94,6 @@
   "concertVal": "Concert",
   "festivalVal": "Festival",
   "eventVal": "Event",
-  "today_concert": "Today"
+  "today_concert": "Today",
+  "no_setlist_available": "Performance has not started yet"
 }

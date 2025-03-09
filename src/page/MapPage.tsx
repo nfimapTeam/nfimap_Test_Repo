@@ -11,21 +11,37 @@ import { useTranslation } from "react-i18next";
 import { concertsDataEng } from "../datas/concertsEng";
 import { nfiRoadDataEng } from "../datas/nfilRoadEng";
 import { globalConcertsEng } from "../datas/globalConcertsEng";
+import { useConcertList } from "../api/concerts/concertsApi";
 
-type Concert = {
+interface ConcertDate {
+  date: string;
+  start_time: string;
+  duration_minutes: number;
+}
+
+interface TicketOpen {
+  date: string;
+  time: string;
+}
+
+interface Concert {
+  id: number;
   name: string;
   location: string;
-  type: string;
-  durationMinutes: number;
-  date: string[];
   startTime: string;
+  concertDate: ConcertDate[];
+  type: string;
+  performanceType: string;
   artists: string[];
-  ticketLink: string;
   poster: string;
-  lat: string;
-  lng: string;
-  ticketOpen?: any;
-};
+  EventState: number;
+  ticketOpen: TicketOpen;
+  ticketLink: string;
+  lat: number;
+  lng: number;
+  globals: boolean;
+  isTicketOpenDate: boolean;
+}
 
 type NfiRoad = {
   id: number;
@@ -55,121 +71,147 @@ const MapPage = () => {
     useState<boolean>(false);
   const [selectedGlobalConcert, setSelectedGlobalConcert] =
     useState<Concert | null>(null);
+  const [lang, setLang] = useState("ko");
+
+  const { data: concertsData, refetch: refetchConcertsData } = useConcertList(lang);
 
   useEffect(() => {
     if (i18n.language === "ko") {
-      setConcertState(concertsData);
-      setNfiRoadState(nfiRoadData);
-      setGlobalConcertState(globalConcerts);
+      setLang("ko");
     } else {
-      setConcertState(concertsDataEng);
-      setNfiRoadState(nfiRoadDataEng);
-      setGlobalConcertState(globalConcertsEng);
+      setLang("en");
     }
   }, [i18n.language]);
 
   useEffect(() => {
-    const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);
-    let concerts;
-    if (i18n.language === "ko") {
-      concerts = concertsData;
-    } else {
-      concerts = concertsDataEng;
-    }
+    refetchConcertsData();
+  }, [lang]);
 
-    const filteredConcerts = concerts.filter((concert) => {
-      const matchesQuery =
+  useEffect(() => {
+    if (i18n.language === "ko") {
+      setNfiRoadState(nfiRoadData);
+    } else {
+      setNfiRoadState(nfiRoadDataEng);
+    }
+  }, [i18n.language]);
+
+useEffect(() => {
+  // concertsData가 없으면 종료
+  if (!concertsData) return;
+
+  const currentDate: Date = new Date();
+  currentDate.setHours(0, 0, 0, 0);
+
+  // 국내 콘서트 (globals: false)
+  const domesticConcerts: Concert[] = concertsData.filter(
+    (concert: Concert): boolean => !concert.globals
+  );
+
+  const filteredConcerts: Concert[] = domesticConcerts.filter(
+    (concert: Concert): boolean => {
+      const matchesQuery: boolean =
         concert.name.toLowerCase().includes(query.toLowerCase()) ||
         concert.location.toLowerCase().includes(query.toLowerCase());
 
-      const concertDates = concert.date.map((date) => {
-        const parsedDate = new Date(date.split("(")[0]);
-        parsedDate.setHours(0, 0, 0, 0); // 시간을 0으로 설정
-        return parsedDate;
-      });
-      const latestDate = new Date(
-        Math.max(...concertDates.map((date) => date.getTime()))
+      const concertDates: Date[] = concert.concertDate.map(
+        (d: { date: string; start_time: string; duration_minutes: number }): Date =>
+          new Date(d.date)
       );
-
-      const isPast = latestDate < currentDate; // 과거인지 확인
-      const isUpcomingOrToday = latestDate >= currentDate;
-
-      const matchesType = selectedType ? concert.type === selectedType : true;
-
-      return (
-        matchesQuery &&
-        (showPastConcerts ? true : isUpcomingOrToday) &&
-        matchesType
+      const latestDate: Date = new Date(
+        Math.max(...concertDates.map((date: Date): number => date.getTime()))
       );
-    });
+      const isUpcomingOrToday: boolean = latestDate >= currentDate;
 
-    // 날짜 기준으로 정렬
-    filteredConcerts.sort((a, b) => {
-      const dateA = Math.max(
-        ...a.date.map((date) => new Date(date.split("(")[0]).getTime())
+      const matchesType: boolean = selectedType
+        ? concert.type === selectedType
+        : true;
+
+      return matchesQuery && (showPastConcerts ? true : isUpcomingOrToday) && matchesType;
+    }
+  );
+
+  filteredConcerts.sort(
+    (a: Concert, b: Concert): number => {
+      const dateA: number = Math.max(
+        ...a.concertDate.map(
+          (d: { date: string; start_time: string; duration_minutes: number }): number =>
+            new Date(d.date).getTime()
+        )
       );
-      const dateB = Math.max(
-        ...b.date.map((date) => new Date(date.split("(")[0]).getTime())
+      const dateB: number = Math.max(
+        ...b.concertDate.map(
+          (d: { date: string; start_time: string; duration_minutes: number }): number =>
+            new Date(d.date).getTime()
+        )
       );
       return dateA - dateB;
-    });
-
-    setConcertState(filteredConcerts);
-  }, [query, showPastConcerts, selectedType, i18n.language]);
-
-  useEffect(() => {
-    const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);
-
-    let concerts;
-    if (i18n.language === "ko") {
-      concerts = globalConcerts;
-    } else {
-      concerts = globalConcertsEng;
     }
+  );
 
-    const filteredGlobalConcerts = concerts.filter((concert) => {
-      const matchesQuery =
+  setConcertState(filteredConcerts);
+}, [concertsData, query, showPastConcerts, selectedType]);
+
+// 두 번째 useEffect: 해외 콘서트 필터링 및 정렬
+useEffect(() => {
+  // concertsData가 없으면 종료
+  if (!concertsData) return;
+
+  const currentDate: Date = new Date();
+  currentDate.setHours(0, 0, 0, 0);
+
+  // 해외 콘서트 (globals: true)
+  const globalConcerts: Concert[] = concertsData.filter(
+    (concert: Concert): boolean => concert.globals
+  );
+
+  const filteredGlobalConcerts: Concert[] = globalConcerts.filter(
+    (concert: Concert): boolean => {
+      const matchesQuery: boolean =
         concert.name.toLowerCase().includes(globalQuery.toLowerCase()) ||
         concert.location.toLowerCase().includes(globalQuery.toLowerCase());
 
-      const concertDates = concert.date.map((date) => {
-        const parsedDate = new Date(date.split("(")[0]);
-        parsedDate.setHours(0, 0, 0, 0);
-        return parsedDate;
-      });
-
-      const latestDate = new Date(
-        Math.max(...concertDates.map((date) => date.getTime()))
+      const concertDates: Date[] = concert.concertDate.map(
+        (d: { date: string; start_time: string; duration_minutes: number }): Date =>
+          new Date(d.date)
       );
+      const latestDate: Date = new Date(
+        Math.max(...concertDates.map((date: Date): number => date.getTime()))
+      );
+      const isUpcomingOrToday: boolean = latestDate >= currentDate;
 
-      const isUpcomingOrToday = latestDate >= currentDate;
-
-      const matchesType = selectedGlobalType
+      const matchesType: boolean = selectedGlobalType
         ? concert.type === selectedGlobalType
         : true;
 
-      return (
-        matchesQuery &&
-        (showPastConcertsGlobal ? true : isUpcomingOrToday) &&
-        matchesType
-      );
-    });
+      return matchesQuery && (showPastConcertsGlobal ? true : isUpcomingOrToday) && matchesType;
+    }
+  );
 
-    // Sort by date
-    filteredGlobalConcerts.sort((a, b) => {
-      const dateA = Math.max(
-        ...a.date.map((date) => new Date(date.split("(")[0]).getTime())
+  filteredGlobalConcerts.sort(
+    (a: Concert, b: Concert): number => {
+      const dateA: number = Math.max(
+        ...a.concertDate.map(
+          (d: { date: string; start_time: string; duration_minutes: number }): number =>
+            new Date(d.date).getTime()
+        )
       );
-      const dateB = Math.max(
-        ...b.date.map((date) => new Date(date.split("(")[0]).getTime())
+      const dateB: number = Math.max(
+        ...b.concertDate.map(
+          (d: { date: string; start_time: string; duration_minutes: number }): number =>
+            new Date(d.date).getTime()
+        )
       );
       return dateA - dateB;
-    });
+    }
+  );
 
-    setGlobalConcertState(filteredGlobalConcerts);
-  }, [globalQuery, showPastConcertsGlobal, selectedGlobalType, i18n.language]);
+  setGlobalConcertState(filteredGlobalConcerts);
+}, [concertsData, globalQuery, showPastConcertsGlobal, selectedGlobalType]);
+
+  useEffect(() => {
+    console.log(globalConcertState);
+    console.log(concertState);
+  }, [concertState, globalConcertState]);
 
   useEffect(() => {
     let concerts;

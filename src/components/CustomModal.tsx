@@ -20,8 +20,49 @@ import {
 import { CalendarIcon, ClockIcon, MapPinIcon, UserIcon, ExternalLinkIcon, StickyNoteIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
+interface ConcertDate {
+  date: string;
+  start_time: string;
+  duration_minutes: number;
+}
+
+interface TicketOpen {
+  date: string;
+  time: string;
+}
+
+interface Concert {
+  id: number;
+  name: string;
+  location: string;
+  startTime: string;
+  concertDate: ConcertDate[];
+  type: string;
+  performanceType: string;
+  artists: string[];
+  poster: string;
+  EventState: number;
+  ticketOpen: TicketOpen;
+  ticketLink: string;
+  lat: number;
+  lng: number;
+  globals: boolean;
+  isTicketOpenDate: boolean;
+}
+
+interface NfiRoad {
+  id: number;
+  name: string;
+  location: string;
+  category: string;
+  lat: string;
+  lng: string;
+  naverLink: string;
+  note: string;
+}
+
 interface CustomModalProps {
-  item: any;
+  item: Concert | NfiRoad | null;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -65,7 +106,7 @@ const CustomModal = ({ item, isOpen, onClose }: CustomModalProps) => {
                   boxShadow="md"
                 >
                   <Image
-                    src={item.poster}
+                    src={(item as Concert).poster || "/image/logo/logo.svg"} // 포스터가 없으면 기본 이미지
                     alt={item.name}
                     objectFit="cover"
                     position="absolute"
@@ -82,7 +123,7 @@ const CustomModal = ({ item, isOpen, onClose }: CustomModalProps) => {
                 <Box>
                   <HStack spacing={2} mb={2}>
                     <Badge colorScheme={isNfiRoad ? "green" : "purple"} fontSize="md" px={2} py={1}>
-                      {isNfiRoad ? item.category : t("performance")}
+                      {isNfiRoad ? (item as NfiRoad).category : t("performance")}
                     </Badge>
                   </HStack>
                 </Box>
@@ -94,14 +135,14 @@ const CustomModal = ({ item, isOpen, onClose }: CustomModalProps) => {
                   </HStack>
                   {isNfiRoad ? (
                     <>
-                      {item.note && (
+                      {(item as NfiRoad).note && (
                         <HStack spacing={4}>
-                          <StickyNoteIcon  size={20} color="#3182CE" />
-                          <Text fontWeight="medium">{item.note}</Text>
+                          <StickyNoteIcon size={20} color="#3182CE" />
+                          <Text fontWeight="medium">{(item as NfiRoad).note}</Text>
                         </HStack>
                       )}
-                      {item.naverLink && (
-                        <Link href={item.naverLink} isExternal>
+                      {(item as NfiRoad).naverLink && (
+                        <Link href={(item as NfiRoad).naverLink} isExternal>
                           <Button
                             colorScheme="green"
                             variant="solid"
@@ -117,17 +158,24 @@ const CustomModal = ({ item, isOpen, onClose }: CustomModalProps) => {
                     <>
                       <HStack spacing={4}>
                         <CalendarIcon size={20} color="#3182CE" />
-                        <Text fontWeight="medium">{item.date.join(" ~ ")}</Text>
+                        <Text fontWeight="medium">
+                          {(item as Concert).concertDate.map((d) => d.date).join(" ~ ")}
+                        </Text>
                       </HStack>
                       <HStack spacing={4}>
                         <ClockIcon size={20} color="#3182CE" />
                         <Text fontWeight="medium">
-                            {item.startTime} {t("total")} {item.durationMinutes} {t("minutes")}
+                          {(item as Concert).concertDate[0]?.start_time || (item as Concert).startTime}{" "}
+                          {t("total")}{" "}
+                          {(item as Concert).concertDate[0]?.duration_minutes || "N/A"}{" "}
+                          {t("minutes")}
                         </Text>
                       </HStack>
                       <HStack spacing={4} alignItems="flex-start">
                         <UserIcon size={20} color="#3182CE" />
-                        <Text fontWeight="medium">{item.artists.join(", ")}</Text>
+                        <Text fontWeight="medium">
+                          {(item as Concert).artists.join(", ")}
+                        </Text>
                       </HStack>
                     </>
                   )}

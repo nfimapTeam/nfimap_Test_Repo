@@ -12,20 +12,35 @@ import { Select } from "antd";
 import NoData from "./NoData";
 import { useTranslation } from "react-i18next"; // useTranslation 훅 임포트
 
-type Concert = {
+interface ConcertDate {
+  date: string;
+  start_time: string;
+  duration_minutes: number;
+}
+
+interface TicketOpen {
+  date: string;
+  time: string;
+}
+
+interface Concert {
+  id: number;
   name: string;
   location: string;
-  type: string;
-  durationMinutes: number;
-  date: string[];
   startTime: string;
+  concertDate: ConcertDate[];
+  type: string;
+  performanceType: string;
   artists: string[];
-  ticketLink: string;
   poster: string;
-  lat: string;
-  lng: string;
-  ticketOpen?: any;
-};
+  EventState: number;
+  ticketOpen: TicketOpen;
+  ticketLink: string;
+  lat: number;
+  lng: number;
+  globals: boolean;
+  isTicketOpenDate: boolean;
+}
 
 type ConcertInfoProps = {
   concerts: Concert[];
@@ -59,13 +74,13 @@ const ConcertInfo = ({
     setSelectedConcert(concert);
   };
 
-  const isConcertPast = (concert: Concert) => {
-    const currentDate = new Date();
-    return concert.date.every((dateString) => {
-      const datePart = dateString.split("(")[0]; // 날짜 문자열에서 "(요일)" 부분 제거
-      const concertDate = new Date(datePart);
-      concertDate.setHours(0, 0, 0, 0); // 날짜만 비교
-      currentDate.setHours(0, 0, 0, 0);
+  const isConcertPast = (concert: Concert): boolean => {
+    const currentDate: Date = new Date();
+    currentDate.setHours(0, 0, 0, 0); // 현재 날짜의 시간 초기화
+  
+    return concert.concertDate.every((concertDateItem: ConcertDate): boolean => {
+      const concertDate: Date = new Date(concertDateItem.date);
+      concertDate.setHours(0, 0, 0, 0); // 콘서트 날짜의 시간 초기화
       return concertDate < currentDate;
     });
   };
