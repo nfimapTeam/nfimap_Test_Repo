@@ -19,6 +19,8 @@ import {
   TabPanels,
   Tab,
   TabPanel,
+  useDisclosure,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import {
   CalendarIcon,
@@ -28,14 +30,17 @@ import {
   MusicIcon,
   CameraIcon,
   UsersIcon,
+  Ticket,
+  Download,
 } from "lucide-react";
-import NotFound from "../components/NotFound";
-import Card from "../components/Card";
+import NotFound from "../../components/NotFound";
+import Card from "../../components/Card";
 import moment from "moment";
 import { useTranslation } from "react-i18next";
-import Comments from "../components/Comments";
-import { useConcertDetail } from "../api/concerts/concertsDetailApi";
-import { useConcertList } from "../api/concerts/concertsApi";
+import Comments from "../../components/Comments";
+import { useConcertDetail } from "../../api/concerts/concertsDetailApi";
+import { useConcertList } from "../../api/concerts/concertsApi";
+import { getTicketSiteName } from "../../util/getTicketSiteName";
 
 interface Concert {
   id: number;
@@ -45,7 +50,7 @@ interface Concert {
   performanceType: string;
   startTime: string;
   artists: string[];
-  ticketLink: string;
+  ticketLink: string[];
   poster: string;
   lat: number | string;
   lng: number | string;
@@ -68,15 +73,14 @@ interface Concert {
       music: {
         name: string;
         youtube_url: string;
-      }
+      };
       status: string;
       play_order: number;
-    }[]; // 문자열 또는 객체 배열
+    }[];
     start_time: string;
   }[];
 }
 
-// TimeRemaining 타입 정의
 interface TimeRemaining {
   days: number;
   hours: number;
@@ -91,8 +95,10 @@ const DetailPage: React.FC = () => {
   const currentTime = moment();
   const [allConcerts, setAllConcerts] = useState<Concert[]>([]);
   const [lang, setLang] = useState<"ko" | "en">("ko");
-
   const { data: concertDetail, refetch: refetchConcertDetail } = useConcertDetail(id ?? "", lang);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedSetlist, setSelectedSetlist] = useState<any>(null);
+  const isMobile = useBreakpointValue({ base: true, md: false });
 
   useEffect(() => {
     if (i18n.language === "ko") {
@@ -106,22 +112,30 @@ const DetailPage: React.FC = () => {
     refetchConcertDetail();
   }, [lang, refetchConcertDetail]);
 
-
-
   if (!id || !concertDetail) {
     return <NotFound content="정보가 없습니다." />;
   }
 
-  const concertDates: string[] = concertDetail.setlist?.map((set: { date: string }) => set.date) || concertDetail.concertDate.map((d: { date: string }) => d.date) || [];
+  const concertDates: string[] =
+    concertDetail.setlist?.map((set: { date: string }) => set.date) ||
+    concertDetail.concertDate.map((d: { date: string }) => d.date) ||
+    [];
   const augmentedConcertDetail: Concert = {
     ...concertDetail,
     date: concertDates,
-    concertDate: concertDetail.concertDate || (concertDetail.setlist?.map((set: { date: string, start_time: string, duration_minutes: string }) => ({
-      date: set.date,
-      start_time: set.start_time,
-      duration_minutes: set.duration_minutes,
-    })) || []),
-    durationMinutes: concertDetail.setlist?.[0]?.duration_minutes || concertDetail.concertDate[0]?.duration_minutes || 0,
+    concertDate:
+      concertDetail.concertDate ||
+      (concertDetail.setlist?.map(
+        (set: { date: string; start_time: string; duration_minutes: string }) => ({
+          date: set.date,
+          start_time: set.start_time,
+          duration_minutes: set.duration_minutes,
+        })
+      ) || []),
+    durationMinutes:
+      concertDetail.setlist?.[0]?.duration_minutes ||
+      concertDetail.concertDate[0]?.duration_minutes ||
+      0,
   };
 
   const isEventTodayOrFuture = (dates: string[]): boolean => {
@@ -134,8 +148,7 @@ const DetailPage: React.FC = () => {
     const ticketOpenMoment = moment(`${openDate} ${openTime}`, "YYYY-MM-DD HH:mm");
     const diffDuration = moment.duration(ticketOpenMoment.diff(currentTime));
     const days = Math.floor(diffDuration.asDays());
-    const hours = diffDuration.hours()
-
+    const hours = diffDuration.hours();
     const minutes = diffDuration.minutes();
 
     if (days < 0 || hours < 0) {
@@ -144,7 +157,6 @@ const DetailPage: React.FC = () => {
 
     return { days, hours, minutes };
   };
-
 
   const getButtonText = (
     concert: Concert,
@@ -155,7 +167,7 @@ const DetailPage: React.FC = () => {
       return t("check_performance_info");
     } else if (concert.ticketOpen.date === "0000-00-00") {
       return t("waiting_schedule");
-    } else if (concert.ticketLink === "") {
+    } else if (concert.ticketLink.length === 0 || concert.ticketLink[0] === "") {
       return timeRemaining
         ? `${timeRemaining.days}${t("day")} ${timeRemaining.hours}${t("hour")} ${timeRemaining.minutes}${t("minute_later")}`
         : t("waiting_ticket_info");
@@ -175,12 +187,16 @@ const DetailPage: React.FC = () => {
     }
   };
 
+  const handleExtractSetlist = (setlist: any) => {
+    setSelectedSetlist(setlist);
+    onOpen();
+  };
+
   const isPastEvent: boolean = !isEventTodayOrFuture(augmentedConcertDetail.date);
   const timeRemaining: TimeRemaining | null = calculateTimeRemaining(
     augmentedConcertDetail.ticketOpen.date,
     augmentedConcertDetail.ticketOpen.time
   );
-
 
   return (
     <Box height="calc(100svh - 120px)">
@@ -272,20 +288,47 @@ const DetailPage: React.FC = () => {
                   )}
                 </Flex>
 
-                <Button
-                  onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
-                    handleButtonClick(e, augmentedConcertDetail, isPastEvent)
-                  }
-                  as={Link}
-                  href={augmentedConcertDetail.ticketLink}
-                  isExternal
-                  border="2px solid #eee"
-                  bg="brand.sub2"
-                  _hover={{ bg: "brand.main" }}
-                  color="white"
-                >
-                  {getButtonText(augmentedConcertDetail, isPastEvent, timeRemaining)}
-                </Button>
+                {augmentedConcertDetail.ticketLink.length === 1 ? (
+                  <Button
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
+                      handleButtonClick(e, augmentedConcertDetail, isPastEvent)
+                    }
+                    as={Link}
+                    href={augmentedConcertDetail.ticketLink[0]}
+                    isExternal
+                    border="2px solid #eee"
+                    bg="brand.sub2"
+                    _hover={{ bg: "brand.main", textDecoration: "none" }}
+                    _focus={{ textDecoration: "none" }}
+                    color="white"
+                    textDecoration="none"
+                  >
+                    {getButtonText(augmentedConcertDetail, isPastEvent, timeRemaining)}
+                  </Button>
+                ) : (
+                  <SimpleGrid columns={{ base: 1, md: 2 }} spacing={2}>
+                    {augmentedConcertDetail.ticketLink.map((link, index) => (
+                      <Button
+                        key={index}
+                        as={Link}
+                        href={link}
+                        isExternal
+                        border="2px solid #eee"
+                        bg="brand.sub2"
+                        _hover={{ bg: "brand.main", textDecoration: "none" }}
+                        _focus={{ textDecoration: "none" }}
+                        color="white"
+                        size="md"
+                        leftIcon={<Icon as={Ticket} />}
+                        justifyContent="flex-start"
+                        textAlign="left"
+                        textDecoration="none"
+                      >
+                        {getTicketSiteName(link)}
+                      </Button>
+                    ))}
+                  </SimpleGrid>
+                )}
               </Flex>
             </Box>
           </Flex>
@@ -355,102 +398,107 @@ const DetailPage: React.FC = () => {
 
               {augmentedConcertDetail.setlist && augmentedConcertDetail.setlist.length > 0 && (
                 <Box bg={cardBgColor} p={6} borderRadius="lg" boxShadow="lg">
-                  <HStack mb={4} justify="center">
-                    <Icon as={MusicIcon} color="purple.500" boxSize={6} />
-                    <Text fontSize="2xl" fontWeight="bold" color="gray.800">
+                  <HStack mb={2} align="center">
+                    <Icon as={MusicIcon} color="purple.500" boxSize={5} />
+                    <Text fontSize="xl" fontWeight="bold" color="gray.800">
                       {t("setlist")}
                     </Text>
                   </HStack>
-                  <Tabs variant="soft-rounded" colorScheme="purple">
-                    <TabList overflowX="auto" whiteSpace="nowrap" mb={4}>
+
+                  <Tabs variant="soft-rounded" colorScheme="purple" size="sm">
+                    <TabList
+                      overflowX="auto"
+                      whiteSpace="nowrap"
+                      mb={2}
+                      css={{
+                        '&::-webkit-scrollbar': { height: '4px' },
+                        '&::-webkit-scrollbar-thumb': {
+                          backgroundColor: 'rgba(160, 174, 192, 0.4)',
+                          borderRadius: '4px',
+                        }
+                      }}
+                    >
                       {augmentedConcertDetail.setlist.map((set, index) => (
-                        <Tab key={index}>
-                          {moment(set.date, "YYYY-MM-DD").format("YYYY-MM-DD")}
+                        <Tab key={index} fontSize={{ base: "sm", md: "md" }} px={3} py={1} minW="auto">
+                          {moment(set.date, "YYYY-MM-DD").format("MM/DD")}
                         </Tab>
                       ))}
                     </TabList>
-                    <TabPanels>
+
+                    <TabPanels pt={1}>
                       {augmentedConcertDetail.setlist.map((set, index) => (
-                        <TabPanel key={index}>
-                          <SimpleGrid columns={1} spacing={4}>
-                            {set.music.length > 0 ? (
-                              set.music.map((song, songIndex) => (
-                                <Box
-                                  key={songIndex}
-                                  p={4}
-                                  bg="white"
-                                  borderRadius="xl"
-                                  boxShadow="0 4px 12px rgba(0,0,0,0.1)"
-                                  border="2px solid"
-                                  borderColor="purple.100"
-                                  _hover={{
-                                    transform: "translateY(-2px)",
-                                    boxShadow: "0 6px 16px rgba(0,0,0,0.12)",
-                                    borderColor: "purple.300",
-                                  }}
-                                  transition="all 0.2s"
-                                  onClick={() => {
-                                    window.open(song.music.youtube_url, "_blank"); // 새로운 탭에서 유튜브 URL 열기
-                                  }}
-                                  cursor="pointer"
-                                >
-                                  <Flex align="center" justify="center" gap={3}>
-                                    <Text
-                                      fontSize="xl"
-                                      fontWeight="bold"
-                                      color="purple.500"
-                                      w="36px"
-                                      textAlign="right"
+                        <TabPanel key={index} p={0}>
+                          {set.music.length > 0 ? (
+                            isMobile ? (
+                              // 모바일 뷰: 노래 목록을 절반으로 나눠 2개의 컬럼으로 표시
+                              <SimpleGrid columns={2} spacing={3}>
+                                <Flex direction="column" w="100%">
+                                  {set.music.slice(0, Math.ceil(set.music.length / 2)).map((song, songIndex) => (
+                                    <Box
+                                      key={songIndex}
+                                      py={2} px={3} bg="white" borderRadius="full" boxShadow="0 1px 3px rgba(0,0,0,0.05)"
+                                      border="1px solid" borderColor="purple.100" _hover={{ bg: "purple.50", borderColor: "purple.300", transform: "translateY(-1px)" }}
+                                      transition="all 0.2s" onClick={() => window.open(song.music.youtube_url, "_blank")} cursor="pointer"
+                                      display="flex" alignItems="center" width="100%" mb={2}
                                     >
-                                      {(songIndex + 1).toString().padStart(2, "0")}
-                                    </Text>
-                                    <Text
-                                      fontSize="lg"
-                                      fontWeight="medium"
-                                      color="gray.700"
-                                      letterSpacing="wide"
+                                      <Text fontSize="sm" fontWeight="bold" color="purple.500" mr={1.5} flexShrink={0}>
+                                        {songIndex + 1}.
+                                      </Text>
+                                      <Text fontSize="sm" fontWeight="medium" color="gray.700" noOfLines={1} flexGrow={1}>
+                                        {song.music.name}
+                                      </Text>
+                                    </Box>
+                                  ))}
+                                </Flex>
+                                <Flex direction="column" w="100%">
+                                  {set.music.slice(Math.ceil(set.music.length / 2)).map((song, songIndex) => (
+                                    <Box
+                                      key={songIndex}
+                                      py={2} px={3} bg="white" borderRadius="full" boxShadow="0 1px 3px rgba(0,0,0,0.05)"
+                                      border="1px solid" borderColor="purple.100" _hover={{ bg: "purple.50", borderColor: "purple.300", transform: "translateY(-1px)" }}
+                                      transition="all 0.2s" onClick={() => window.open(song.music.youtube_url, "_blank")} cursor="pointer"
+                                      display="flex" alignItems="center" width="100%" mb={2}
                                     >
-                                      {song.music.name} {/* song.music에서 name을 바로 사용 */}
-                                    </Text>
-                                  </Flex>
-                                </Box>
-                              ))
+                                      <Text fontSize="sm" fontWeight="bold" color="purple.500" mr={1.5} flexShrink={0}>
+                                        {Math.ceil(set.music.length / 2) + songIndex + 1}.
+                                      </Text>
+                                      <Text fontSize="sm" fontWeight="medium" color="gray.700" noOfLines={1} flexGrow={1}>
+                                        {song.music.name}
+                                      </Text>
+                                    </Box>
+                                  ))}
+                                </Flex>
+                              </SimpleGrid>
                             ) : (
-                              <Flex w="100%" justifyContent="center" alignItems="center">
-                                <Text color="gray.500">{t("no_setlist_available")}</Text>
-                              </Flex>
-                            )}
-                          </SimpleGrid>
+                              // 데스크톱 뷰: 기존 방식대로 멀티 컬럼 레이아웃 유지
+                              <SimpleGrid columns={{ base: 2, md: 3, lg: 4 }} spacing={3}>
+                                {set.music.map((song, songIndex) => (
+                                  <Box
+                                    key={songIndex}
+                                    py={2} px={3} bg="white" borderRadius="full" boxShadow="0 1px 3px rgba(0,0,0,0.05)"
+                                    border="1px solid" borderColor="purple.100" _hover={{ bg: "purple.50", borderColor: "purple.300", transform: "translateY(-1px)" }}
+                                    transition="all 0.2s" onClick={() => window.open(song.music.youtube_url, "_blank")} cursor="pointer"
+                                    display="flex" alignItems="center" width="100%" mb={2}
+                                  >
+                                    <Text fontSize={{ base: "sm", md: "md" }} fontWeight="bold" color="purple.500" mr={1.5} flexShrink={0}>
+                                      {songIndex + 1}.
+                                    </Text>
+                                    <Text fontSize={{ base: "sm", md: "md" }} fontWeight="medium" color="gray.700" noOfLines={1} flexGrow={1}>
+                                      {song.music.name}
+                                    </Text>
+                                  </Box>
+                                ))}
+                              </SimpleGrid>
+                            )
+                          ) : (
+                            <Flex w="100%" justifyContent="center" alignItems="center" p={4} gridColumn="1 / -1">
+                              <Text fontSize="sm" color="gray.500">{t("no_setlist_available")}</Text>
+                            </Flex>
+                          )}
                         </TabPanel>
                       ))}
                     </TabPanels>
                   </Tabs>
-                </Box>
-              )}
-
-
-
-              {augmentedConcertDetail.ootd && augmentedConcertDetail.ootd.length > 0 && augmentedConcertDetail.ootd[0] !== "" && (
-                <Box bg={cardBgColor} p={6} borderRadius="lg" boxShadow="lg">
-                  <HStack mb={3}>
-                    <Icon as={CameraIcon} color="purple.600" />
-                    <Text fontSize="xl" fontWeight="bold" color="gray.700">
-                      {t("costume")}
-                    </Text>
-                  </HStack>
-                  <SimpleGrid columns={1} spacing={4}>
-                    {augmentedConcertDetail.ootd.map((image: any, index: number) => (
-                      <Image
-                        key={index}
-                        src={image.image}
-                        alt={`공연 의상 ${index + 1}`}
-                        borderRadius="md"
-                        boxShadow="md"
-                        objectFit="cover"
-                        w="100%"
-                      />
-                    ))}
-                  </SimpleGrid>
                 </Box>
               )}
 
@@ -482,7 +530,6 @@ const DetailPage: React.FC = () => {
             </VStack>
           </Box>
         )}
-        {/* <Comments /> */}
       </Box>
     </Box>
   );
