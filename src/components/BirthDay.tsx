@@ -24,7 +24,7 @@ const members: Member[] = [
   { name: "차훈", date: "07-12" },
   { name: "김재현", date: "07-15" },
   { name: "유회승", date: "02-26" },
-  { name: "서동성", date: "04-09" },
+  { name: "서동성", date: "04-08" },
 ];
 
 const images: { [key: string]: string[] } = {
@@ -36,7 +36,7 @@ const images: { [key: string]: string[] } = {
   차훈: [""],
   김재현: [""],
   유회승: ["/image/toro/hs.jpeg"],
-  서동성: [""],
+  서동성: ["/image/toro/ds.png"],
 };
 
 // 생일 축하 메시지 배열
