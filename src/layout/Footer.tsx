@@ -7,7 +7,6 @@ const Footer = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
-  
   const getLinkColor = (path: string) => {
     return location.pathname === path ? "brand.sub2" : "black";
   };
@@ -18,7 +17,7 @@ const Footer = () => {
 
   return (
     <Flex
-      direction="column"
+      direction="row" // Horizontal layout for the footer items
       px={4}
       py={2}
       bg="white"
@@ -26,59 +25,70 @@ const Footer = () => {
       position="fixed"
       bottom="0"
       width="100%"
-      height="50px" 
+      height="70px" // Increased height to accommodate the stacked layout
       zIndex="2"
     >
-      <Flex justify="space-between">
+      <Flex justify="space-between" width="100%">
+        {/* List Item */}
         <Flex
           flex="1"
+          direction="column" // Stack icon and text vertically
           justifyContent="center"
           alignItems="center"
-          gap="5px"
+          gap="2px" // Small gap between icon and text
           cursor="pointer"
           onClick={() => navigate("/")}
         >
-          <RiListUnordered color={getLinkColorIcon("/")} />
-          <Text fontSize="lg" color={getLinkColor("/")} fontWeight={600}>
+          <RiListUnordered color={getLinkColorIcon("/")} size={24} />
+          <Text fontSize="sm" color={getLinkColor("/")} fontWeight={600} textAlign="center">
             {t('list')}
           </Text>
         </Flex>
+
+        {/* Map Item */}
         <Flex
           flex="1"
+          direction="column"
           justifyContent="center"
           alignItems="center"
-          gap="5px"
+          gap="2px"
           cursor="pointer"
           onClick={() => navigate("/map")}
         >
-          <RiMapPinLine color={getLinkColorIcon("/map")} />
-          <Text fontSize="lg" color={getLinkColor("/map")} fontWeight={600}>
+          <RiMapPinLine color={getLinkColorIcon("/map")} size={24} />
+          <Text fontSize="sm" color={getLinkColor("/map")} fontWeight={600} textAlign="center">
             {t('map')}
           </Text>
         </Flex>
+
+        {/* Profile Item */}
         <Flex
           flex="1"
+          direction="column"
           justifyContent="center"
           alignItems="center"
-          gap="5px"
+          gap="2px"
           cursor="pointer"
           onClick={() => navigate("/profile")}
         >
-          <RiUser3Line color={getLinkColorIcon("/profile")} />
-          <Text fontSize="lg" color={getLinkColor("/profile")} fontWeight={600}>
+          <RiUser3Line color={getLinkColorIcon("/profile")} size={24} />
+          <Text fontSize="sm" color={getLinkColor("/profile")} fontWeight={600} textAlign="center">
             {t('profile')}
           </Text>
         </Flex>
+
+        {/* Music Item */}
         <Flex
           flex="1"
+          direction="column"
           justifyContent="center"
           alignItems="center"
-          gap="5px"
+          gap="2px"
           cursor="pointer"
           onClick={() => navigate("/music")}
         >
-          <RiMusicLine color={getLinkColorIcon("/music")} />
-          <Text fontSize="lg" color={getLinkColor("/music")} fontWeight={600}>
+          <RiMusicLine color={getLinkColorIcon("/music")} size={24} />
+          <Text fontSize="sm" color={getLinkColor("/music")} fontWeight={600} textAlign="center">
             {t('music')}
           </Text>
         </Flex>
