@@ -24,7 +24,7 @@ const members: Member[] = [
   { name: "차훈", date: "07-12" },
   { name: "김재현", date: "07-15" },
   { name: "유회승", date: "02-26" },
-  { name: "서동성", date: "04-08" },
+  { name: "서동성", date: "04-09" },
 ];
 
 const images: { [key: string]: string[] } = {

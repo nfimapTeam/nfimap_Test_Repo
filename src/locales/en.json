@@ -95,5 +95,11 @@
   "festivalVal": "Festival",
   "eventVal": "Event",
   "today_concert": "Today",
-  "no_setlist_available": "Performance has not started yet"
+  "no_setlist_available": "Performance has not started yet",
+  "view_ticket_sites": "View Ticket Options",
+  "copy_setlist": "Copy Setlist",
+  "setlist_copied": "Setlist copied",
+  "setlist_copied_description": "You can now paste it anywhere.",
+  "copy_failed": "Copy failed",
+  "copy_failed_description": "There was an issue copying the setlist."
 }

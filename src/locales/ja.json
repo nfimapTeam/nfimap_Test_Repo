@@ -96,5 +96,11 @@
   "festivalVal": "Festival",
   "eventVal": "Event",
   "today_concert": "本日の公演",
-  "no_setlist_available": "まだ公演前です"
+  "no_setlist_available": "まだ公演前です",
+  "view_ticket_sites": "チケットサイトを見る",
+  "copy_setlist": "セットリストをコピー",
+  "setlist_copied": "セットリストをコピーしました",
+  "setlist_copied_description": "好きな場所に貼り付けられます。",
+  "copy_failed": "コピーに失敗しました",
+  "copy_failed_description": "セットリストのコピー中に問題が発生しました。"
 }

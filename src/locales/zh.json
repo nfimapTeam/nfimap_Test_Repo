@@ -97,5 +97,11 @@
   "festivalVal": "Festival",
   "eventVal": "Event",
   "today_concert": "今日演出",
-  "no_setlist_available": "演出尚未开始"
+  "no_setlist_available": "演出尚未开始",
+  "view_ticket_sites": "查看售票网站",
+  "copy_setlist": "复制歌单",
+  "setlist_copied": "歌单已复制",
+  "setlist_copied_description": "你现在可以粘贴到任何地方。",
+  "copy_failed": "复制失败",
+  "copy_failed_description": "复制歌单时出错了。"
 }
