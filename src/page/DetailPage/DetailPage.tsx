@@ -44,6 +44,7 @@ import { getTicketSiteName } from "../../util/getTicketSiteName";
 import { TicketDrawer } from "./components/Drawer";
 import { TicketModal } from "./components/TicketModal";
 import SetlistComponent from "./components/SetlistComponent";
+import Loading from "../../components/Loading";
 
 interface Concert {
   id: number;
@@ -98,7 +99,7 @@ const DetailPage: React.FC = () => {
   const currentTime = moment();
   const [allConcerts, setAllConcerts] = useState<Concert[]>([]);
   const [lang, setLang] = useState<"ko" | "en">("ko");
-  const { data: concertDetail, refetch: refetchConcertDetail } = useConcertDetail(id ?? "", lang);
+  const { data: concertDetail, refetch: refetchConcertDetail, isLoading } = useConcertDetail(id ?? "", lang);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedSetlist, setSelectedSetlist] = useState<any>(null);
   const isMobile = useBreakpointValue({ base: true, md: false });
@@ -115,6 +116,10 @@ const DetailPage: React.FC = () => {
   useEffect(() => {
     refetchConcertDetail();
   }, [lang, refetchConcertDetail]);
+
+  if (isLoading) {
+    return <Loading />
+  }
 
   if (!id || !concertDetail) {
     return <NotFound content="정보가 없습니다." />;
