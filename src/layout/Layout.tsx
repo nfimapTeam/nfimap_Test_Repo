@@ -14,7 +14,7 @@ const Layout = ({ children }: LayoutProps) => {
     <div style={{height: "100vh"}}>
       <Header />
       <main>{children}</main>
-      <FnbButton /> 
+      <FnbButton isMobileOrTablet={isMobileOrTablet} /> 
       {isMobileOrTablet && <Footer />}
     </div>
   );

@@ -5,7 +5,11 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const MotionBox = chakra(motion.div);
 
-const FnbButton = () => {
+interface FnbButtonProps {
+  isMobileOrTablet: boolean | undefined;
+}
+
+const FnbButton = ({isMobileOrTablet} : FnbButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const ref = React.useRef(null);
@@ -43,8 +47,8 @@ const FnbButton = () => {
       {/* FNB 버튼 및 추가 버튼 그룹 */}
       <Box 
         position="fixed" 
-        bottom="60px" 
-        right="16px" 
+        bottom={isMobileOrTablet ? "80px" : "30px"} 
+        right={isMobileOrTablet ? "16px" : "30px"} 
         zIndex={3}
         display="flex"
         flexDirection="column"
