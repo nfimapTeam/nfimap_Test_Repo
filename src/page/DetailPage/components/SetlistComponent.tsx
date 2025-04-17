@@ -13,6 +13,8 @@ import {
   Flex,
   Button,
   useBreakpointValue,
+  Image,
+  SimpleGrid,
   BoxProps,
   IconProps,
   TextProps,
@@ -21,8 +23,9 @@ import {
 } from '@chakra-ui/react';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
+import { MusicIcon, CameraIcon } from 'lucide-react';
 
-// Interfaces remain the same
+// Interfaces
 interface Music {
   name: string;
   youtube_url: string;
@@ -34,11 +37,20 @@ interface Song {
 
 interface Setlist {
   date: string;
+  formatted_date: string;
+  start_time: string;
+  duration_minutes: number;
   music: Song[];
+}
+
+interface OOTD {
+  image: string;
+  date: string;
 }
 
 interface AugmentedConcertDetail {
   setlist: Setlist[];
+  ootd: OOTD[];
   poster: string;
   name: string;
 }
@@ -55,20 +67,16 @@ const SetlistComponent: React.FC<SetlistComponentProps> = ({
   const { t } = useTranslation();
   const toast = useToast();
   const tabFontSize = useBreakpointValue({ base: 'sm', md: 'md' });
-
   const isDoubleLine: boolean = augmentedConcertDetail.setlist?.length > 10;
 
   // Function to copy setlist to clipboard
   const handleCopySetlist = (set: Setlist): void => {
-    // Format the setlist as plain text
     const setlistText = set.music
       .map((song: Song, index: number) => `${index + 1}. ${song.music.name}`)
       .join('\n');
 
-    // Use concert name as title, followed by translated "Setlist" and date
     const fullText = `${augmentedConcertDetail.name}\n${moment(set.date, 'YYYY-MM-DD').format('YYYY/MM/DD')} ${t('setlist')}\n\n${setlistText}`;
 
-    // Copy to clipboard
     navigator.clipboard
       .writeText(fullText)
       .then(() => {
@@ -92,6 +100,11 @@ const SetlistComponent: React.FC<SetlistComponentProps> = ({
       });
   };
 
+  // Function to get OOTD images for a specific date
+  const getOOTDForDate = (date: string): OOTD[] => {
+    return augmentedConcertDetail.ootd.filter((ootd: OOTD) => ootd.date === date);
+  };
+
   return (
     <>
       {augmentedConcertDetail.setlist &&
@@ -99,43 +112,28 @@ const SetlistComponent: React.FC<SetlistComponentProps> = ({
           <Box
             bg={cardBgColor}
             p={{ base: 4, md: 6 }}
-            borderRadius="lg"
-            boxShadow="lg"
             width="100%"
             as="section"
-            {...({} as BoxProps)}
+            border="1px solid"
+            borderRadius="2xl"
+            boxShadow="xl"
+            borderColor="purple.100"
+            transition="all 0.3s"
+            _hover={{ boxShadow: '2xl', transform: 'translateY(-4px)' }}
           >
-            <HStack mb={4} justify="space-between" align="center">
-              <HStack>
-                <Icon
-                  color="purple.500"
-                  boxSize={{ base: 5, md: 6 }}
-                  {...({} as IconProps)}
-                />
-                <Text
-                  fontSize={{ base: 'lg', md: 'xl' }}
-                  fontWeight="bold"
-                  color="gray.800"
-                  {...({} as TextProps)}
-                >
-                  {t('setlist')}
-                </Text>
-              </HStack>
-            </HStack>
-
-            <Tabs variant="soft-rounded" colorScheme="purple" size="sm">
+            <Tabs variant="soft-rounded" colorScheme="purple" size="md">
               <TabList
                 overflowX="auto"
                 whiteSpace="nowrap"
-                mb={4}
+                mb={6}
                 display="flex"
                 flexWrap={isDoubleLine ? 'wrap' : 'nowrap'}
-                gap={2}
+                gap={3}
                 css={{
-                  '&::-webkit-scrollbar': { height: '4px' },
+                  '&::-webkit-scrollbar': { height: '6px' },
                   '&::-webkit-scrollbar-thumb': {
-                    backgroundColor: 'rgba(160, 174, 192, 0.4)',
-                    borderRadius: '4px',
+                    backgroundColor: 'rgba(160, 174, 192, 0.5)',
+                    borderRadius: '6px',
                   },
                 }}
               >
@@ -144,15 +142,21 @@ const SetlistComponent: React.FC<SetlistComponentProps> = ({
                     <Tab
                       key={index}
                       fontSize={tabFontSize}
-                      px={{ base: 2, md: 3 }}
-                      py={1}
+                      px={{ base: 4, md: 5 }}
+                      py={2}
                       minW="auto"
-                      bg="purple.100"
-                      _selected={{ bg: 'purple.500', color: 'white' }}
+                      bg="purple.50"
+                      _selected={{
+                        bg: 'purple.600',
+                        color: 'white',
+                        boxShadow: 'md',
+                      }}
                       borderRadius="full"
                       display="flex"
                       alignItems="center"
-                      mb={isDoubleLine ? 2 : 0}
+                      mb={isDoubleLine ? 3 : 0}
+                      transition="all 0.2s"
+                      _hover={{ bg: 'purple.100' }}
                     >
                       {moment(set.date, 'YYYY-MM-DD').format('MM/DD')}
                     </Tab>
@@ -160,20 +164,40 @@ const SetlistComponent: React.FC<SetlistComponentProps> = ({
                 )}
               </TabList>
 
-              <TabPanels pt={1}>
+              <TabPanels pt={2}>
                 {augmentedConcertDetail.setlist.map(
                   (set: Setlist, index: number) => (
                     <TabPanel key={index} p={0}>
-                      {/* Conditionally render the Copy Setlist button only if setlist has songs */}
+                      <HStack mb={6} justify="space-between" align="center">
+                        <HStack>
+                          <Icon
+                            as={MusicIcon}
+                            color="purple.500"
+                            boxSize={{ base: 6, md: 8 }}
+                          />
+                          <Text
+                            fontSize={{ base: 'xl', md: '2xl' }}
+                            fontWeight="extrabold"
+                            color="gray.800"
+                            bgGradient="linear(to-r, purple.600, pink.500)"
+                            bgClip="text"
+                          >
+                            {t('setlist')}
+                          </Text>
+                        </HStack>
+                      </HStack>
+                      {/* Setlist Section */}
                       {set.music.length > 0 && (
-                        <Flex w="100%" h="40px" justifyContent="flex-end" mb={4}>
+                        <Flex w="100%" h="40px" justifyContent="flex-end" mb={6}>
                           <Button
-                            size="sm"
+                            size="md"
                             colorScheme="purple"
                             borderRadius="full"
-                            px={6}
+                            px={8}
                             onClick={() => handleCopySetlist(set)}
-                            {...({} as ButtonProps)}
+                            leftIcon={<Icon as={MusicIcon} />}
+                            _hover={{ transform: 'scale(1.05)' }}
+                            transition="all 0.2s"
                           >
                             {t('copy_setlist')}
                           </Button>
@@ -181,23 +205,24 @@ const SetlistComponent: React.FC<SetlistComponentProps> = ({
                       )}
 
                       {set.music.length > 0 ? (
-                        <VStack spacing={3} align="stretch">
+                        <VStack spacing={4} align="stretch" mb={8}>
                           {set.music.map((song: Song, songIndex: number) => (
                             <Box
                               key={songIndex}
-                              py={2}
-                              px={4}
+                              py={3}
+                              px={5}
                               bg="white"
-                              borderRadius="full"
-                              boxShadow="0 2px 4px rgba(0,0,0,0.05)"
+                              borderRadius="xl"
+                              boxShadow="0 4px 6px rgba(0,0,0,0.05)"
                               border="1px solid"
                               borderColor="purple.100"
                               _hover={{
                                 bg: 'purple.50',
                                 borderColor: 'purple.300',
-                                transform: 'translateY(-1px)',
+                                transform: 'translateY(-2px)',
+                                boxShadow: '0 6px 12px rgba(0,0,0,0.1)',
                               }}
-                              transition="all 0.2s"
+                              transition="all 0.3s"
                               onClick={() =>
                                 window.open(song.music.youtube_url, '_blank')
                               }
@@ -209,20 +234,18 @@ const SetlistComponent: React.FC<SetlistComponentProps> = ({
                               <Text
                                 fontSize={tabFontSize}
                                 fontWeight="bold"
-                                color="purple.500"
-                                mr={3}
+                                color="purple.600"
+                                mr={4}
                                 flexShrink={0}
-                                {...({} as TextProps)}
                               >
                                 {songIndex + 1}.
                               </Text>
                               <Text
                                 fontSize={tabFontSize}
                                 fontWeight="medium"
-                                color="gray.700"
+                                color="gray.800"
                                 noOfLines={2}
                                 lineHeight="short"
-                                {...({} as TextProps)}
                               >
                                 {song.music.name}
                               </Text>
@@ -234,17 +257,75 @@ const SetlistComponent: React.FC<SetlistComponentProps> = ({
                           w="100%"
                           justifyContent="center"
                           alignItems="center"
-                          p={4}
+                          p={6}
+                          bg="gray.50"
+                          borderRadius="lg"
+                          border="1px dashed"
+                          borderColor="gray.200"
                         >
                           <Text
                             fontSize={tabFontSize}
                             color="gray.500"
-                            {...({} as TextProps)}
                           >
                             {t('no_setlist_available')}
                           </Text>
                         </Flex>
                       )}
+
+                      {/* OOTD Section - Display OOTD images for the selected tab's date */}
+                      <Box mt={8}>
+                        <HStack mb={4}>
+                          <Icon as={CameraIcon} color="pink.500" boxSize={6} />
+                          <Text
+                            fontSize={{ base: 'lg', md: 'xl' }}
+                            fontWeight="bold"
+                            color="gray.800"
+                            bgGradient="linear(to-r, pink.500, purple.500)"
+                            bgClip="text"
+                          >
+                            {t('costume')}
+                          </Text>
+                        </HStack>
+                        {getOOTDForDate(set.date).length > 0 ? (
+                          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
+                            {getOOTDForDate(set.date).map((ootd: OOTD, ootdIndex: number) => (
+                              <Box
+                                key={ootdIndex}
+                                position="relative"
+                                overflow="hidden"
+                                borderRadius="lg"
+                                transition="all 0.3s"
+                              >
+                                <Image
+                                  src={ootd.image}
+                                  alt={`Outfit for ${ootd.date}`}
+                                  borderRadius="lg"
+                                  boxShadow="md"
+                                  w="100%"
+                                />
+                              </Box>
+                            ))}
+                          </SimpleGrid>
+                        ) : (
+                          <Flex
+                            w="100%"
+                            justifyContent="center"
+                            alignItems="center"
+                            p={6}
+                            bg="gray.50"
+                            borderRadius="lg"
+                            border="1px dashed"
+                            borderColor="gray.200"
+                          >
+                            <Text
+                              fontSize={tabFontSize}
+                              color="gray.500"
+                            >
+                              {t('no_ootd_available')}
+                            </Text>
+                          </Flex>
+                        )}
+                      </Box>
                     </TabPanel>
                   )
                 )}

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Box, Tabs, TabList, Tab, TabPanels, TabPanel } from "@chakra-ui/react";
+import { Box, Tabs, TabList, Tab, TabPanels, TabPanel, useBreakpointValue } from "@chakra-ui/react";
 import ConcertInfo from "./ConcertInfo";
 import NfiRoad from "./NfiRoad";
 import NoData from "./NoData";
@@ -98,12 +98,13 @@ const Sidebar = ({
   setSelectedGlobalType,
 }: SidebarProps) => {
   const { t, i18n } = useTranslation();
+  const isMobileOrTablet = useBreakpointValue({ base: true, md: true, lg: false });
 
   return (
     <Box
       w="340px"
       bg="#fff"
-      h="calc(100vh - 120px)"
+      h={isMobileOrTablet ? "calc(100vh - 120px)" : "calc(100svh - 70px)"}
       boxShadow="0 0 10px rgba(0, 0, 0, 0.1)"
       borderRight="1px solid #ddd"
       display="flex"

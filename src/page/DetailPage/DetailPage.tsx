@@ -99,6 +99,7 @@ const DetailPage: React.FC = () => {
   const currentTime = moment();
   const [allConcerts, setAllConcerts] = useState<Concert[]>([]);
   const [lang, setLang] = useState<"ko" | "en">("ko");
+  const isMobileOrTablet = useBreakpointValue({ base: true, md: true, lg: false });
   const { data: concertDetail, refetch: refetchConcertDetail, isLoading } = useConcertDetail(id ?? "", lang);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedSetlist, setSelectedSetlist] = useState<any>(null);
@@ -208,7 +209,7 @@ const DetailPage: React.FC = () => {
   );
 
   return (
-    <Box height="calc(100svh - 120px)">
+    <Box h={isMobileOrTablet ? "calc(100svh - 120px)" : "calc(100svh - 70px)"}>
       <Box p="16px 16px 100px 16px" width="100%" maxWidth="1200px" mx="auto">
         <Flex direction={{ base: "column", md: "row" }} gap={8} align="stretch">
           <Flex
@@ -217,8 +218,10 @@ const DetailPage: React.FC = () => {
             alignItems="center"
             bg={cardBgColor}
             p={6}
-            borderRadius="lg"
-            boxShadow="md"
+            border="1px solid"
+            borderRadius="2xl"
+            boxShadow="xl"
+            borderColor="purple.100"
           >
             <Box maxW={{ base: "100%", md: "400px" }} w="100%">
               <Image
@@ -236,7 +239,10 @@ const DetailPage: React.FC = () => {
           </Flex>
 
           <Flex flexDirection="column" justifyContent="space-between" flex={1} gap={4}>
-            <Box bg={cardBgColor} p={6} borderRadius="lg" boxShadow="md">
+            <Box bg={cardBgColor} p={6} border="1px solid"
+              borderRadius="2xl"
+              boxShadow="xl"
+              borderColor="purple.100">
               <Badge colorScheme="red" fontSize="md" mb={2}>
                 {augmentedConcertDetail.type}
               </Badge>
@@ -260,7 +266,10 @@ const DetailPage: React.FC = () => {
               </VStack>
             </Box>
 
-            <Box bg={cardBgColor} p={6} borderRadius="lg" boxShadow="md">
+            <Box bg={cardBgColor} p={6} border="1px solid"
+              borderRadius="2xl"
+              boxShadow="xl"
+              borderColor="purple.100">
               <Text fontSize="xl" fontWeight="semibold" mb={3}>
                 {t("performers")}
               </Text>
@@ -273,7 +282,10 @@ const DetailPage: React.FC = () => {
               </Flex>
             </Box>
 
-            <Box bg={cardBgColor} p={6} borderRadius="lg" boxShadow="md">
+            <Box bg={cardBgColor} p={6} border="1px solid"
+              borderRadius="2xl"
+              boxShadow="xl"
+              borderColor="purple.100">
               <Text fontSize="xl" fontWeight="semibold" mb={3}>
                 {augmentedConcertDetail.type === "행사" || augmentedConcertDetail.type === "Event"
                   ? t("performanceInfo")
@@ -344,14 +356,16 @@ const DetailPage: React.FC = () => {
 
         {augmentedConcertDetail && (
           <Box mt={8}>
-            <Divider mb={4} />
-            <Text fontSize="3xl" fontWeight="bold" mb={4} color="teal.600">
+            {/* <Text fontSize="3xl" fontWeight="bold" mb={4} color="teal.600">
               {t("performance_details")}
-            </Text>
+            </Text> */}
 
             <VStack spacing={6} align="stretch">
               {augmentedConcertDetail.address && (
-                <Box bg={cardBgColor} p={6} borderRadius="lg" boxShadow="lg">
+                <Box bg={cardBgColor} p={6} border="1px solid"
+                  borderRadius="2xl"
+                  boxShadow="xl"
+                  borderColor="purple.100">
                   <HStack mb={3}>
                     <Icon as={InfoIcon} color="blue.600" />
                     <Text fontSize="xl" fontWeight="bold" color="gray.700">
@@ -404,90 +418,31 @@ const DetailPage: React.FC = () => {
                 </Box>
               )}
               <SetlistComponent cardBgColor={cardBgColor} augmentedConcertDetail={augmentedConcertDetail} />
-              {/* {augmentedConcertDetail.setlist && augmentedConcertDetail.setlist.length > 0 && (
-                <Box bg={cardBgColor} p={6} borderRadius="lg" boxShadow="lg">
-                  <HStack mb={2} align="center">
-                    <Icon as={MusicIcon} color="purple.500" boxSize={5} />
-                    <Text fontSize="xl" fontWeight="bold" color="gray.800">
-                      {t("setlist")}
-                    </Text>
-                  </HStack>
-
-                  <Tabs variant="soft-rounded" colorScheme="purple" size="sm">
-                    <TabList
-                      overflowX="auto"
-                      whiteSpace="nowrap"
-                      mb={2}
-                      css={{
-                        '&::-webkit-scrollbar': { height: '4px' },
-                        '&::-webkit-scrollbar-thumb': {
-                          backgroundColor: 'rgba(160, 174, 192, 0.4)',
-                          borderRadius: '4px',
-                        }
-                      }}
-                    >
-                      {augmentedConcertDetail.setlist.map((set, index) => (
-                        <Tab key={index} fontSize={{ base: "sm", md: "md" }} px={3} py={1} minW="auto">
-                          {moment(set.date, "YYYY-MM-DD").format("MM/DD")}
-                        </Tab>
+              {/* {augmentedConcertDetail.ootd &&
+                augmentedConcertDetail.ootd.length > 0 &&
+                augmentedConcertDetail.ootd[0] !== "" && (
+                  <Box bg={cardBgColor} p={6} borderRadius="lg" boxShadow="lg">
+                    <HStack mb={3}>
+                      <Icon as={CameraIcon} color="purple.600" />
+                      <Text fontSize="xl" fontWeight="bold" color="gray.700">
+                        {t("costume")}
+                      </Text>
+                    </HStack>
+                    <SimpleGrid columns={1} spacing={4}>
+                      {augmentedConcertDetail.ootd.map((image, index) => (
+                        <Image
+                          key={index}
+                          src={image}
+                          alt={`공연 의상 ${index + 1}`}
+                          borderRadius="md"
+                          boxShadow="md"
+                          objectFit="cover"
+                          w="100%"
+                        />
                       ))}
-                    </TabList>
-
-                    <TabPanels pt={1}>
-                      {augmentedConcertDetail.setlist.map((set, index) => (
-                        <TabPanel key={index} p={0}>
-                          {set.music.length > 0 ? (
-                            <VStack spacing={2} align="stretch">
-                              {set.music.map((song, songIndex) => (
-                                <Box
-                                  key={songIndex}
-                                  py={2} px={3}
-                                  bg="white"
-                                  borderRadius="full"
-                                  boxShadow="0 1px 3px rgba(0,0,0,0.05)"
-                                  border="1px solid"
-                                  borderColor="purple.100"
-                                  _hover={{ bg: "purple.50", borderColor: "purple.300", transform: "translateY(-1px)" }}
-                                  transition="all 0.2s"
-                                  onClick={() => window.open(song.music.youtube_url, "_blank")}
-                                  cursor="pointer"
-                                  display="flex"
-                                  alignItems="center"
-                                  width="100%"
-                                >
-                                  <Text
-                                    fontSize={{ base: "sm", md: "md" }}
-                                    fontWeight="bold"
-                                    color="purple.500"
-                                    mr={2}
-                                    flexShrink={0}
-                                  >
-                                    {songIndex + 1}.
-                                  </Text>
-                                  <Text
-                                    fontSize={{ base: "sm", md: "md" }}
-                                    fontWeight="medium"
-                                    color="gray.700"
-                                    noOfLines={2} // 두 줄까지만 보여주기
-                                    lineHeight="short"
-                                  >
-                                    {song.music.name}
-                                  </Text>
-                                </Box>
-                              ))}
-                            </VStack>
-                          ) : (
-                            <Flex w="100%" justifyContent="center" alignItems="center" p={4}>
-                              <Text fontSize="sm" color="gray.500">{t("no_setlist_available")}</Text>
-                            </Flex>
-                          )}
-                        </TabPanel>
-                      ))}
-                    </TabPanels>
-
-                  </Tabs>
-                </Box>
-              )} */}
+                    </SimpleGrid>
+                  </Box>
+                )} */}
 
               {augmentedConcertDetail.seats && augmentedConcertDetail.seats.length > 0 && augmentedConcertDetail.seats.some((seat: { image: string }) => seat.image) && (
                 <Box bg={cardBgColor} p={6} borderRadius="lg" boxShadow="lg">

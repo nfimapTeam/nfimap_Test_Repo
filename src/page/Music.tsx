@@ -89,6 +89,7 @@ const Music = () => {
   const musicNames = musicData.map((music: MusicType) => music.name);
   const youtubeUrl = musicData.map((music: MusicType) => music.youtubeUrl);
   const columnCount = useBreakpointValue({ base: 1, md: 2, lg: 3, xl: 4 });
+  const isMobileOrTablet = useBreakpointValue({ base: true, md: true, lg: false });
 
   const getToken = useCallback(async () => {
     const clientId = process.env.REACT_APP_SPOTIFY_CLIENT_ID_API_KEY;
@@ -214,7 +215,7 @@ const Music = () => {
 
   return (
     <Box
-      h="calc(100svh - 120px)"
+      h={isMobileOrTablet ? "calc(100svh - 120px)" : "calc(100svh - 70px)"}
       width="100%"
       mx="auto"
       p="16px 16px 100px 16px"

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useDisclosure } from "@chakra-ui/react";
+import { useBreakpointValue, useDisclosure } from "@chakra-ui/react";
 import CustomModal from "./CustomModal";
 import { useTranslation } from "react-i18next";
 
@@ -71,12 +71,9 @@ const NaverMap = ({
   const [currentInfoWindow, setCurrentInfoWindow] = useState<any>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { t, i18n } = useTranslation();
+  const isMobileOrTablet = useBreakpointValue({ base: true, md: true, lg: false });
 
   const ZOOM_LEVEL = 3;
-
-  useEffect(() => {
-    console.log(currentInfoWindow)
-  }, [concerts, nfiRoad]);
 
   const getCategoryImage = (category: string): string => {
     switch (category) {
@@ -436,7 +433,7 @@ const NaverMap = ({
       ref={mapContainerRef}
       style={{
         width: "100%",
-        height: "calc(100vh - 140px)",
+        height: isMobileOrTablet ? "calc(100svh - 140px)" : "calc(100svh - 70px)",
         overflow: "hidden",
         position: "relative",
       }}

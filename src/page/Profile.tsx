@@ -9,6 +9,7 @@ import {
   Stack,
   Link,
   Icon,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import {
   RiTeamLine,
@@ -64,6 +65,7 @@ const isFutureDate = (militaryDate: string) => {
 const Profile = () => {
   const { t, i18n } = useTranslation();
   const [profileState, setProfileState] = useState<ProfileData>();
+  const isMobileOrTablet = useBreakpointValue({ base: true, md: true, lg: false });
 
   useEffect(() => {
     const newProfileData =
@@ -87,7 +89,7 @@ const Profile = () => {
 
   return (
     <Box
-      h="calc(100svh - 120px)"
+    h={isMobileOrTablet ? "calc(100svh - 120px)" : "calc(100svh - 70px)"}
       width="100%"
       mx="auto"
       p="16px 16px 100px 16px"

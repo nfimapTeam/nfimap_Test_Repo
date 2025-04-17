@@ -9,7 +9,6 @@ const NoData = () => {
       spacing={4}
       align="center"
       justify="center"
-      minHeight="calc(100svh - 120px)"
       height="100%"
       position="relative"
     >

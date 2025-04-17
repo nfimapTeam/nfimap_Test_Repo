@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { useDisclosure } from "@chakra-ui/react";
+import { useBreakpointValue, useDisclosure } from "@chakra-ui/react";
 import CustomModal from "./CustomModal";
 import { useTranslation } from "react-i18next";
 
@@ -58,6 +58,7 @@ const GoogleMap = ({
   const markersRef = useRef<any[]>([]);
   const [currentInfoWindow, setCurrentInfoWindow] = useState<any>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const isMobileOrTablet = useBreakpointValue({ base: true, md: true, lg: false });
 
   const handleDetailClick = useCallback(() => {
     onOpen();
@@ -307,7 +308,7 @@ const GoogleMap = ({
       ref={mapContainerRef}
       style={{
         width: "100%",
-        height: "calc(100vh - 120px)",
+        height: isMobileOrTablet ? "calc(100svh - 140px)" : "calc(100svh - 70px)",
         overflow: "hidden",
         position: "relative",
       }}

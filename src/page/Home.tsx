@@ -57,6 +57,7 @@ const Home = () => {
   const { t, i18n } = useTranslation();
 
   const columns = useBreakpointValue({ base: 1, md: 2, lg: 3 });
+  const isMobileOrTablet = useBreakpointValue({ base: true, md: true, lg: false });
   const [currentTime, setCurrentTime] = useState(moment());
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState(t("latest"));
@@ -113,10 +114,10 @@ const Home = () => {
     } else if (concert.ticketLink === "") {
       return timeRemaining
         ? t("timeUntilTicketing", {
-            days: timeRemaining.days,
-            hours: timeRemaining.hours,
-            minutes: timeRemaining.minutes,
-          })
+          days: timeRemaining.days,
+          hours: timeRemaining.hours,
+          minutes: timeRemaining.minutes,
+        })
         : t("waitingForTicketInfo");
     } else {
       return t("buyTickets");
@@ -246,7 +247,7 @@ const Home = () => {
 
   return (
     <Box
-      h="calc(100svh - 120px)"
+      h={isMobileOrTablet ? "calc(100svh - 120px)" : "calc(100svh - 70px)"}
       width="100%"
       mx="auto"
       p="16px 16px 70px 16px"
@@ -343,7 +344,9 @@ const Home = () => {
             </FormControl>
           </Flex>
         </Box>
-        {sortedConcerts.length === 0 && <NoData />}
+
+        {sortedConcerts.length === 0 && (<Box h={isMobileOrTablet ? "calc(100svh - 120px)" : "calc(100svh - 70px)"}><NoData /></Box>)}
+
         <SimpleGrid columns={columns} spacing={6}>
           {sortedConcerts.map((concert, index) => {
             const lastConcertDate = concert.date[concert.date.length - 1];

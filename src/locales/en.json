@@ -101,5 +101,6 @@
   "setlist_copied": "Setlist copied",
   "setlist_copied_description": "You can now paste it anywhere.",
   "copy_failed": "Copy failed",
-  "copy_failed_description": "There was an issue copying the setlist."
+  "copy_failed_description": "There was an issue copying the setlist.",
+  "no_ootd_available": "The OOTD has not been posted yet"
 }

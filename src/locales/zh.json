@@ -103,5 +103,6 @@
   "setlist_copied": "歌单已复制",
   "setlist_copied_description": "你现在可以粘贴到任何地方。",
   "copy_failed": "复制失败",
-  "copy_failed_description": "复制歌单时出错了。"
+  "copy_failed_description": "复制歌单时出错了。",
+  "no_ootd_available": "OOTD尚未发布"
 }
