@@ -33,6 +33,7 @@ interface Music {
 
 interface Song {
   music: Music;
+  status: string;
 }
 
 interface Setlist {
@@ -41,6 +42,7 @@ interface Setlist {
   start_time: string;
   duration_minutes: number;
   music: Song[];
+  status: string;
 }
 
 interface OOTD {
@@ -56,11 +58,13 @@ interface AugmentedConcertDetail {
 }
 
 interface SetlistComponentProps {
+  lang: string;
   augmentedConcertDetail: any;
   cardBgColor: string;
 }
 
 const SetlistComponent: React.FC<SetlistComponentProps> = ({
+  lang,
   augmentedConcertDetail,
   cardBgColor,
 }) => {
@@ -104,6 +108,17 @@ const SetlistComponent: React.FC<SetlistComponentProps> = ({
   const getOOTDForDate = (date: string): OOTD[] => {
     return augmentedConcertDetail.ootd.filter((ootd: OOTD) => ootd.date === date);
   };
+
+  const songStatus = (status: string) => {
+    const statusMessages: { [key: string]: string } = {
+      encore: lang === "ko" ? " - 앵콜" : " - Encore",
+      double_encore: lang === "ko" ? " - 앵앵콜" : " - Double Encore",
+      extra: lang === "ko" ? " - 한번 더" : " - Once More",
+    };
+
+    return statusMessages[status] || "";
+  };
+
 
   return (
     <>
@@ -233,7 +248,7 @@ const SetlistComponent: React.FC<SetlistComponentProps> = ({
                                 noOfLines={2}
                                 lineHeight="short"
                               >
-                                {song.music.name}
+                                {song.music.name}{songStatus(song.status)}
                               </Text>
                             </Box>
                           ))}

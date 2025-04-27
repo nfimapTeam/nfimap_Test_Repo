@@ -60,12 +60,14 @@ const CustomSelect = styled(Select)`
   height: 40px;
   
   .ant-select-selector {
-    border-color: #9f7aea !important;
+    border-color: rgb(226, 232, 240);
     height: 40px;
     display: flex;
     align-items: center;
   }
-
+  &.ant-select-focused {
+      border-color: #9f7aea !important;
+  }
   &:hover .ant-select-selector {
     border-color: #9f7aea !important;
   }
@@ -327,26 +329,26 @@ const Home = () => {
           </InputGroup>
 
           <Flex width="100%" justifyContent="space-between" gap={4}>
-              <CustomSelect
-                value={selectedType}
-                onChange={(value) => setSelectedType(value as string)}
-                dropdownRender={(menu) => <CustomDropdown>{menu}</CustomDropdown>}
-                placeholder={t("selectConcertType")}
-              >
-                <Option value="">{t("all")}</Option>
-                <Option value={t("concertVal")}>{t("concert")}</Option>
-                <Option value={t("festivalVal")}>{t("festival")}</Option>
-                <Option value={t("eventVal")}>{t("event")}</Option>
-              </CustomSelect>
+            <CustomSelect
+              value={selectedType}
+              onChange={(value) => setSelectedType(value as string)}
+              dropdownRender={(menu) => <CustomDropdown>{menu}</CustomDropdown>}
+              placeholder={t("selectConcertType")}
+            >
+              <Option value="">{t("all")}</Option>
+              <Option value={t("concertVal")}>{t("concert")}</Option>
+              <Option value={t("festivalVal")}>{t("festival")}</Option>
+              <Option value={t("eventVal")}>{t("event")}</Option>
+            </CustomSelect>
 
-              <CustomSelect
-                value={sortOrder}
-                onChange={(value) => setSortOrder(value as string)}
-                dropdownRender={(menu) => <CustomDropdown>{menu}</CustomDropdown>}
-              >
-                <Option value={t("latest")}>{t("latest")}</Option>
-                <Option value={t("byName")}>{t("byName")}</Option>
-              </CustomSelect>
+            <CustomSelect
+              value={sortOrder}
+              onChange={(value) => setSortOrder(value as string)}
+              dropdownRender={(menu) => <CustomDropdown>{menu}</CustomDropdown>}
+            >
+              <Option value={t("latest")}>{t("latest")}</Option>
+              <Option value={t("byName")}>{t("byName")}</Option>
+            </CustomSelect>
 
             <FormControl display="flex" alignItems="center">
               <FormLabel htmlFor="show-past-events" mb="0">

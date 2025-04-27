@@ -210,8 +210,6 @@ const DetailPage: React.FC = () => {
     return moment(time, "HH:mm:ss").format("HH:mm");
   };
 
-  console.log(augmentedConcertDetail);
-
   const isPastEvent: boolean = !isEventTodayOrFuture(augmentedConcertDetail.date);
   const timeRemaining: TimeRemaining | null = calculateTimeRemaining(
     augmentedConcertDetail.ticketOpen.date,
@@ -350,18 +348,10 @@ const DetailPage: React.FC = () => {
               <Flex flexDirection="column" gap={3}>
                 <Flex>
                   {!(augmentedConcertDetail.type === "행사" || augmentedConcertDetail.type === "Event") && (
-                    <Badge
-                      colorScheme="green"
-                      fontSize="md"
-                      alignItems="center"
-                      overflow="visible"
-                      whiteSpace="normal"
-                    >
-                      <Text>
-                        {t("ticket_open")}: {augmentedConcertDetail.ticketOpen.date}{" "}
-                        {augmentedConcertDetail.ticketOpen.time} ({t("korea_time")})
-                      </Text>
-                    </Badge>
+                    <Text>
+                      {t("ticket_open")}: {augmentedConcertDetail.ticketOpen.date}{" "}
+                      {augmentedConcertDetail.ticketOpen.time} ({t("korea_time")})
+                    </Text>
                   )}
                 </Flex>
 
@@ -574,6 +564,7 @@ const DetailPage: React.FC = () => {
                 </TabPanel>
                 <TabPanel p={0}>
                   <SetlistComponent
+                    lang={lang}
                     cardBgColor={cardBgColor}
                     augmentedConcertDetail={augmentedConcertDetail}
                   />
