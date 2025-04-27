@@ -34,7 +34,7 @@ import {
   Download,
 } from "lucide-react";
 import NotFound from "../../components/NotFound";
-import Card from "../../components/Card";
+import Card from "../Home/component/Card";
 import moment from "moment";
 import { useTranslation } from "react-i18next";
 import Comments from "../../components/Comments";
@@ -72,6 +72,7 @@ interface Concert {
   ootd?: string[];
   setlist?: {
     date: string;
+    formatted_date: string;
     duration_minutes: number;
     music: {
       music: {
@@ -82,6 +83,9 @@ interface Concert {
       play_order: number;
     }[];
     start_time: string;
+  }[];
+  infoImage?: {
+    image: string;
   }[];
 }
 
@@ -202,11 +206,22 @@ const DetailPage: React.FC = () => {
     onOpen();
   };
 
+  const formatTime = (time: string) => {
+    return moment(time, "HH:mm:ss").format("HH:mm");
+  };
+
+  console.log(augmentedConcertDetail);
+
   const isPastEvent: boolean = !isEventTodayOrFuture(augmentedConcertDetail.date);
   const timeRemaining: TimeRemaining | null = calculateTimeRemaining(
     augmentedConcertDetail.ticketOpen.date,
     augmentedConcertDetail.ticketOpen.time
   );
+
+  const formatDuration = (minutes: number) => {
+    const hours = Math.floor(minutes / 60);
+    return lang === "ko" ? `${hours}시간` : `${hours} hour${hours !== 1 ? "s" : ""}`;
+  };
 
   return (
     <Box h={isMobileOrTablet ? "calc(100svh - 120px)" : "calc(100svh - 70px)"}>
@@ -255,13 +270,54 @@ const DetailPage: React.FC = () => {
                   <Icon as={MapPinIcon} color="gray.500" />
                   <Text fontSize="lg">{augmentedConcertDetail.location}</Text>
                 </HStack>
-                <HStack>
-                  <Icon as={CalendarIcon} color="gray.500" />
-                  <Text fontSize="lg">{augmentedConcertDetail.date.join(" - ")}</Text>
-                </HStack>
-                <HStack>
-                  <Icon as={TimerIcon} color="gray.500" />
-                  <Text fontSize="lg">{augmentedConcertDetail.startTime}</Text>
+                <HStack align="start">
+                  <Icon as={CalendarIcon} color="gray.500" mt={2} />
+                  <VStack align="start" spacing={2}>
+                    {augmentedConcertDetail.setlist && augmentedConcertDetail.setlist.length > 0 ? (
+                      augmentedConcertDetail.setlist.map((set, index) => (
+                        <Text
+                          key={index}
+                          fontSize={{ base: "md", md: "lg" }}
+                          py={0.5}
+                        >
+                          <Text as="span" fontWeight="medium">
+                            {set.formatted_date}
+                          </Text>
+                          <Text as="span" color="purple.600" fontWeight="semibold" ml={2}>
+                            {formatTime(set.start_time)}
+                          </Text>
+                          <Text as="span" color="gray.500" fontWeight="medium" ml={2}>
+                            ({formatDuration(set.duration_minutes)})
+                          </Text>
+                        </Text>
+                      ))
+                    ) : augmentedConcertDetail.concertDate && augmentedConcertDetail.concertDate.length > 0 ? (
+                      augmentedConcertDetail.concertDate.map((d, index) => (
+                        <Text
+                          key={index}
+                          fontSize={{ base: "md", md: "lg" }}
+                          py={0.5}
+                        >
+                          <Text as="span" fontWeight="medium">
+                            {moment(d.date).format("YYYY-MM-DD(ddd)")}
+                          </Text>
+                          <Text as="span" color="purple.600" fontWeight="semibold" ml={2}>
+                            {formatTime(d.start_time)}
+                          </Text>
+                          <Text as="span" color="gray.500" fontWeight="medium" ml={2}>
+                            ({formatDuration(d.duration_minutes)})
+                          </Text>
+                        </Text>
+                      ))
+                    ) : (
+                      <Text
+                        fontSize={{ base: "md", md: "lg" }}
+                        py={0.5}
+                      >
+                        -
+                      </Text>
+                    )}
+                  </VStack>
                 </HStack>
               </VStack>
             </Box>
@@ -341,7 +397,7 @@ const DetailPage: React.FC = () => {
                     as={Link}
                     href={augmentedConcertDetail.ticketLink[0]}
                     isExternal
-                    bg="brand.sub2"
+                    bg='#9F7AEA'
                     color="white"
                     _hover={{ bg: "brand.main" }}
                   >
@@ -356,120 +412,174 @@ const DetailPage: React.FC = () => {
 
         {augmentedConcertDetail && (
           <Box mt={8}>
-            {/* <Text fontSize="3xl" fontWeight="bold" mb={4} color="teal.600">
-              {t("performance_details")}
-            </Text> */}
+            <Tabs
+              variant="soft-rounded"
+              colorScheme="purple"
+              bg={cardBgColor}
+              borderRadius="2xl"
+              boxShadow="xl"
+              border="1px solid"
+              borderColor="purple.100"
+              p={6}
+            >
+              <TabList mb={6}>
+                <Tab
+                  w="50%"
+                  maxW="50%"
+                  onClick={(e) => e.currentTarget.focus()}
+                  fontSize={{ base: "md", md: "lg" }}
+                  fontWeight="semibold"
+                  color="gray.500"
+                  _selected={{
+                    color: "white",
+                    bg: "purple.400",
+                    borderColor: "purple.200",
+                  }}
+                  borderRadius="lg"
+                  px={4}
+                  py={2}
+                  textAlign="center"
+                  whiteSpace="nowrap"
+                  overflow="hidden"
+                  textOverflow="ellipsis"
+                >
+                  {t("info")}
+                </Tab>
+                <Tab
+                  w="50%"
+                  maxW="50%"
+                  onClick={(e) => e.currentTarget.focus()}
+                  fontSize={{ base: "md", md: "lg" }}
+                  fontWeight="semibold"
+                  color="gray.500"
+                  _selected={{
+                    color: "white",
+                    bg: "purple.400",
+                    borderColor: "purple.200"
+                  }}
+                  borderRadius="lg"
+                  px={4}
+                  py={2}
+                  textAlign="center"
+                  whiteSpace="nowrap"
+                  overflow="hidden"
+                  textOverflow="ellipsis"
+                >
+                  {t("setlist")}
+                </Tab>
+              </TabList>
 
-            <VStack spacing={6} align="stretch">
-              {augmentedConcertDetail.address && (
-                <Box bg={cardBgColor} p={6} border="1px solid"
-                  borderRadius="2xl"
-                  boxShadow="xl"
-                  borderColor="purple.100">
-                  <HStack mb={3}>
-                    <Icon as={InfoIcon} color="blue.600" />
-                    <Text fontSize="xl" fontWeight="bold" color="gray.700">
-                      {t("basic_info")}
-                    </Text>
-                  </HStack>
-                  <VStack align="start" spacing={3}>
-                    <Text fontSize="lg" color="gray.800">
-                      <strong>{t("address")}</strong>
-                    </Text>
-                    <Text fontSize="lg" color="gray.800">
-                      {"\u2022"} {augmentedConcertDetail.address}
-                    </Text>
-                    {augmentedConcertDetail.capacity && (
-                      <>
-                        <Text fontSize="lg" color="gray.800">
-                          <strong>{t("capacity")}</strong>
-                        </Text>
-                        <Text fontSize="lg" color="gray.800">
-                          {"\u2022"} {augmentedConcertDetail.capacity}
-                        </Text>
-                      </>
+              <TabPanels>
+                <TabPanel p={0}>
+                  <VStack spacing={6} align="stretch">
+                    {augmentedConcertDetail.address && (
+                      <Box>
+                        <HStack mb={3}>
+                          <Icon as={InfoIcon} color="blue.600" />
+                          <Text fontSize="xl" fontWeight="bold" color="gray.700">
+                            {t("basic_info")}
+                          </Text>
+                        </HStack>
+                        <VStack align="start" spacing={3}>
+                          <Text fontSize="lg" color="gray.800">
+                            <strong>{t("address")}</strong>
+                          </Text>
+                          <Text fontSize="lg" color="gray.800">
+                            {"\u2022"} {augmentedConcertDetail.address}
+                          </Text>
+                          {augmentedConcertDetail.capacity && (
+                            <>
+                              <Text fontSize="lg" color="gray.800">
+                                <strong>{t("capacity")}</strong>
+                              </Text>
+                              <Text fontSize="lg" color="gray.800">
+                                {"\u2022"} {augmentedConcertDetail.capacity}
+                              </Text>
+                            </>
+                          )}
+                          {augmentedConcertDetail.note && augmentedConcertDetail.note.length > 0 && (
+                            <>
+                              <Text fontSize="lg" color="gray.800">
+                                <strong>{t("notes")}</strong>
+                                <br />
+                              </Text>
+                              {augmentedConcertDetail.note.map((note: string, index: number) =>
+                                note.endsWith(".png") ||
+                                  note.endsWith(".jpg") ||
+                                  note.endsWith(".jpeg") ||
+                                  note.endsWith(".gif") ? (
+                                  <Image
+                                    key={index}
+                                    src={note}
+                                    alt={`노트 이미지 ${index + 1}`}
+                                    borderRadius="md"
+                                    boxShadow="md"
+                                    objectFit="cover"
+                                    w="100%"
+                                  />
+                                ) : (
+                                  <Text key={index} fontSize="lg" color="gray.600">
+                                    {"\u2022"} {note}
+                                  </Text>
+                                )
+                              )}
+                            </>
+                          )}
+                          <SimpleGrid columns={1} spacing={4}>
+                            {augmentedConcertDetail.infoImage && augmentedConcertDetail.infoImage.length > 0 && augmentedConcertDetail?.infoImage.map((info: { image: string }, index: number) =>
+                              info.image ? (
+                                <Image
+                                  key={index}
+                                  src={info.image}
+                                  alt={`좌석 배치도 ${index + 1}`}
+                                  borderRadius="md"
+                                  boxShadow="md"
+                                  objectFit="cover"
+                                  w="100%"
+                                />
+                              ) : null
+                            )}
+                          </SimpleGrid>
+                        </VStack>
+                      </Box>
                     )}
-                    {augmentedConcertDetail.note && augmentedConcertDetail.note.length > 0 && (
-                      <>
-                        <Text fontSize="lg" color="gray.800">
-                          <strong>{t("notes")}</strong>
-                          <br />
-                        </Text>
-                        {augmentedConcertDetail.note.map((note: string, index: number) =>
-                          note.endsWith(".png") || note.endsWith(".jpg") || note.endsWith(".jpeg") || note.endsWith(".gif") ? (
-                            <Image
-                              key={index}
-                              src={note}
-                              alt={`노트 이미지 ${index + 1}`}
-                              borderRadius="md"
-                              boxShadow="md"
-                              objectFit="cover"
-                              w="100%"
-                            />
-                          ) : (
-                            <Text key={index} fontSize="lg" color="gray.600">
-                              {"\u2022"} {note}
+                    {augmentedConcertDetail.seats &&
+                      augmentedConcertDetail.seats.length > 0 &&
+                      augmentedConcertDetail.seats.some((seat: { image: string }) => seat.image) && (
+                        <Box>
+                          <HStack mb={3}>
+                            <Icon as={UsersIcon} color="orange.600" />
+                            <Text fontSize="xl" fontWeight="bold" color="gray.700">
+                              {t("seat_map")}
                             </Text>
-                          )
-                        )}
-                      </>
-                    )}
+                          </HStack>
+                          <SimpleGrid columns={1} spacing={4}>
+                            {augmentedConcertDetail.seats.map((seat: { image: string }, index: number) =>
+                              seat.image ? (
+                                <Image
+                                  key={index}
+                                  src={seat.image}
+                                  alt={`좌석 배치도 ${index + 1}`}
+                                  borderRadius="md"
+                                  boxShadow="md"
+                                  objectFit="cover"
+                                  w="100%"
+                                />
+                              ) : null
+                            )}
+                          </SimpleGrid>
+                        </Box>
+                      )}
                   </VStack>
-                </Box>
-              )}
-              <SetlistComponent cardBgColor={cardBgColor} augmentedConcertDetail={augmentedConcertDetail} />
-              {/* {augmentedConcertDetail.ootd &&
-                augmentedConcertDetail.ootd.length > 0 &&
-                augmentedConcertDetail.ootd[0] !== "" && (
-                  <Box bg={cardBgColor} p={6} borderRadius="lg" boxShadow="lg">
-                    <HStack mb={3}>
-                      <Icon as={CameraIcon} color="purple.600" />
-                      <Text fontSize="xl" fontWeight="bold" color="gray.700">
-                        {t("costume")}
-                      </Text>
-                    </HStack>
-                    <SimpleGrid columns={1} spacing={4}>
-                      {augmentedConcertDetail.ootd.map((image, index) => (
-                        <Image
-                          key={index}
-                          src={image}
-                          alt={`공연 의상 ${index + 1}`}
-                          borderRadius="md"
-                          boxShadow="md"
-                          objectFit="cover"
-                          w="100%"
-                        />
-                      ))}
-                    </SimpleGrid>
-                  </Box>
-                )} */}
-
-              {augmentedConcertDetail.seats && augmentedConcertDetail.seats.length > 0 && augmentedConcertDetail.seats.some((seat: { image: string }) => seat.image) && (
-                <Box bg={cardBgColor} p={6} borderRadius="lg" boxShadow="lg">
-                  <HStack mb={3}>
-                    <Icon as={UsersIcon} color="orange.600" />
-                    <Text fontSize="xl" fontWeight="bold" color="gray.700">
-                      {t("seat_map")}
-                    </Text>
-                  </HStack>
-                  <SimpleGrid columns={1} spacing={4}>
-                    {augmentedConcertDetail.seats.map((seat: { image: string }, index: number) =>
-                      seat.image ? (
-                        <Image
-                          key={index}
-                          src={seat.image}
-                          alt={`좌석 배치도 ${index + 1}`}
-                          borderRadius="md"
-                          boxShadow="md"
-                          objectFit="cover"
-                          w="100%"
-                        />
-                      ) : null
-                    )}
-                  </SimpleGrid>
-                </Box>
-              )}
-            </VStack>
+                </TabPanel>
+                <TabPanel p={0}>
+                  <SetlistComponent
+                    cardBgColor={cardBgColor}
+                    augmentedConcertDetail={augmentedConcertDetail}
+                  />
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
           </Box>
         )}
       </Box>

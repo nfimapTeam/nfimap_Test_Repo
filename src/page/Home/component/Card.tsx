@@ -8,11 +8,15 @@ import {
   Badge,
   Button,
   Link,
+  useBreakpointValue,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { keyframes } from "@chakra-ui/react";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { TicketModal } from "../../DetailPage/components/TicketModal";
+import { TicketDrawer } from "../../DetailPage/components/Drawer";
 
 // Concert 타입 정의 (Home과 동일)
 interface Concert {
@@ -24,7 +28,7 @@ interface Concert {
   concertDate: { date: string; start_time: string; duration_minutes: number }[];
   startTime: string;
   artists: string[];
-  ticketLink: string;
+  ticketLink: string[];
   poster: string;
   lat: string | number;
   lng: string | number;
@@ -41,6 +45,7 @@ interface CardProps {
   isPastEvent: boolean;
   isTicketOpen: boolean;
   timeRemaining: { days: number; hours: number; minutes: number } | null;
+  lang: string;
   getButtonText: (
     concert: Concert,
     isPastEvent: boolean,
@@ -89,16 +94,31 @@ const Card = ({
   isTicketOpen,
   isPastEvent,
   timeRemaining,
+  lang,
   getButtonText,
   handleButtonClick,
 }: CardProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const isMobile = useBreakpointValue({ base: true, md: false });
+  const { isOpen: isDrawerOpen, onOpen: onDrawerOpen, onClose: onDrawerClose } = useDisclosure();
 
+  const handleTicketButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation(); // 카드 클릭 이벤트와 분리
+    if (isPastEvent) {
+      handleButtonClick(e, concert, isPastEvent); // 과거 이벤트는 기존 로직
+    } else if (concert.ticketLink.length === 1 && concert.ticketLink[0]) {
+      window.open(concert.ticketLink[0], "_blank"); // 링크 1개면 바로 이동
+    } else if (concert.ticketLink.length > 1) {
+      onDrawerOpen(); // 링크 2개 이상이면 모달/드로어 열기
+    }
+  };
   return (
     <Box
       position="relative"
       onClick={() => navigate(`/${concert.id}`)}
+      overflow="hidden" // ✅ 추가
+      borderRadius="md"
       sx={{
         transition: "transform 0.3s ease, box-shadow 0.3s ease",
         "&:hover": {
@@ -120,8 +140,8 @@ const Card = ({
           isTodayEvent
             ? `${borderGlow} 1.5s ease-in-out infinite`
             : isTicketOpen
-            ? `${lavenderGlow} 1.5s ease-in-out infinite`
-            : "none"
+              ? `${lavenderGlow} 1.5s ease-in-out infinite`
+              : "none"
         }
         position="relative"
         zIndex={1}
@@ -195,16 +215,16 @@ const Card = ({
                 )}
                 {(concert.type === "페스티벌" ||
                   concert.type === "Festival") && (
-                  <Badge
-                    bg="blue.100"
-                    color="blue.600"
-                    p="4px 8px"
-                    borderRadius={4}
-                    fontWeight="900"
-                  >
-                    {t("concert_type_festival")}
-                  </Badge>
-                )}
+                    <Badge
+                      bg="blue.100"
+                      color="blue.600"
+                      p="4px 8px"
+                      borderRadius={4}
+                      fontWeight="900"
+                    >
+                      {t("concert_type_festival")}
+                    </Badge>
+                  )}
                 {(concert.type === "행사" || concert.type === "Event") && (
                   <Badge
                     bg="yellow.100"
@@ -218,62 +238,75 @@ const Card = ({
                 )}
                 {(concert.performanceType === "단독" ||
                   concert.performanceType === "Solo") && (
-                  <Badge
-                    bg="purple.100"
-                    color="purple.600"
-                    p="4px 8px"
-                    borderRadius={4}
-                    fontWeight="900"
-                  >
-                    {t("performance_type_solo")}
-                  </Badge>
-                )}
+                    <Badge
+                      bg="purple.100"
+                      color="purple.600"
+                      p="4px 8px"
+                      borderRadius={4}
+                      fontWeight="900"
+                    >
+                      {t("performance_type_solo")}
+                    </Badge>
+                  )}
                 {(concert.performanceType === "합동" ||
                   concert.performanceType === "Joint") && (
-                  <Badge
-                    bg="teal.100"
-                    color="teal.600"
-                    p="4px 8px"
-                    borderRadius={4}
-                    fontWeight="900"
-                  >
-                    {t("performance_type_joint")}
-                  </Badge>
-                )}
+                    <Badge
+                      bg="teal.100"
+                      color="teal.600"
+                      p="4px 8px"
+                      borderRadius={4}
+                      fontWeight="900"
+                    >
+                      {t("performance_type_joint")}
+                    </Badge>
+                  )}
                 {(concert.performanceType === "출연" ||
                   concert.performanceType === "Guest") && (
-                  <Badge
-                    bg="orange.100"
-                    color="orange.600"
-                    p="4px 8px"
-                    borderRadius={4}
-                    fontWeight="900"
-                  >
-                    {t("performance_type_guest")}
-                  </Badge>
-                )}
+                    <Badge
+                      bg="orange.100"
+                      color="orange.600"
+                      p="4px 8px"
+                      borderRadius={4}
+                      fontWeight="900"
+                    >
+                      {t("performance_type_guest")}
+                    </Badge>
+                  )}
               </HStack>
             </Box>
           </VStack>
         </HStack>
         {!isPastEvent && (
-          <Link href={concert.ticketLink} isExternal>
-            <Button
-              mt={4}
-              border="2px solid #eee"
-              bg="brand.sub2"
-              _hover={{ bg: "brand.main" }}
-              width="100%"
-              fontSize="13px"
-              onClick={(e) => handleButtonClick(e, concert, isPastEvent)}
-              isDisabled={concert.ticketLink === ""}
-              color="white"
-            >
-              {getButtonText(concert, isPastEvent, timeRemaining)}
-            </Button>
-          </Link>
+          <Button
+            mt={4}
+            border="2px solid #eee"
+            bg="purple.400"
+            _hover={{ bg: "brand.main" }}
+            width="100%"
+            fontSize="13px"
+            onClick={handleTicketButtonClick}
+            isDisabled={concert.ticketLink.length === 0 || concert.ticketLink[0] === ""}
+            color="white"
+          >
+            {getButtonText(concert, isPastEvent, timeRemaining)}
+          </Button>
         )}
       </Box>
+      {isMobile ? (
+        <TicketDrawer
+          links={concert.ticketLink}
+          isOpen={isDrawerOpen}
+          onClose={onDrawerClose}
+          lang={lang}
+        />
+      ) : (
+        <TicketModal
+          links={concert.ticketLink}
+          isOpen={isDrawerOpen}
+          onClose={onDrawerClose}
+          lang={lang}
+        />
+      )}
     </Box>
   );
 };

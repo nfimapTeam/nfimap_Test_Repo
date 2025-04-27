@@ -103,5 +103,6 @@
   "setlist_copied_description": "好きな場所に貼り付けられます。",
   "copy_failed": "コピーに失敗しました",
   "copy_failed_description": "セットリストのコピー中に問題が発生しました。",
-  "no_ootd_available": "OOTDはまだ投稿されていません"
+  "no_ootd_available": "OOTDはまだ投稿されていません",
+  "info": "情報"
 }

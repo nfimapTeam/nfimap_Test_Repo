@@ -58,8 +58,8 @@ const FnbButton = ({isMobileOrTablet} : FnbButtonProps) => {
           aria-label="FNB 버튼"
           icon={isOpen ? <RiCloseLine size={24} /> : <RiAddLine size={24} />}
           onClick={() => setIsOpen(!isOpen)}
-          bg={isOpen ? "white" : "blue.500"}
-          color={isOpen ? "blue.500" : "white"}
+          bg={isOpen ? "white" : "#9F7AEA"}
+          color={isOpen ? "#9F7AEA" : "white"}
           isRound
           width="56px"
           height="56px"

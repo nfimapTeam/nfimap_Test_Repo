@@ -103,5 +103,6 @@
   "setlist_copied_description": "이제 원하는 곳에 붙여넣을 수 있어요.",
   "copy_failed": "복사 실패",
   "copy_failed_description": "셋리스트 복사 중 문제가 발생했어요.",
-  "no_ootd_available": "아직 OOTD가 등록되지 않았습니다"
+  "no_ootd_available": "아직 OOTD가 등록되지 않았습니다",
+  "info": "정보"
 }

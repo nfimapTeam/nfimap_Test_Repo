@@ -8,11 +8,11 @@ const Footer = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const getLinkColor = (path: string) => {
-    return location.pathname === path ? "brand.sub2" : "black";
+    return location.pathname === path ? "purple.400" : "black";
   };
 
   const getLinkColorIcon = (path: string) => {
-    return location.pathname === path ? "#0597F2" : "black";
+    return location.pathname === path ? "#9F7AEA" : "black";
   };
 
   return (

@@ -14,19 +14,18 @@ import {
 } from "@chakra-ui/react";
 import { SearchIcon, CloseIcon } from "@chakra-ui/icons";
 import { Select } from "antd";
-import { Option } from "antd/es/mentions";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { toggleState } from "../atom/toggleState";
-import Card from "../components/Card";
+import { toggleState } from "../../atom/toggleState";
+import Card from "./component/Card";
 import "react-calendar/dist/Calendar.css";
-import "../style/custom.css";
 import { Helmet } from "react-helmet-async";
-import NoData from "../components/NoData";
+import NoData from "../../components/NoData";
 import { useTranslation } from "react-i18next";
-import BirrthDay from "../components/BirthDay";
-import { useConcertList } from "../api/concerts/concertsApi";
+import BirrthDay from "../../components/BirthDay";
+import { useConcertList } from "../../api/concerts/concertsApi";
+import styled from "@emotion/styled";
 
 // RawConcert: API에서 오는 원시 데이터 타입
 interface RawConcert {
@@ -38,7 +37,7 @@ interface RawConcert {
   concertDate: { date: string; start_time: string; duration_minutes: number }[];
   startTime: string;
   artists: string[];
-  ticketLink: string;
+  ticketLink: string[];
   poster: string;
   lat: string | number;
   lng: string | number;
@@ -52,6 +51,32 @@ interface RawConcert {
 interface Concert extends RawConcert {
   date: string[];
 }
+
+const { Option } = Select;
+
+// Select 자체 스타일
+const CustomSelect = styled(Select)`
+  width: 200px;
+  height: 40px;
+  
+  .ant-select-selector {
+    border-color: #9f7aea !important;
+    height: 40px;
+    display: flex;
+    align-items: center;
+  }
+
+  &:hover .ant-select-selector {
+    border-color: #9f7aea !important;
+  }
+`;
+
+// 드롭다운 안 옵션 hover 스타일
+const CustomDropdown = styled.div`
+  .ant-select-item-option-active {
+    background-color: rgb(233, 216, 253) !important;
+  }
+`;
 
 const Home = () => {
   const { t, i18n } = useTranslation();
@@ -111,7 +136,7 @@ const Home = () => {
       return t("performanceInfo");
     } else if (concert.ticketOpen.date === "0000-00-00") {
       return t("waitingForTicketSchedule");
-    } else if (concert.ticketLink === "") {
+    } else if (concert.ticketLink.length === 0) {
       return timeRemaining
         ? t("timeUntilTicketing", {
           days: timeRemaining.days,
@@ -278,9 +303,9 @@ const Home = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               mb={4}
-              focusBorderColor="#4BA4F2"
+              focusBorderColor='#9F7AEA'
               bg="whiteAlpha.900"
-              _hover={{ borderColor: "#79AEF2" }}
+              _hover={{ borderColor: '#9F7AEA' }}
               _placeholder={{ color: "gray.400" }}
               size="lg"
               borderRadius="md"
@@ -302,35 +327,26 @@ const Home = () => {
           </InputGroup>
 
           <Flex width="100%" justifyContent="space-between" gap={4}>
-            <Select
-              value={selectedType}
-              onChange={(value) => setSelectedType(value)}
-              style={{ width: 200, height: 40 }}
-              dropdownStyle={{
-                backgroundColor: "#ffffff",
-                borderColor: "#4BA4F2",
-                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-              }}
-              placeholder={t("selectConcertType")}
-            >
-              <Option value="">{t("all")}</Option>
-              <Option value={t("concertVal")}>{t("concert")}</Option>
-              <Option value={t("festivalVal")}>{t("festival")}</Option>
-              <Option value={t("eventVal")}>{t("event")}</Option>
-            </Select>
-            <Select
-              value={sortOrder}
-              onChange={(value) => setSortOrder(value)}
-              style={{ width: 200, height: 40 }}
-              dropdownStyle={{
-                backgroundColor: "#ffffff",
-                borderColor: "#4BA4F2",
-                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-              }}
-            >
-              <Option value={t("latest")}>{t("latest")}</Option>
-              <Option value={t("byName")}>{t("byName")}</Option>
-            </Select>
+              <CustomSelect
+                value={selectedType}
+                onChange={(value) => setSelectedType(value as string)}
+                dropdownRender={(menu) => <CustomDropdown>{menu}</CustomDropdown>}
+                placeholder={t("selectConcertType")}
+              >
+                <Option value="">{t("all")}</Option>
+                <Option value={t("concertVal")}>{t("concert")}</Option>
+                <Option value={t("festivalVal")}>{t("festival")}</Option>
+                <Option value={t("eventVal")}>{t("event")}</Option>
+              </CustomSelect>
+
+              <CustomSelect
+                value={sortOrder}
+                onChange={(value) => setSortOrder(value as string)}
+                dropdownRender={(menu) => <CustomDropdown>{menu}</CustomDropdown>}
+              >
+                <Option value={t("latest")}>{t("latest")}</Option>
+                <Option value={t("byName")}>{t("byName")}</Option>
+              </CustomSelect>
 
             <FormControl display="flex" alignItems="center">
               <FormLabel htmlFor="show-past-events" mb="0">
@@ -340,6 +356,11 @@ const Home = () => {
                 id="show-past-events"
                 isChecked={toggle}
                 onChange={() => setToggle(!toggle)}
+                sx={{
+                  '.chakra-switch__track': {
+                    bg: toggle ? '#9F7AEA' : 'gray.200',
+                  },
+                }}
               />
             </FormControl>
           </Flex>
@@ -363,6 +384,7 @@ const Home = () => {
             return (
               <Card
                 key={index}
+                lang={lang}
                 concert={concert}
                 isTodayEvent={isTodayEvent}
                 isTicketOpen={isTicketOpen}
