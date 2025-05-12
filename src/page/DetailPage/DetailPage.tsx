@@ -73,7 +73,7 @@ interface Concert {
   setlist?: {
     date: string;
     formatted_date: string;
-    duration_minutes: number;
+    duration_minutes?: number;
     music: {
       music: {
         name: string;
@@ -130,27 +130,39 @@ const DetailPage: React.FC = () => {
     return <NotFound content="정보가 없습니다." />;
   }
 
+  const hasSetlist = Array.isArray(concertDetail.setlist) && concertDetail.setlist.length > 0;
+  const hasConcertDate = Array.isArray(concertDetail.concertDate) && concertDetail.concertDate.length > 0;
+
   const concertDates: string[] =
-    concertDetail.setlist?.map((set: { date: string }) => set.date) ||
-    concertDetail.concertDate.map((d: { date: string }) => d.date) ||
-    [];
+    hasSetlist
+      ? concertDetail.setlist.map((set: { date: string }) => set.date)
+      : hasConcertDate
+        ? concertDetail.concertDate.map((d: { date: string }) => d.date)
+        : [];
+
   const augmentedConcertDetail: Concert = {
     ...concertDetail,
     date: concertDates,
     concertDate:
-      concertDetail.concertDate ||
-      (concertDetail.setlist?.map(
-        (set: { date: string; start_time: string; duration_minutes: string }) => ({
-          date: set.date,
-          start_time: set.start_time,
-          duration_minutes: set.duration_minutes,
-        })
-      ) || []),
+      hasConcertDate
+        ? concertDetail.concertDate
+        : hasSetlist
+          ? concertDetail.setlist.map(
+            (set: { date: string; start_time: string; duration_minutes: string }) => ({
+              date: set.date,
+              start_time: set.start_time,
+              duration_minutes: set.duration_minutes,
+            })
+          )
+          : [],
     durationMinutes:
-      concertDetail.setlist?.[0]?.duration_minutes ||
-      concertDetail.concertDate[0]?.duration_minutes ||
-      0,
+      hasSetlist && concertDetail.setlist[0]?.duration_minutes
+        ? concertDetail.setlist[0].duration_minutes
+        : hasConcertDate && concertDetail.concertDate[0]?.duration_minutes
+          ? concertDetail.concertDate[0].duration_minutes
+          : 0,
   };
+
 
   const isEventTodayOrFuture = (dates: string[]): boolean => {
     if (!dates || dates.length === 0) return false;
@@ -216,11 +228,6 @@ const DetailPage: React.FC = () => {
     augmentedConcertDetail.ticketOpen.time
   );
 
-  const formatDuration = (minutes: number) => {
-    const hours = Math.floor(minutes / 60);
-    return lang === "ko" ? `${hours}시간` : `${hours} hour${hours !== 1 ? "s" : ""}`;
-  };
-
   return (
     <Box h={isMobileOrTablet ? "calc(100svh - 120px)" : "calc(100svh - 70px)"}>
       <Box p="16px 16px 100px 16px" width="100%" maxWidth="1200px" mx="auto">
@@ -285,7 +292,7 @@ const DetailPage: React.FC = () => {
                             {formatTime(set.start_time)}
                           </Text>
                           <Text as="span" color="gray.500" fontWeight="medium" ml={2}>
-                            ({formatDuration(set.duration_minutes)})
+                            {set.duration_minutes}{set.duration_minutes && t("minutes")}
                           </Text>
                         </Text>
                       ))
@@ -303,7 +310,7 @@ const DetailPage: React.FC = () => {
                             {formatTime(d.start_time)}
                           </Text>
                           <Text as="span" color="gray.500" fontWeight="medium" ml={2}>
-                            ({formatDuration(d.duration_minutes)})
+                            {d.duration_minutes}{d.duration_minutes && t("minutes")}
                           </Text>
                         </Text>
                       ))
