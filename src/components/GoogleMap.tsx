@@ -154,7 +154,7 @@ const GoogleMap = ({
               </p>
             </div>
             </div>
-            <button id="detailBtn-${concert.name.replace(/\s+/g, "-")}" style="margin-top: 5px; padding: 4px 8px; width: 100%; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; background-color: #0597F2; color: white; cursor: pointer; transition: background-color 0.3s, color 0.3s;">
+            <button id="detailBtn-${concert.name.replace(/\s+/g, "-")}" style="margin-top: 5px; padding: 4px 8px; width: 100%; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; background-color: #9F7AEA; color: white; cursor: pointer; transition: background-color 0.3s, color 0.3s;">
               ${t("View Details")}
             </button>
           </div>

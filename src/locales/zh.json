@@ -27,7 +27,6 @@
   "map_global": "海外演出",
   "mapSearchPlaceholder": "按名称或地点搜索.",
   "mapSelectPlaceholder": "选择类型",
-  "mapSelectPlaceholder": "选择类型",
   "mapTypeOptions": {
     "mapAll": "全部",
     "mapConcert": "音乐会",
@@ -105,5 +104,7 @@
   "copy_failed": "复制失败",
   "copy_failed_description": "复制歌单时出错了。",
   "no_ootd_available": "OOTD尚未发布",
-  "info": "信息"
+  "show_details": "演唱会详情",
+  "show_record": "演唱会记录",
+  "selectTicketProvider": "选择购票渠道"
 }

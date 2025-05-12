@@ -94,124 +94,134 @@ const MapPage = () => {
       setNfiRoadState(nfiRoadDataEng);
     }
   }, [i18n.language]);
-
-useEffect(() => {
-  // concertsData가 없으면 종료
-  if (!concertsData) return;
-
-  const currentDate: Date = new Date();
-  currentDate.setHours(0, 0, 0, 0);
-
-  // 국내 콘서트 (globals: false)
-  const domesticConcerts: Concert[] = concertsData.filter(
-    (concert: Concert): boolean => !concert.globals
-  );
-
-  const filteredConcerts: Concert[] = domesticConcerts.filter(
-    (concert: Concert): boolean => {
-      const matchesQuery: boolean =
-        concert.name.toLowerCase().includes(query.toLowerCase()) ||
-        concert.location.toLowerCase().includes(query.toLowerCase());
-
-      const concertDates: Date[] = concert.concertDate.map(
-        (d: { date: string; start_time: string; duration_minutes: number }): Date =>
-          new Date(d.date)
-      );
-      const latestDate: Date = new Date(
-        Math.max(...concertDates.map((date: Date): number => date.getTime()))
-      );
-      const isUpcomingOrToday: boolean = latestDate >= currentDate;
-
-      const matchesType: boolean = selectedType
-        ? concert.type === selectedType
-        : true;
-
-      return matchesQuery && (showPastConcerts ? true : isUpcomingOrToday) && matchesType;
+  const translateType = (type: string) => {
+    switch (type.toLowerCase().trim()) {
+      case "콘서트":
+      case "concert":
+        return t("concert");
+      case "페스티벌":
+      case "festival":
+        return t("festival");
+      case "행사":
+      case "event":
+        return t("event");
+      default:
+        return type;
     }
-  );
-
-  filteredConcerts.sort(
-    (a: Concert, b: Concert): number => {
-      const dateA: number = Math.max(
-        ...a.concertDate.map(
-          (d: { date: string; start_time: string; duration_minutes: number }): number =>
-            new Date(d.date).getTime()
-        )
-      );
-      const dateB: number = Math.max(
-        ...b.concertDate.map(
-          (d: { date: string; start_time: string; duration_minutes: number }): number =>
-            new Date(d.date).getTime()
-        )
-      );
-      return dateA - dateB;
-    }
-  );
-
-  setConcertState(filteredConcerts);
-}, [concertsData, query, showPastConcerts, selectedType]);
-
-// 두 번째 useEffect: 해외 콘서트 필터링 및 정렬
-useEffect(() => {
-  // concertsData가 없으면 종료
-  if (!concertsData) return;
-
-  const currentDate: Date = new Date();
-  currentDate.setHours(0, 0, 0, 0);
-
-  // 해외 콘서트 (globals: true)
-  const globalConcerts: Concert[] = concertsData.filter(
-    (concert: Concert): boolean => concert.globals
-  );
-
-  const filteredGlobalConcerts: Concert[] = globalConcerts.filter(
-    (concert: Concert): boolean => {
-      const matchesQuery: boolean =
-        concert.name.toLowerCase().includes(globalQuery.toLowerCase()) ||
-        concert.location.toLowerCase().includes(globalQuery.toLowerCase());
-
-      const concertDates: Date[] = concert.concertDate.map(
-        (d: { date: string; start_time: string; duration_minutes: number }): Date =>
-          new Date(d.date)
-      );
-      const latestDate: Date = new Date(
-        Math.max(...concertDates.map((date: Date): number => date.getTime()))
-      );
-      const isUpcomingOrToday: boolean = latestDate >= currentDate;
-
-      const matchesType: boolean = selectedGlobalType
-        ? concert.type === selectedGlobalType
-        : true;
-
-      return matchesQuery && (showPastConcertsGlobal ? true : isUpcomingOrToday) && matchesType;
-    }
-  );
-
-  filteredGlobalConcerts.sort(
-    (a: Concert, b: Concert): number => {
-      const dateA: number = Math.max(
-        ...a.concertDate.map(
-          (d: { date: string; start_time: string; duration_minutes: number }): number =>
-            new Date(d.date).getTime()
-        )
-      );
-      const dateB: number = Math.max(
-        ...b.concertDate.map(
-          (d: { date: string; start_time: string; duration_minutes: number }): number =>
-            new Date(d.date).getTime()
-        )
-      );
-      return dateA - dateB;
-    }
-  );
-
-  setGlobalConcertState(filteredGlobalConcerts);
-}, [concertsData, globalQuery, showPastConcertsGlobal, selectedGlobalType]);
+  };
 
   useEffect(() => {
-    console.log(globalConcertState);
-    console.log(concertState);
-  }, [concertState, globalConcertState]);
+    // concertsData가 없으면 종료
+    if (!concertsData) return;
+
+    const currentDate: Date = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+
+    // 국내 콘서트 (globals: false)
+    const domesticConcerts: Concert[] = concertsData.filter(
+      (concert: Concert): boolean => !concert.globals
+    );
+
+    const filteredConcerts: Concert[] = domesticConcerts.filter(
+      (concert: Concert): boolean => {
+        const matchesQuery: boolean =
+          concert.name.toLowerCase().includes(query.toLowerCase()) ||
+          concert.location.toLowerCase().includes(query.toLowerCase());
+
+        const concertDates: Date[] = concert.concertDate.map(
+          (d: { date: string; start_time: string; duration_minutes: number }): Date =>
+            new Date(d.date)
+        );
+        const latestDate: Date = new Date(
+          Math.max(...concertDates.map((date: Date): number => date.getTime()))
+        );
+        const isUpcomingOrToday: boolean = latestDate >= currentDate;
+
+        const matchesType: boolean = selectedType
+          ? concert.type === translateType(selectedType)
+          : true;
+
+        return matchesQuery && (showPastConcerts ? true : isUpcomingOrToday) && matchesType;
+      }
+    );
+
+    filteredConcerts.sort(
+      (a: Concert, b: Concert): number => {
+        const dateA: number = Math.max(
+          ...a.concertDate.map(
+            (d: { date: string; start_time: string; duration_minutes: number }): number =>
+              new Date(d.date).getTime()
+          )
+        );
+        const dateB: number = Math.max(
+          ...b.concertDate.map(
+            (d: { date: string; start_time: string; duration_minutes: number }): number =>
+              new Date(d.date).getTime()
+          )
+        );
+        return dateA - dateB;
+      }
+    );
+
+    setConcertState(filteredConcerts);
+  }, [concertsData, query, showPastConcerts, selectedType]);
+
+  // 두 번째 useEffect: 해외 콘서트 필터링 및 정렬
+  useEffect(() => {
+    // concertsData가 없으면 종료
+    if (!concertsData) return;
+
+    const currentDate: Date = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+
+    // 해외 콘서트 (globals: true)
+    const globalConcerts: Concert[] = concertsData.filter(
+      (concert: Concert): boolean => concert.globals
+    );
+
+    const filteredGlobalConcerts: Concert[] = globalConcerts.filter(
+      (concert: Concert): boolean => {
+        const matchesQuery: boolean =
+          concert.name.toLowerCase().includes(globalQuery.toLowerCase()) ||
+          concert.location.toLowerCase().includes(globalQuery.toLowerCase());
+
+        const concertDates: Date[] = concert.concertDate.map(
+          (d: { date: string; start_time: string; duration_minutes: number }): Date =>
+            new Date(d.date)
+        );
+        const latestDate: Date = new Date(
+          Math.max(...concertDates.map((date: Date): number => date.getTime()))
+        );
+        const isUpcomingOrToday: boolean = latestDate >= currentDate;
+
+        const matchesType: boolean = selectedGlobalType
+          ? concert.type === selectedGlobalType
+          : true;
+
+        return matchesQuery && (showPastConcertsGlobal ? true : isUpcomingOrToday) && matchesType;
+      }
+    );
+
+    filteredGlobalConcerts.sort(
+      (a: Concert, b: Concert): number => {
+        const dateA: number = Math.max(
+          ...a.concertDate.map(
+            (d: { date: string; start_time: string; duration_minutes: number }): number =>
+              new Date(d.date).getTime()
+          )
+        );
+        const dateB: number = Math.max(
+          ...b.concertDate.map(
+            (d: { date: string; start_time: string; duration_minutes: number }): number =>
+              new Date(d.date).getTime()
+          )
+        );
+        return dateA - dateB;
+      }
+    );
+
+    setGlobalConcertState(filteredGlobalConcerts);
+  }, [concertsData, globalQuery, showPastConcertsGlobal, selectedGlobalType]);
 
   useEffect(() => {
     let concerts;

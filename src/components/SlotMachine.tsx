@@ -99,7 +99,7 @@ const SlotMachine = ({ textData, youtubeUrl }: Props) => {
           <IconButton
             onClick={handleClick}
             isDisabled={!isClickable}
-            colorScheme="blue"
+            colorScheme="purple"
             aria-label="추천곡 시작"
             height="24px"
             icon={<RiMusic2Line />}

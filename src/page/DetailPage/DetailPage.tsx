@@ -102,7 +102,7 @@ const DetailPage: React.FC = () => {
   const cardBgColor = useColorModeValue("white", "gray.800");
   const currentTime = moment();
   const [allConcerts, setAllConcerts] = useState<Concert[]>([]);
-  const [lang, setLang] = useState<"ko" | "en">("ko");
+  const [lang, setLang] = useState("");
   const isMobileOrTablet = useBreakpointValue({ base: true, md: true, lg: false });
   const { data: concertDetail, refetch: refetchConcertDetail, isLoading } = useConcertDetail(id ?? "", lang);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -329,9 +329,9 @@ const DetailPage: React.FC = () => {
               </Text>
               <Flex wrap="wrap" gap={2}>
                 {augmentedConcertDetail.artists.map((artist: string, index: number) => (
-                  <Badge key={index} colorScheme="purple" fontSize="md">
-                    {artist}
-                  </Badge>
+                  <Box key={index} fontSize="md">
+                    <Text as="span" fontWeight={artist === "N.Flying" ? "bold" : "md"} color={artist === "N.Flying" ? "purple.500" : "black"}>{artist}</Text>
+                  </Box>
                 ))}
               </Flex>
             </Box>
@@ -359,9 +359,9 @@ const DetailPage: React.FC = () => {
                   <>
                     <Button
                       onClick={onDrawerOpen} // 드로어든 모달이든 여는 트리거는 이걸로 통일
-                      bg="brand.sub2"
+                      bg="#9F7AEA"
                       color="white"
-                      _hover={{ bg: "brand.main" }}
+                      _hover={{ bg: "#9F7AEA" }}
                     >
                       {t("view_ticket_sites")}
                     </Button>
@@ -372,6 +372,7 @@ const DetailPage: React.FC = () => {
                         isOpen={isDrawerOpen}
                         onClose={onDrawerClose}
                         lang={lang}
+                        t={t}
                       />
                     ) : (
                       <TicketModal
@@ -379,6 +380,7 @@ const DetailPage: React.FC = () => {
                         isOpen={isDrawerOpen} // 똑같이 드로어용 상태 재활용
                         onClose={onDrawerClose}
                         lang={lang}
+                        t={t}
                       />
                     )}
                   </>
@@ -433,7 +435,7 @@ const DetailPage: React.FC = () => {
                   overflow="hidden"
                   textOverflow="ellipsis"
                 >
-                  {t("info")}
+                  {t("show_details")}
                 </Tab>
                 <Tab
                   w="50%"
@@ -455,7 +457,7 @@ const DetailPage: React.FC = () => {
                   overflow="hidden"
                   textOverflow="ellipsis"
                 >
-                  {t("setlist")}
+                  {t("show_record")}
                 </Tab>
               </TabList>
 

@@ -239,7 +239,7 @@ const SetlistComponent: React.FC<SetlistComponentProps> = ({
                                 mr={4}
                                 flexShrink={0}
                               >
-                                {songIndex + 1}.
+                                {(songIndex + 1).toString().padStart(2, '0')}.
                               </Text>
                               <Text
                                 fontSize={tabFontSize}

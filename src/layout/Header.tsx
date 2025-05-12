@@ -1,9 +1,18 @@
-// Header.tsx
 import React, { useEffect } from "react";
-import { Box, Flex, Image, useBreakpointValue } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Image,
+  useBreakpointValue,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Button,
+} from "@chakra-ui/react";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Select } from "antd";
 import NavItems from "./NavItems";
 
 const Header = () => {
@@ -12,12 +21,12 @@ const Header = () => {
   // 언어 변경 및 세션 스토리지에 저장하는 함수
   const changeLanguage = (value: string) => {
     i18n.changeLanguage(value);
-    sessionStorage.setItem("preferredLanguage", value);
+    localStorage.setItem("preferredLanguage", value);
   };
 
   // 컴포넌트가 마운트될 때 세션에서 언어 설정 불러오기
   useEffect(() => {
-    const savedLanguage = sessionStorage.getItem("preferredLanguage");
+    const savedLanguage = localStorage.getItem("preferredLanguage");
     if (savedLanguage) {
       i18n.changeLanguage(savedLanguage);
     }
@@ -59,21 +68,100 @@ const Header = () => {
             </Link>
           </Flex>
           <Box position="absolute" right="16px">
-            <Select
-              onChange={changeLanguage}
-              value={i18n.language}
-              style={{ width: 100, height: 40 }}
-              dropdownStyle={{
-                backgroundColor: "#ffffff",
-                borderColor: "#4BA4F2",
-                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-              }}
-            >
-              <Select.Option value="ko">한국어</Select.Option>
-              <Select.Option value="en">English</Select.Option>
-              <Select.Option value="ja">日本語</Select.Option>
-              <Select.Option value="zh">中文</Select.Option>
-            </Select>
+            <Menu>
+              <MenuButton
+                as={Button}
+                rightIcon={<ChevronDownIcon />}
+                bg="white"
+                borderWidth="1px"
+                color="gray.800"
+                fontSize="sm"
+                fontWeight="medium"
+                height="40px"
+                width="100px"
+                borderRadius="md"
+                boxShadow="sm"
+                _hover={{
+                  borderColor: "purple.400",
+                  boxShadow: "md",
+                }}
+                _active={{
+                  bg: "purple.50",
+                  borderColor: "purple.500",
+                }}
+                _focus={{
+                  borderColor: "purple.500",
+                  boxShadow: "0 0 0 1px #9F7AEA",
+                }}
+                textAlign="left"
+                justifyContent="space-between"
+                px={3}
+              >
+                {i18n.language === "ko" ? "한국어" : 
+                 i18n.language === "en" ? "English" : 
+                 i18n.language === "ja" ? "日本語" : 
+                 i18n.language === "zh" ? "中文" : i18n.language}
+              </MenuButton>
+              <MenuList
+                bg="white"
+                borderColor="purple.200"
+                borderRadius="md"
+                boxShadow="lg"
+                minW="100px"
+                zIndex={10}
+                py={1}
+                mt={1}
+              >
+                <MenuItem
+                  onClick={() => changeLanguage("ko")}
+                  bg="white"
+                  color="gray.800"
+                  fontSize="sm"
+                  _hover={{ bg: "purple.50", color: "purple.700" }}
+                  _focus={{ bg: "purple.50" }}
+                  px={4}
+                  py={2}
+                >
+                  한국어
+                </MenuItem>
+                <MenuItem
+                  onClick={() => changeLanguage("en")}
+                  bg="white"
+                  color="gray.800"
+                  fontSize="sm"
+                  _hover={{ bg: "purple.50", color: "purple.700" }}
+                  _focus={{ bg: "purple.50" }}
+                  px={4}
+                  py={2}
+                >
+                  English
+                </MenuItem>
+                <MenuItem
+                  onClick={() => changeLanguage("ja")}
+                  bg="white"
+                  color="gray.800"
+                  fontSize="sm"
+                  _hover={{ bg: "purple.50", color: "purple.700" }}
+                  _focus={{ bg: "purple.50" }}
+                  px={4}
+                  py={2}
+                >
+                  日本語
+                </MenuItem>
+                <MenuItem
+                  onClick={() => changeLanguage("zh")}
+                  bg="white"
+                  color="gray.800"
+                  fontSize="sm"
+                  _hover={{ bg: "purple.50", color: "purple.700" }}
+                  _focus={{ bg: "purple.50" }}
+                  px={4}
+                  py={2}
+                >
+                  中文
+                </MenuItem>
+              </MenuList>
+            </Menu>
           </Box>
         </>
       ) : (
@@ -82,7 +170,7 @@ const Header = () => {
           {/* Left Logo */}
           <Link to="/">
             <Flex alignItems="center">
-              <Image src={logoSrc} alt="Nfimap Logo" height="150px"/>
+              <Image src={logoSrc} alt="Nfimap Logo" height="150px" />
             </Flex>
           </Link>
           {/* Navigation Items (Centered-Right) */}
@@ -91,21 +179,100 @@ const Header = () => {
           </Flex>
           {/* Language Dropdown (Far Right) */}
           <Box pr="16px">
-            <Select
-              onChange={changeLanguage}
-              value={i18n.language}
-              style={{ width: 100, height: 40 }}
-              dropdownStyle={{
-                backgroundColor: "#ffffff",
-                borderColor: "#4BA4F2",
-                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-              }}
-            >
-              <Select.Option value="ko">한국어</Select.Option>
-              <Select.Option value="en">English</Select.Option>
-              <Select.Option value="ja">日本語</Select.Option>
-              <Select.Option value="zh">中文</Select.Option>
-            </Select>
+            <Menu>
+              <MenuButton
+                as={Button}
+                rightIcon={<ChevronDownIcon />}
+                bg="white"
+                borderColor="purple.200"
+                borderWidth="1px"
+                color="gray.800"
+                fontSize="sm"
+                fontWeight="medium"
+                height="40px"
+                width="100px"
+                borderRadius="md"
+                boxShadow="sm"
+                _hover={{
+                  borderColor: "purple.400",
+                  boxShadow: "md",
+                }}
+                _active={{
+                  bg: "purple.50",
+                  borderColor: "purple.500",
+                }}
+                _focus={{
+                  borderColor: "purple.500",
+                  boxShadow: "0 0 0 1px #9F7AEA",
+                }}
+                textAlign="left"
+                justifyContent="space-between"
+                px={3}
+              >
+                {i18n.language === "ko" ? "한국어" : 
+                 i18n.language === "en" ? "English" : 
+                 i18n.language === "ja" ? "日本語" : 
+                 i18n.language === "zh" ? "中文" : i18n.language}
+              </MenuButton>
+              <MenuList
+                bg="white"
+                borderColor="purple.200"
+                borderRadius="md"
+                boxShadow="lg"
+                minW="100px"
+                zIndex={10}
+                mt={1}
+              >
+                <MenuItem
+                  onClick={() => changeLanguage("ko")}
+                  bg="white"
+                  color="gray.800"
+                  fontSize="sm"
+                  _hover={{ bg: "purple.50", color: "purple.700" }}
+                  _focus={{ bg: "purple.50" }}
+                  px={4}
+                  py={2}
+                >
+                  한국어
+                </MenuItem>
+                <MenuItem
+                  onClick={() => changeLanguage("en")}
+                  bg="white"
+                  color="gray.800"
+                  fontSize="sm"
+                  _hover={{ bg: "purple.50", color: "purple.700" }}
+                  _focus={{ bg: "purple.50" }}
+                  px={4}
+                  py={2}
+                >
+                  English
+                </MenuItem>
+                <MenuItem
+                  onClick={() => changeLanguage("ja")}
+                  bg="white"
+                  color="gray.800"
+                  fontSize="sm"
+                  _hover={{ bg: "purple.50", color: "purple.700" }}
+                  _focus={{ bg: "purple.50" }}
+                  px={4}
+                  py={2}
+                >
+                  日本語
+                </MenuItem>
+                <MenuItem
+                  onClick={() => changeLanguage("zh")}
+                  bg="white"
+                  color="gray.800"
+                  fontSize="sm"
+                  _hover={{ bg: "purple.50", color: "purple.700" }}
+                  _focus={{ bg: "purple.50" }}
+                  px={4}
+                  py={2}
+                >
+                  中文
+                </MenuItem>
+              </MenuList>
+            </Menu>
           </Box>
         </>
       )}

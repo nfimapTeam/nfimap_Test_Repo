@@ -298,6 +298,7 @@ const Card = ({
           isOpen={isDrawerOpen}
           onClose={onDrawerClose}
           lang={lang}
+          t={t}
         />
       ) : (
         <TicketModal
@@ -305,6 +306,7 @@ const Card = ({
           isOpen={isDrawerOpen}
           onClose={onDrawerClose}
           lang={lang}
+          t={t}
         />
       )}
     </Box>

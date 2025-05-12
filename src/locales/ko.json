@@ -104,5 +104,7 @@
   "copy_failed": "복사 실패",
   "copy_failed_description": "셋리스트 복사 중 문제가 발생했어요.",
   "no_ootd_available": "아직 OOTD가 등록되지 않았습니다",
-  "info": "정보"
+  "show_details": "공연 상세",
+  "show_record": "공연 기록",
+  "selectTicketProvider": "예매처 선택"
 }

@@ -11,9 +11,13 @@ import {
   Icon,
   SimpleGrid,
   useBreakpointValue,
+  Menu,
+  MenuButton,
+  Button,
+  MenuList,
+  MenuItem,
 } from "@chakra-ui/react";
-import { SearchIcon, CloseIcon } from "@chakra-ui/icons";
-import { Select } from "antd";
+import { SearchIcon, CloseIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
@@ -25,7 +29,6 @@ import NoData from "../../components/NoData";
 import { useTranslation } from "react-i18next";
 import BirrthDay from "../../components/BirthDay";
 import { useConcertList } from "../../api/concerts/concertsApi";
-import styled from "@emotion/styled";
 
 // RawConcert: API에서 오는 원시 데이터 타입
 interface RawConcert {
@@ -52,34 +55,6 @@ interface Concert extends RawConcert {
   date: string[];
 }
 
-const { Option } = Select;
-
-// Select 자체 스타일
-const CustomSelect = styled(Select)`
-  width: 200px;
-  height: 40px;
-  
-  .ant-select-selector {
-    border-color: rgb(226, 232, 240);
-    height: 40px;
-    display: flex;
-    align-items: center;
-  }
-  &.ant-select-focused {
-      border-color: #9f7aea !important;
-  }
-  &:hover .ant-select-selector {
-    border-color: #9f7aea !important;
-  }
-`;
-
-// 드롭다운 안 옵션 hover 스타일
-const CustomDropdown = styled.div`
-  .ant-select-item-option-active {
-    background-color: rgb(233, 216, 253) !important;
-  }
-`;
-
 const Home = () => {
   const { t, i18n } = useTranslation();
 
@@ -91,7 +66,7 @@ const Home = () => {
   const [toggle, setToggle] = useRecoilState(toggleState);
   const [selectedType, setSelectedType] = useState("");
   const navigate = useNavigate();
-  const [lang, setLang] = useState("ko");
+  const [lang, setLang] = useState("");
 
   const { data: concertsData, refetch: refetchConcertsData } = useConcertList(lang);
 
@@ -119,11 +94,18 @@ const Home = () => {
       setSortOrder(t("latest"));
     }
   }, [toggle, t]);
+  useEffect(() => {
+    console.log(selectedType)
+  }, [selectedType]);
 
   useEffect(() => {
     setSortOrder(t("latest"));
     setSelectedType("");
   }, [i18n.language, t]);
+
+  useEffect(() => {
+    translateType(selectedType)
+  }, [selectedType])
 
   const clearSearch = () => {
     setSearchQuery("");
@@ -141,10 +123,10 @@ const Home = () => {
     } else if (concert.ticketLink.length === 0) {
       return timeRemaining
         ? t("timeUntilTicketing", {
-          days: timeRemaining.days,
-          hours: timeRemaining.hours,
-          minutes: timeRemaining.minutes,
-        })
+            days: timeRemaining.days,
+            hours: timeRemaining.hours,
+            minutes: timeRemaining.minutes,
+          })
         : t("waitingForTicketInfo");
     } else {
       return t("buyTickets");
@@ -163,10 +145,7 @@ const Home = () => {
   };
 
   const calculateTimeRemaining = (openDate: string, openTime: string) => {
-    const ticketOpenMoment = moment(
-      `${openDate} ${openTime}`,
-      "YYYY-MM-DD HH:mm"
-    );
+    const ticketOpenMoment = moment(`${openDate} ${openTime}`, "YYYY-MM-DD HH:mm");
     const diffDuration = moment.duration(ticketOpenMoment.diff(currentTime));
     const days = Math.floor(diffDuration.asDays());
     const hours = diffDuration.hours();
@@ -186,8 +165,6 @@ const Home = () => {
   };
 
   const sortConcerts = (concerts: Concert[]) => {
-    const now = moment();
-
     const upcomingConcerts = concerts.filter((concert) =>
       isEventTodayOrFuture(concert.date)
     );
@@ -229,17 +206,14 @@ const Home = () => {
   };
 
   const translateType = (type: string) => {
-    switch (type) {
+    switch (type.toLowerCase().trim()) {
       case "콘서트":
-        return t("concert");
-      case "페스티벌":
-        return t("festival");
-      case "행사":
-        return t("event");
       case "concert":
         return t("concert");
+      case "페스티벌":
       case "festival":
         return t("festival");
+      case "행사":
       case "event":
         return t("event");
       default:
@@ -247,13 +221,19 @@ const Home = () => {
     }
   };
 
+  // API type 값을 정규화
+  const normalizeType = (type: string) => {
+    return type.toLowerCase().trim();
+  };
+
   const filteredAndSortedConcerts = (concertsData || []).filter((concert: RawConcert) => {
     const matchesSearch =
       (concert.name && concert.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (concert.location && concert.location.toLowerCase().includes(searchQuery.toLowerCase()));
 
-    const translatedConcertType = translateType(concert.type);
-    const matchesType = selectedType === "" || translatedConcertType === selectedType;
+    // 필터링: selectedType이 비어있거나 정규화된 concert.type과 일치하는지 확인
+    const matchesType =
+      selectedType === "" || normalizeType(concert.type) === normalizeType(selectedType);
 
     const lastConcertDate = concert.concertDate[concert.concertDate.length - 1].date;
     const concertDateMoment = moment(lastConcertDate, "YYYY-MM-DD");
@@ -291,10 +271,7 @@ const Home = () => {
         <Helmet>
           <title>{t("helmettitle")}</title>
           <meta name="description" content={t("helmetdescription")} />
-          <meta
-            property="og:image"
-            content="https://nfimap.co.kr/image/nfimap.png"
-          />
+          <meta property="og:image" content="/image/nfimap.png" /> {/* 로컬 경로로 수정 */}
           <meta property="og:url" content="https://nfimap.co.kr" />
         </Helmet>
         <Box mb={4}>
@@ -305,9 +282,9 @@ const Home = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               mb={4}
-              focusBorderColor='#9F7AEA'
+              focusBorderColor="#9F7AEA"
               bg="whiteAlpha.900"
-              _hover={{ borderColor: '#9F7AEA' }}
+              _hover={{ borderColor: "#9F7AEA" }}
               _placeholder={{ color: "gray.400" }}
               size="lg"
               borderRadius="md"
@@ -328,28 +305,172 @@ const Home = () => {
             </InputRightElement>
           </InputGroup>
 
-          <Flex width="100%" justifyContent="space-between" gap={4}>
-            <CustomSelect
-              value={selectedType}
-              onChange={(value) => setSelectedType(value as string)}
-              dropdownRender={(menu) => <CustomDropdown>{menu}</CustomDropdown>}
-              placeholder={t("selectConcertType")}
-            >
-              <Option value="">{t("all")}</Option>
-              <Option value={t("concertVal")}>{t("concert")}</Option>
-              <Option value={t("festivalVal")}>{t("festival")}</Option>
-              <Option value={t("eventVal")}>{t("event")}</Option>
-            </CustomSelect>
+          <Flex width="100%" justifyContent="start" gap={4} alignItems="center">
+            <FormControl maxW="100px">
+              <Menu>
+                <MenuButton
+                  minW="100px"
+                  as={Button}
+                  rightIcon={<ChevronDownIcon />}
+                  bg="white"
+                  borderWidth="1px"
+                  color="gray.800"
+                  fontSize="sm"
+                  fontWeight="medium"
+                  height="40px"
+                  borderRadius="md"
+                  boxShadow="sm"
+                  _hover={{
+                    borderColor: "purple.400",
+                    boxShadow: "md",
+                  }}
+                  _active={{
+                    bg: "purple.50",
+                    borderColor: "purple.500",
+                  }}
+                  _focus={{
+                    borderColor: "purple.500",
+                    boxShadow: "0 0 0 1px #9F7AEA",
+                  }}
+                  textAlign="left"
+                  justifyContent="space-between"
+                  px={3}
+                >
+                  {selectedType ? translateType(selectedType) : t("all")}
+                </MenuButton>
+                <MenuList
+                  bg="white"
+                  borderColor="purple.200"
+                  borderRadius="md"
+                  boxShadow="lg"
+                  minW="200px"
+                  zIndex={10}
+                  py={1}
+                  mt={1}
+                >
+                  <MenuItem
+                    onClick={() => setSelectedType("")}
+                    bg="white"
+                    color="gray.800"
+                    fontSize="sm"
+                    _hover={{ bg: "purple.50", color: "purple.700" }}
+                    _focus={{ bg: "purple.50" }}
+                    px={4}
+                    py={2}
+                  >
+                    {t("all")}
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => setSelectedType(i18n.language === "ko" ? "콘서트" : "concert")}
+                    bg="white"
+                    color="gray.800"
+                    fontSize="sm"
+                    _hover={{ bg: "purple.50", color: "purple.700" }}
+                    _focus={{ bg: "purple.50" }}
+                    px={4}
+                    py={2}
+                  >
+                    {t("concert")}
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => setSelectedType(i18n.language === "ko" ? "페스티벌" : "festival")} // API type에 맞게 고정
+                    bg="white"
+                    color="gray.800"
+                    fontSize="sm"
+                    _hover={{ bg: "purple.50", color: "purple.700" }}
+                    _focus={{ bg: "purple.50" }}
+                    px={4}
+                    py={2}
+                  >
+                    {t("festival")}
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => setSelectedType(i18n.language === "ko" ? "행사" : "event")} // API type에 맞게 고정
+                    bg="white"
+                    color="gray.800"
+                    fontSize="sm"
+                    _hover={{ bg: "purple.50", color: "purple.700" }}
+                    _focus={{ bg: "purple.50" }}
+                    px={4}
+                    py={2}
+                  >
+                    {t("event")}
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            </FormControl>
 
-            <CustomSelect
-              value={sortOrder}
-              onChange={(value) => setSortOrder(value as string)}
-              dropdownRender={(menu) => <CustomDropdown>{menu}</CustomDropdown>}
-            >
-              <Option value={t("latest")}>{t("latest")}</Option>
-              <Option value={t("byName")}>{t("byName")}</Option>
-            </CustomSelect>
+            {/* Sort Order Dropdown */}
+            <FormControl maxW="100px">
+              <Menu>
+                <MenuButton
+                  minW="100px"
+                  as={Button}
+                  rightIcon={<ChevronDownIcon />}
+                  bg="white"
+                  borderWidth="1px"
+                  color="gray.800"
+                  fontSize="sm"
+                  fontWeight="medium"
+                  height="40px"
+                  borderRadius="md"
+                  boxShadow="sm"
+                  _hover={{
+                    borderColor: "purple.400",
+                    boxShadow: "md",
+                  }}
+                  _active={{
+                    bg: "purple.50",
+                    borderColor: "purple.500",
+                  }}
+                  _focus={{
+                    borderColor: "purple.500",
+                    boxShadow: "0 0 0 1px #9F7AEA",
+                  }}
+                  textAlign="left"
+                  justifyContent="space-between"
+                  px={3}
+                >
+                  {sortOrder}
+                </MenuButton>
+                <MenuList
+                  bg="white"
+                  borderColor="purple.200"
+                  borderRadius="md"
+                  boxShadow="lg"
+                  minW="200px"
+                  zIndex={10}
+                  mt={1}
+                >
+                  <MenuItem
+                    onClick={() => setSortOrder(t("latest"))}
+                    bg="white"
+                    color="gray.800"
+                    fontSize="sm"
+                    _hover={{ bg: "purple.50", color: "purple.700" }}
+                    _focus={{ bg: "purple.50" }}
+                    px={4}
+                    py={2}
+                  >
+                    {t("latest")}
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => setSortOrder(t("byName"))}
+                    bg="white"
+                    color="gray.800"
+                    fontSize="sm"
+                    _hover={{ bg: "purple.50", color: "purple.700" }}
+                    _focus={{ bg: "purple.50" }}
+                    px={4}
+                    py={2}
+                  >
+                    {t("byName")}
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            </FormControl>
 
+            {/* Toggle Switch */}
             <FormControl display="flex" alignItems="center">
               <FormLabel htmlFor="show-past-events" mb="0">
                 {t("showPastEvents")}
@@ -359,8 +480,8 @@ const Home = () => {
                 isChecked={toggle}
                 onChange={() => setToggle(!toggle)}
                 sx={{
-                  '.chakra-switch__track': {
-                    bg: toggle ? '#9F7AEA' : 'gray.200',
+                  ".chakra-switch__track": {
+                    bg: toggle ? "#9F7AEA" : "gray.200",
                   },
                 }}
               />
@@ -368,14 +489,24 @@ const Home = () => {
           </Flex>
         </Box>
 
-        {sortedConcerts.length === 0 && (<Box h={isMobileOrTablet ? "calc(100svh - 120px)" : "calc(100svh - 70px)"}><NoData /></Box>)}
+        {sortedConcerts.length === 0 && (
+          <Box h={isMobileOrTablet ? "calc(100svh - 120px)" : "calc(100svh - 70px)"}>
+            <NoData />
+          </Box>
+        )}
 
         <SimpleGrid columns={columns} spacing={6}>
           {sortedConcerts.map((concert, index) => {
             const lastConcertDate = concert.date[concert.date.length - 1];
-            const isFutureOrToday = moment(lastConcertDate, "YYYY-MM-DD").isSameOrAfter(currentTime, "day");
+            const isFutureOrToday = moment(lastConcertDate, "YYYY-MM-DD").isSameOrAfter(
+              currentTime,
+              "day"
+            );
             const isPastEvent = !isFutureOrToday;
-            const isTodayEvent = moment(lastConcertDate, "YYYY-MM-DD").isSame(currentTime, "day");
+            const isTodayEvent = moment(lastConcertDate, "YYYY-MM-DD").isSame(
+              currentTime,
+              "day"
+            );
 
             const isTicketOpen = concert.ticketOpen?.date === moment().format("YYYY-MM-DD");
             const timeRemaining = calculateTimeRemaining(
