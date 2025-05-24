@@ -4,7 +4,7 @@ import MapPage from "./page/MapPage";
 import Layout from "./layout/Layout";
 import DetailPage from "./page/DetailPage/DetailPage";
 import NotFound from "./components/NotFound";
-import Profile from "./page/Profile";
+import Profile from "./page/Profile/Profile";
 import Music from "./page/Music";
 import { useTranslation } from "react-i18next";
 
