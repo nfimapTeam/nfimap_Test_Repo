@@ -12,5 +12,6 @@ export const useConcertList = (lang: string = "ko") => {
   return useQuery({
     queryKey: ["ConcertList"],
     queryFn: () => getConcertList(lang),
+    enabled: false,
   });
 };
