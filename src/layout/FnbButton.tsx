@@ -115,26 +115,6 @@ const FnbButton = ({ isMobileOrTablet }: FnbButtonProps) => {
                 }}
                 transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
               />
-              <IconButton
-                onClick={goToContentLink}
-                aria-label="추가 버튼 1"
-                icon={<MdOndemandVideo color="#9F7AEA" size="24" />}
-                bg="white"
-                color="teal.500"
-                isRound
-                width="56px"
-                height="56px"
-                padding="4px"
-                boxShadow="0px 4px 12px rgba(0, 0, 0, 0.1)"
-                _hover={{
-                  transform: "scale(1.05)",
-                  boxShadow: "0px 6px 16px rgba(0, 0, 0, 0.15)"
-                }}
-                _active={{
-                  transform: "scale(0.95)"
-                }}
-                transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
-              />
             </VStack>
           )}
         </AnimatePresence>

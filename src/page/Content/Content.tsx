@@ -1,12 +1,15 @@
-import { Box, useBreakpointValue } from "@chakra-ui/react";
-import React from "react";
+import { Box, Button, ButtonGroup, useBreakpointValue, Flex } from "@chakra-ui/react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import YouTubePlayer from "./Components/Youtube";
+import Music from "./Components/Music";
 
 
 const Content = () => {
   const { t, i18n } = useTranslation();
   const isMobileOrTablet = useBreakpointValue({ base: true, md: true, lg: false });
+  const [category, setCategory] = useState<'video' | 'npart' | 'music'>('video');
+
 
   return (
     <Box
@@ -23,8 +26,34 @@ const Content = () => {
         "scrollbar-width": "none",
       }}
     >
-      <Box maxWidth="1200px" margin="auto">
-        <YouTubePlayer />
+      <Box maxWidth="1200px" margin="auto" pb={10}>
+        <Flex justifyContent="center" mt={10}>
+          <ButtonGroup isAttached variant="outline" colorScheme="purple">
+            <Button
+              isActive={category === 'video'}
+              onClick={() => setCategory('video')}
+            >
+              {t('content')}
+            </Button>
+            <Button
+              isActive={category === 'npart'}
+              onClick={() => setCategory('npart')}
+            >
+              {t('npart')}
+            </Button>
+            <Button
+              isActive={category === 'music'}
+              onClick={() => setCategory('music')}
+            >
+              {t('music')}
+            </Button>
+          </ButtonGroup>
+        </Flex>
+        {category === 'music' && (
+          <Music />
+        )}
+        {(category === 'video' || category === 'npart') && (
+          <YouTubePlayer category={category} setCategory={setCategory} />)}
       </Box>
     </Box>
   );

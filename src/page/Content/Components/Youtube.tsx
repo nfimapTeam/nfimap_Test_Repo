@@ -20,6 +20,7 @@ import { youtubeData } from '../Data/youtubeData';
 import { npart } from '../Data/npart';
 import { RepeatIcon, CloseIcon } from '@chakra-ui/icons';
 import { useTranslation } from 'react-i18next';
+import Music from './Music';
 
 interface Video {
   videoId: string;
@@ -28,11 +29,15 @@ interface Video {
   url: string;
 }
 
-const YouTubePlayer = () => {
+interface YouTubePlayerProps {
+  category: 'video' | 'npart' | 'music';
+  setCategory: (category: 'video' | 'npart' | 'music') => void;
+}
+
+const YouTubePlayer = ({ category, setCategory }: YouTubePlayerProps) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
   const [currentVideo, setCurrentVideo] = useState<Video | null>(null);
   const [videos, setVideos] = useState<Video[]>([]);
-  const [category, setCategory] = useState<'video' | 'npart'>('video');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const containerRef = useRef<HTMLDivElement>(null);
   const { t, i18n } = useTranslation();
@@ -84,22 +89,9 @@ const YouTubePlayer = () => {
     <Box ref={containerRef} minH="100vh" py={8} px={2} mt={10}>
       <VStack spacing={6} mx="auto">
         {/* 카테고리 선택 버튼 */}
-        <ButtonGroup isAttached variant="outline" colorScheme="purple">
-          <Button
-            isActive={category === 'video'}
-            onClick={() => setCategory('video')}
-          >
-            {t('content')}
-          </Button>
-          <Button
-            isActive={category === 'npart'}
-            onClick={() => setCategory('npart')}
-          >
-            {t('npart')}
-          </Button>
-        </ButtonGroup>
 
         {/* 비디오 목록 */}
+        
         <Grid
           templateColumns={isMobile ? '1fr' : 'repeat(3, 1fr)'}
           gap={4}

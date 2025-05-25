@@ -91,7 +91,7 @@ const NavItems: React.FC<NavItemsProps> = ({
       >
         {!textOnly && <RiMusicLine color={getLinkColorIcon("/music")} size={iconSize} />}
         <Text fontSize={fontSize} color={getLinkColor("/music")} fontWeight={600} textAlign="center">
-          {t("music")}
+          {t("content")}
         </Text>
       </Flex>
     </Flex>

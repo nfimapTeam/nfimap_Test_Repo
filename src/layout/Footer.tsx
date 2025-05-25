@@ -2,6 +2,7 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { RiListUnordered, RiMapPinLine, RiUser3Line, RiMusicLine } from "@remixicon/react";
 import { useTranslation } from "react-i18next";
+import { MdOndemandVideo } from "react-icons/md";
 
 const Footer = () => {
   const { t } = useTranslation();
@@ -85,11 +86,11 @@ const Footer = () => {
           alignItems="center"
           gap="2px"
           cursor="pointer"
-          onClick={() => navigate("/music")}
+          onClick={() => navigate("/content")}
         >
-          <RiMusicLine color={getLinkColorIcon("/music")} size={24} />
-          <Text fontSize="sm" color={getLinkColor("/music")} fontWeight={600} textAlign="center">
-            {t('music')}
+          <MdOndemandVideo color={getLinkColorIcon("/content")} size={24} />
+          <Text fontSize="sm" color={getLinkColor("/content")} fontWeight={600} textAlign="center">
+            {t('content')}
           </Text>
         </Flex>
       </Flex>

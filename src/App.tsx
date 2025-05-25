@@ -5,7 +5,7 @@ import Layout from "./layout/Layout";
 import DetailPage from "./page/DetailPage/DetailPage";
 import NotFound from "./components/NotFound";
 import Profile from "./page/Profile/Profile";
-import Music from "./page/Music";
+import Music from "./page/Content/Components/Music";
 import { useTranslation } from "react-i18next";
 import Content from "./page/Content/Content";
 

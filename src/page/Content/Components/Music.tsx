@@ -21,9 +21,9 @@ import {
   useBreakpointValue,
   Link,
 } from "@chakra-ui/react";
-import Loading from "../components/Loading";
-import { musicData } from "../datas/music";
-import SlotMachine from "../components/SlotMachine";
+import Loading from "../../../components/Loading";
+import { musicData } from "../../../datas/music";
+import SlotMachine from "../../../components/SlotMachine";
 import { Helmet } from "react-helmet-async";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { useTranslation } from "react-i18next";
@@ -215,135 +215,108 @@ const Music = () => {
 
   return (
     <Box
-      h={isMobileOrTablet ? "calc(100svh - 120px)" : "calc(100svh - 70px)"}
-      width="100%"
-      mx="auto"
-      p="16px 16px 100px 16px"
-      overflowY="auto"
-      css={{
-        "&::-webkit-scrollbar": {
-          display: "none",
-        },
-        "-ms-overflow-style": "none",
-        "scrollbar-width": "none",
-      }}
     >
-      <Box maxWidth="1200px" margin="auto">
-        <Helmet>
-          <title>{t("music_page_title")}</title> {/* 다국어 제목 */}
-          <meta
-            name="description"
-            content="N.Fimap은 팬덤 N.Fia의 덕질을 응원합니다."
-          />
-          <meta
-            property="og:description"
-            content="N.Fimap의 예제 페이지입니다."
-          />
-          <meta property="og:image" content="%PUBLIC_URL%/image/logo/logo.svg" />
-          <meta property="og:url" content="https://nfimap.co.kr" />
-        </Helmet>
-        <Box p="20px">
-          <Flex
-            alignItems="center"
-            gap="5px"
-            zIndex="10"
-            justifyContent="flex-end"
-            flexGrow={1}
-            overflow="hidden"
-          >
-            <SlotMachine textData={musicNames} youtubeUrl={youtubeUrl} />
-          </Flex>
-        </Box>
-        <VStack spacing={4}>
-          <Input
-            placeholder={t("music_search_placeholder")} // 다국어 검색 안내
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            borderColor="purple.200"
-            bg="whiteAlpha.900"
-            focusBorderColor="purple.500"
-            size="lg"
-            borderRadius="md"
-            boxShadow="md"
-            m="20px 0"
-          />
-
-          <Grid templateColumns={`repeat(${columnCount}, 1fr)`} gap={6}>
-            {filteredAlbums.map((album) => (
-              <Box
-                key={album.id}
-                onClick={() => handleAlbumClick(album)}
-                cursor="pointer"
-                p={4}
-                borderWidth={1}
-                borderRadius="md"
-                boxShadow="md"
-                _hover={{ boxShadow: "lg" }}
-              >
-                <Image src={album.images[0]?.url} alt={album.name} />
-                <Text mt={2} fontSize="sm" fontWeight="bold">
-                  {album.name}
-                </Text>
-                <Text fontSize="xs" color="gray.500">
-                  {album.release_date}
-                </Text>
-              </Box>
-            ))}
-          </Grid>
-          {loading && <Loading />}
-          {hasMore && !loading && (
-            <Center mt={4}>
-              <Button onClick={handleLoadMore}>{t("music_load_more")}</Button>{" "}
-              {/* 다국어 더 불러오기 */}
-            </Center>
-          )}
-        </VStack>
-
-        <Modal isOpen={isOpen} onClose={onClose} size="xl">
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>{selectedAlbum?.name}</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody p={4}>
-              {tracks.length === 0 ? (
-                <Text textAlign="center" color="gray.500">
-                  {t("music_no_tracks")} {/* 다국어 트랙 없음 */}
-                </Text>
-              ) : (
-                <VStack spacing={4} align="start">
-                  {tracks.map((track) => (
-                    <Box
-                      key={track.id}
-                      p={3}
-                      borderWidth={1}
-                      borderRadius="md"
-                      boxShadow="sm"
-                      bg="gray.50"
-                      w="100%"
-                    >
-                      <Flex align="center" justify="space-between">
-                        <Text fontWeight="bold" fontSize="md">
-                          {track.name}
-                        </Text>
-                        {track.preview_url && (
-                          <audio
-                            controls
-                            controlsList="nodownload"
-                            src={track.preview_url}
-                          >
-                            {t("music_audio_support")}{" "}
-                            {/* 다국어 오디오 지원 관련 */}
-                          </audio>
-                        )}
-                      </Flex>
-                    </Box>
-                  ))}
-                </VStack>
-              )}
-            </ModalBody>
-          </ModalContent>
-        </Modal>
+      <Box p="20px">
+        <Flex
+          alignItems="center"
+          gap="5px"
+          zIndex="10"
+          justifyContent="flex-end"
+          flexGrow={1}
+          overflow="hidden"
+        >
+          <SlotMachine textData={musicNames} youtubeUrl={youtubeUrl} />
+        </Flex>
       </Box>
+      <VStack spacing={4}>
+        <Input
+          placeholder={t("music_search_placeholder")} // 다국어 검색 안내
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          borderColor="purple.200"
+          bg="whiteAlpha.900"
+          focusBorderColor="purple.500"
+          size="lg"
+          borderRadius="md"
+          boxShadow="md"
+          m="20px 0"
+        />
+
+        <Grid templateColumns={`repeat(${columnCount}, 1fr)`} gap={6}>
+          {filteredAlbums.map((album) => (
+            <Box
+              key={album.id}
+              onClick={() => handleAlbumClick(album)}
+              cursor="pointer"
+              p={4}
+              borderWidth={1}
+              borderRadius="md"
+              boxShadow="md"
+              _hover={{ boxShadow: "lg" }}
+            >
+              <Image src={album.images[0]?.url} alt={album.name} />
+              <Text mt={2} fontSize="sm" fontWeight="bold">
+                {album.name}
+              </Text>
+              <Text fontSize="xs" color="gray.500">
+                {album.release_date}
+              </Text>
+            </Box>
+          ))}
+        </Grid>
+        {loading && <Loading />}
+        {hasMore && !loading && (
+          <Center mt={4}>
+            <Button onClick={handleLoadMore}>{t("music_load_more")}</Button>{" "}
+            {/* 다국어 더 불러오기 */}
+          </Center>
+        )}
+      </VStack>
+
+      <Modal isOpen={isOpen} onClose={onClose} size="xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{selectedAlbum?.name}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody p={4}>
+            {tracks.length === 0 ? (
+              <Text textAlign="center" color="gray.500">
+                {t("music_no_tracks")} {/* 다국어 트랙 없음 */}
+              </Text>
+            ) : (
+              <VStack spacing={4} align="start">
+                {tracks.map((track) => (
+                  <Box
+                    key={track.id}
+                    p={3}
+                    borderWidth={1}
+                    borderRadius="md"
+                    boxShadow="sm"
+                    bg="gray.50"
+                    w="100%"
+                  >
+                    <Flex align="center" justify="space-between">
+                      <Text fontWeight="bold" fontSize="md">
+                        {track.name}
+                      </Text>
+                      {track.preview_url && (
+                        <audio
+                          controls
+                          controlsList="nodownload"
+                          src={track.preview_url}
+                        >
+                          {t("music_audio_support")}{" "}
+                          {/* 다국어 오디오 지원 관련 */}
+                        </audio>
+                      )}
+                    </Flex>
+                  </Box>
+                ))}
+              </VStack>
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };
