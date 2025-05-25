@@ -259,6 +259,7 @@ const Music = () => {
             placeholder={t("music_search_placeholder")} // 다국어 검색 안내
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            borderColor="purple.200"
             bg="whiteAlpha.900"
             focusBorderColor="purple.500"
             size="lg"

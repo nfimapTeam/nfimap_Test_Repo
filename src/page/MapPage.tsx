@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Box, Button, HStack } from "@chakra-ui/react";
 import Sidebar from "../components/SideBar";
-import { concertsData } from "../datas/concerts";
 import NaverMap from "../components/NaverMap";
 import { nfiRoadData } from "../datas/nfiRoad";
 import GoogleMap from "../components/GoogleMap";
-import { globalConcerts } from "../datas/globalConcerts";
 import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
-import { concertsDataEng } from "../datas/concertsEng";
 import { nfiRoadDataEng } from "../datas/nfilRoadEng";
-import { globalConcertsEng } from "../datas/globalConcertsEng";
 import { useConcertList } from "../api/concerts/concertsApi";
 
 interface ConcertDate {
@@ -132,9 +128,11 @@ const MapPage = () => {
           (d: { date: string; start_time: string; duration_minutes: number }): Date =>
             new Date(d.date)
         );
-        const latestDate: Date = new Date(
-          Math.max(...concertDates.map((date: Date): number => date.getTime()))
-        );
+        // 수정: 마지막 날짜를 기준으로 계산
+        const latestDate: Date = concertDates.length
+          ? new Date(concert.concertDate[concert.concertDate.length - 1].date)
+          : new Date(0); // 빈 배열 처리
+        latestDate.setHours(0, 0, 0, 0);
         const isUpcomingOrToday: boolean = latestDate >= currentDate;
 
         const matchesType: boolean = selectedType
@@ -189,9 +187,11 @@ const MapPage = () => {
           (d: { date: string; start_time: string; duration_minutes: number }): Date =>
             new Date(d.date)
         );
-        const latestDate: Date = new Date(
-          Math.max(...concertDates.map((date: Date): number => date.getTime()))
-        );
+        // 수정: 마지막 날짜를 기준으로 계산
+        const latestDate: Date = concertDates.length
+          ? new Date(concert.concertDate[concert.concertDate.length - 1].date)
+          : new Date(0); // 빈 배열 처리
+        latestDate.setHours(0, 0, 0, 0);
         const isUpcomingOrToday: boolean = latestDate >= currentDate;
 
         const matchesType: boolean = selectedGlobalType

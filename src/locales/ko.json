@@ -5,7 +5,7 @@
   "festival": "페스티벌",
   "event": "행사",
   "searchPlaceholder": "공연명 또는 공연장을 검색하세요.",
-  "showPastEvents": "지난 공연 보기",
+  "showPastEvents": "지난공연",
   "selectDate": "날짜 선택",
   "helmettitle": "엔피맵 - 엔플라잉 콘서트 정보를 확인하세요!",
   "helmetdescription": "N.Fimap은 팬덤 N.Fia의 덕질을 응원합니다.",
@@ -106,5 +106,7 @@
   "no_ootd_available": "아직 OOTD가 등록되지 않았습니다",
   "show_details": "공연 상세",
   "show_record": "공연 기록",
-  "selectTicketProvider": "예매처 선택"
+  "selectTicketProvider": "예매처 선택",
+  "content": "콘텐츠",
+  "npart": "엔퍄트"
 }

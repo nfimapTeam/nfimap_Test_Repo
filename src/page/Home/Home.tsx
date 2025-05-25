@@ -94,9 +94,6 @@ const Home = () => {
       setSortOrder(t("latest"));
     }
   }, [toggle, t]);
-  useEffect(() => {
-    console.log(selectedType)
-  }, [selectedType]);
 
   useEffect(() => {
     setSortOrder(t("latest"));
@@ -123,10 +120,10 @@ const Home = () => {
     } else if (concert.ticketLink.length === 0) {
       return timeRemaining
         ? t("timeUntilTicketing", {
-            days: timeRemaining.days,
-            hours: timeRemaining.hours,
-            minutes: timeRemaining.minutes,
-          })
+          days: timeRemaining.days,
+          hours: timeRemaining.hours,
+          minutes: timeRemaining.minutes,
+        })
         : t("waitingForTicketInfo");
     } else {
       return t("buyTickets");
@@ -159,9 +156,16 @@ const Home = () => {
   };
 
   const isEventTodayOrFuture = (dates: string[]) => {
-    const lastDate = dates[dates.length - 1];
-    const concertDate = moment(lastDate, "YYYY-MM-DD");
-    return concertDate.isSameOrAfter(currentTime, "day");
+    // 수정: 배열에 오늘 또는 미래 날짜가 하나라도 있으면 true 반환
+    return dates.some((date) =>
+      moment(date, "YYYY-MM-DD").isSameOrAfter(currentTime, "day")
+    );
+  };
+
+  const isEventToday = (dates: string[]) => {
+    // 수정: 배열에 오늘 날짜가 하나라도 있으면 true 반환
+    const today = moment().format("YYYY-MM-DD");
+    return dates.includes(today);
   };
 
   const sortConcerts = (concerts: Concert[]) => {
@@ -183,8 +187,23 @@ const Home = () => {
       if (!ticketOpenA && ticketOpenB) return 1;
 
       if (sortOrder === t("latest")) {
-        const dateA = moment(a.date[a.date.length - 1], "YYYY-MM-DD");
-        const dateB = moment(b.date[b.date.length - 1], "YYYY-MM-DD");
+        // 다가오는 공연은 가장 이른 날짜로 정렬
+        const dateA = moment(
+          a.date.reduce((earliest, date) =>
+            moment(date, "YYYY-MM-DD").isBefore(moment(earliest, "YYYY-MM-DD"))
+              ? date
+              : earliest
+          ),
+          "YYYY-MM-DD"
+        );
+        const dateB = moment(
+          b.date.reduce((earliest, date) =>
+            moment(date, "YYYY-MM-DD").isBefore(moment(earliest, "YYYY-MM-DD"))
+              ? date
+              : earliest
+          ),
+          "YYYY-MM-DD"
+        );
         return dateA.diff(dateB);
       } else if (sortOrder === t("byName")) {
         return a.name.localeCompare(b.name);
@@ -195,9 +214,24 @@ const Home = () => {
     upcomingConcerts.sort(sortFunction);
     pastConcerts.sort((a, b) => {
       if (sortOrder === t("latest")) {
-        const dateA = moment(a.date[a.date.length - 1], "YYYY-MM-DD");
-        const dateB = moment(b.date[b.date.length - 1], "YYYY-MM-DD");
-        return dateB.diff(dateA);
+        // 과거 공연은 가장 늦은 날짜로 내림차순 정렬
+        const dateA = moment(
+          a.date.reduce((latest, date) =>
+            moment(date, "YYYY-MM-DD").isAfter(moment(latest, "YYYY-MM-DD"))
+              ? date
+              : latest
+          ),
+          "YYYY-MM-DD"
+        );
+        const dateB = moment(
+          b.date.reduce((latest, date) =>
+            moment(date, "YYYY-MM-DD").isAfter(moment(latest, "YYYY-MM-DD"))
+              ? date
+              : latest
+          ),
+          "YYYY-MM-DD"
+        );
+        return dateB.diff(dateA); // Reverse for past concerts
       }
       return sortFunction(a, b);
     });
@@ -235,14 +269,15 @@ const Home = () => {
     const matchesType =
       selectedType === "" || normalizeType(concert.type) === normalizeType(selectedType);
 
-    const lastConcertDate = concert.concertDate[concert.concertDate.length - 1].date;
-    const concertDateMoment = moment(lastConcertDate, "YYYY-MM-DD");
-    const isPastEvent = concertDateMoment.isBefore(currentTime, "day");
+    // 수정: 오늘 또는 미래 날짜가 있는지 확인
+    const isFutureOrToday = concert.concertDate.some((item) =>
+      moment(item.date, "YYYY-MM-DD").isSameOrAfter(currentTime, "day")
+    );
+    const isPastEvent = !isFutureOrToday;
 
     if (toggle) {
       return matchesSearch && isPastEvent && matchesType;
     } else {
-      const isFutureOrToday = concertDateMoment.isSameOrAfter(currentTime, "day");
       return matchesSearch && isFutureOrToday && matchesType;
     }
   }).map((concert: RawConcert): Concert => ({
@@ -282,6 +317,7 @@ const Home = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               mb={4}
+              borderColor="purple.200"
               focusBorderColor="#9F7AEA"
               bg="whiteAlpha.900"
               _hover={{ borderColor: "#9F7AEA" }}
@@ -312,12 +348,14 @@ const Home = () => {
                   minW="100px"
                   as={Button}
                   rightIcon={<ChevronDownIcon />}
+                  borderColor="purple.200"
                   bg="white"
                   borderWidth="1px"
                   color="gray.800"
                   fontSize="sm"
                   fontWeight="medium"
                   height="40px"
+                  width="100px"
                   borderRadius="md"
                   boxShadow="sm"
                   _hover={{
@@ -407,6 +445,7 @@ const Home = () => {
                   minW="100px"
                   as={Button}
                   rightIcon={<ChevronDownIcon />}
+                  borderColor="purple.200"
                   bg="white"
                   borderWidth="1px"
                   color="gray.800"
@@ -497,16 +536,11 @@ const Home = () => {
 
         <SimpleGrid columns={columns} spacing={6}>
           {sortedConcerts.map((concert, index) => {
-            const lastConcertDate = concert.date[concert.date.length - 1];
-            const isFutureOrToday = moment(lastConcertDate, "YYYY-MM-DD").isSameOrAfter(
-              currentTime,
-              "day"
-            );
+            // 수정: isTodayEvent는 배열에 오늘 날짜가 포함되어 있는지 확인
+            const isTodayEvent = isEventToday(concert.date);
+            // 수정: isPastEvent는 배열에 오늘 또는 미래 날짜가 하나도 없는 경우
+            const isFutureOrToday = isEventTodayOrFuture(concert.date);
             const isPastEvent = !isFutureOrToday;
-            const isTodayEvent = moment(lastConcertDate, "YYYY-MM-DD").isSame(
-              currentTime,
-              "day"
-            );
 
             const isTicketOpen = concert.ticketOpen?.date === moment().format("YYYY-MM-DD");
             const timeRemaining = calculateTimeRemaining(

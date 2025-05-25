@@ -5,7 +5,7 @@
   "festival": "音乐节",
   "event": "活动",
   "searchPlaceholder": "搜索演出名称或场地.",
-  "showPastEvents": "显示过往活动",
+  "showPastEvents": "過往演出",
   "selectDate": "选择日期",
   "helmettitle": "NFimap - 查看N.Flying音乐会信息！",
   "helmetdescription": "N.Fimap支持粉丝团N.Fia的热情。",
@@ -106,5 +106,7 @@
   "no_ootd_available": "OOTD尚未发布",
   "show_details": "演唱会详情",
   "show_record": "演唱会记录",
-  "selectTicketProvider": "选择购票渠道"
+  "selectTicketProvider": "选择购票渠道",
+  "content": "内容",
+  "npart": "N-part"
 }

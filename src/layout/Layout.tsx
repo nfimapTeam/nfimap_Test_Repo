@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "./Header";
 import Footer from "./Footer";
-import FnbButton from "../components/FnbButton";
+import FnbButton from "./FnbButton";
 import { useBreakpointValue } from "@chakra-ui/react";
 
 interface LayoutProps {

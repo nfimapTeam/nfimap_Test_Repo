@@ -106,5 +106,7 @@
   "no_ootd_available": "OOTDはまだ投稿されていません",
   "show_details": "公演詳細",
   "show_record": "公演記録",
-  "selectTicketProvider": "チケット販売元を選択"
+  "selectTicketProvider": "チケット販売元を選択",
+  "content": "コンテンツ",
+  "npart": "N-part"
 }

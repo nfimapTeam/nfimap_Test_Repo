@@ -73,6 +73,7 @@ const Header = () => {
                 as={Button}
                 rightIcon={<ChevronDownIcon />}
                 bg="white"
+                borderColor="purple.200"
                 borderWidth="1px"
                 color="gray.800"
                 fontSize="sm"

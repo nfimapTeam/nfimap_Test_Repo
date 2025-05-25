@@ -27,7 +27,7 @@ import dayjs from "dayjs";
 import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
 import ProfileModal from "./components/ProfileModal";
-import YouTubePlayer from "./components/Youtube";
+import YouTubePlayer from "../Content/Components/Youtube";
 
 interface Member {
   name: string;
@@ -160,12 +160,12 @@ const Profile = () => {
                 h="40px"
                 borderRadius="full"
                 border="1px solid transparent"
-                bgGradient="linear(to-r, #9F7AEA, #805AD5)"
+                bgGradient="linear(to-r, #9DBCBF, #7AA8A6)" // 수정: 새로운 그라디언트 색상
                 p="2px"
-                boxShadow="0 4px 10px rgba(159, 122, 234, 0.5)"
+                boxShadow="0 4px 10px rgba(157, 188, 191, 0.5)" // 수정: #9DBCBF 기반 그림자
                 _hover={{
                   transform: "scale(1.2)",
-                  boxShadow: "0 8px 20px rgba(159, 122, 234, 0.8)",
+                  boxShadow: "0 8px 20px rgba(157, 188, 191, 0.8)", // 수정: #9DBCBF 기반 호버 그림자
                   filter: "brightness(1.1)",
                 }}
                 transition="all 0.4s ease"
@@ -347,7 +347,6 @@ const Profile = () => {
         </Flex>
 
         <ProfileModal isOpen={isOpen} onClose={onClose} selectedMember={selectedMember} />
-        <YouTubePlayer isMobile={isMobile} />
       </Box>
     </Box>
   );

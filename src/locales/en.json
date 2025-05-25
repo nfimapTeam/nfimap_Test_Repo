@@ -5,7 +5,7 @@
   "festival": "Festival",
   "event": "Event",
   "searchPlaceholder": "Search for show or venue.",
-  "showPastEvents": "Show past",
+  "showPastEvents": "PastV",
   "selectDate": "Select Date",
   "helmettitle": "N.Fimap - Check N.Flying concert information!",
   "helmetdescription": "N.Fimap supports the fandom N.Fia's enthusiasm.",
@@ -105,5 +105,7 @@
   "no_ootd_available": "The OOTD has not been posted yet",
   "show_details": "Show Details",
   "show_record": "Show Record",
-  "selectTicketProvider": "Select Ticket Provider"
+  "selectTicketProvider": "Select Ticket Provider",
+  "content": "Content",
+  "npart": "N-part"
 }
