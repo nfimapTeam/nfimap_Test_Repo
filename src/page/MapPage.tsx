@@ -80,8 +80,11 @@ const MapPage = () => {
   }, [i18n.language]);
 
   useEffect(() => {
-    refetchConcertsData();
+    setTimeout(() => {
+      refetchConcertsData();
+    }, 50);
   }, [lang]);
+
 
   useEffect(() => {
     if (i18n.language === "ko") {

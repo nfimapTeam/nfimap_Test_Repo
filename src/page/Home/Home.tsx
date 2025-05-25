@@ -79,7 +79,9 @@ const Home = () => {
   }, [i18n.language]);
 
   useEffect(() => {
-    refetchConcertsData();
+    setTimeout(() => {
+      refetchConcertsData();
+    }, 50);
   }, [lang]);
 
   useEffect(() => {

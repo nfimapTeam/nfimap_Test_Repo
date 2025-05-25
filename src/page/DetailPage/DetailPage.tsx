@@ -111,17 +111,18 @@ const DetailPage: React.FC = () => {
   const { isOpen: isDrawerOpen, onOpen: onDrawerOpen, onClose: onDrawerClose } = useDisclosure();
 
   useEffect(() => {
-    setLang(i18n.language);
-    refetchConcertDetail();
-  }, [i18n.language, refetchConcertDetail]);
+    if (i18n.language === "ko") {
+      setLang("ko");
+    } else {
+      setLang("en");
+    }
+  }, [i18n.language]);
 
   useEffect(() => {
-    if (concertDetail) {
-      console.log("Concert Detail:", concertDetail);
-      console.log("Setlist:", concertDetail.setlist);
-      console.log("ConcertDate:", concertDetail.concertDate);
-    }
-  }, [concertDetail]);
+    setTimeout(() => {
+      refetchConcertDetail();
+    }, 50);
+  }, [lang]);
 
   if (isLoading) {
     return <Loading />;
