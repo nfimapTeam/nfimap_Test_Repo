@@ -13,6 +13,7 @@ import {
   ModalBody,
   useDisclosure,
   useBreakpointValue,
+  Grid,
 } from '@chakra-ui/react';
 import React, { useEffect, useState, useRef } from 'react';
 import { youtubeData } from '../Data/youtubeData';
@@ -99,10 +100,8 @@ const YouTubePlayer = () => {
         </ButtonGroup>
 
         {/* 비디오 목록 */}
-        <Flex
-          direction={isMobile ? 'column' : 'row'}
-          wrap={isMobile ? 'nowrap' : 'wrap'}
-          justify={isMobile ? 'center' : 'space-between'}
+        <Grid
+          templateColumns={isMobile ? '1fr' : 'repeat(3, 1fr)'}
           gap={4}
           w="100%"
         >
@@ -114,7 +113,6 @@ const YouTubePlayer = () => {
               borderRadius="lg"
               overflow="hidden"
               cursor="pointer"
-              w={isMobile ? '100%' : ['100%', '45%', '30%']}
               transition="all 0.2s"
               _hover={{ transform: 'scale(1.05)', boxShadow: 'xl' }}
               onClick={() => openVideo(video)}
@@ -126,7 +124,7 @@ const YouTubePlayer = () => {
               </Box>
             </Box>
           ))}
-        </Flex>
+        </Grid>
 
         {/* 새로고침 버튼 (영상 모드일 때만) */}
         {category === 'video' && (
