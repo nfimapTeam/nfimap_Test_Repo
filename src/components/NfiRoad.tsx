@@ -66,6 +66,7 @@ const NfiRoad = ({
             border="1px solid #eee"
             margin="10px 0"
             borderRadius="4px"
+            borderColor="purple.200"
             w="100%"
             _hover={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}
             position="relative"

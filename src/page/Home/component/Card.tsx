@@ -117,7 +117,7 @@ const Card = ({
     <Box
       position="relative"
       onClick={() => navigate(`/${concert.id}`)}
-      overflow="hidden" // ✅ 추가
+      // overflow="hidden"
       borderRadius="md"
       sx={{
         transition: "transform 0.3s ease, box-shadow 0.3s ease",

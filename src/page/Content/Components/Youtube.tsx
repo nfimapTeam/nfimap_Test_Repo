@@ -63,7 +63,7 @@ const YouTubePlayer = () => {
     if (containerRef.current) {
       containerRef.current.scrollIntoView({ behavior: 'smooth' });
     } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: -500, behavior: 'smooth' });
     }
   };
 
@@ -110,6 +110,8 @@ const YouTubePlayer = () => {
               key={video.videoId}
               bg="white"
               boxShadow="md"
+              borderWidth="1px"
+              borderColor="purple.200"
               borderRadius="lg"
               overflow="hidden"
               cursor="pointer"

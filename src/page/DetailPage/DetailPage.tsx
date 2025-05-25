@@ -62,9 +62,9 @@ interface Concert {
     date: string;
     time: string;
   };
-  concertDate: { date: string; start_time: string; duration_minutes: number }[];
+  concertDate: { date: string; start_time: string; duration_minutes: number | string }[];
   date: string[];
-  durationMinutes?: number;
+  durationMinutes?: number | string;
   address?: string;
   note?: string[];
   capacity?: string;
@@ -73,7 +73,7 @@ interface Concert {
   setlist?: {
     date: string;
     formatted_date: string;
-    duration_minutes?: number;
+    duration_minutes?: number | string;
     music: {
       music: {
         name: string;
@@ -102,7 +102,7 @@ const DetailPage: React.FC = () => {
   const cardBgColor = useColorModeValue("white", "gray.800");
   const currentTime = moment();
   const [allConcerts, setAllConcerts] = useState<Concert[]>([]);
-  const [lang, setLang] = useState("");
+  const [lang, setLang] = useState(i18n.language);
   const isMobileOrTablet = useBreakpointValue({ base: true, md: true, lg: false });
   const { data: concertDetail, refetch: refetchConcertDetail, isLoading } = useConcertDetail(id ?? "", lang);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -111,58 +111,72 @@ const DetailPage: React.FC = () => {
   const { isOpen: isDrawerOpen, onOpen: onDrawerOpen, onClose: onDrawerClose } = useDisclosure();
 
   useEffect(() => {
-    if (i18n.language === "ko") {
-      setLang("ko");
-    } else {
-      setLang("en");
-    }
-  }, [i18n.language]);
+    setLang(i18n.language);
+    refetchConcertDetail();
+  }, [i18n.language, refetchConcertDetail]);
 
   useEffect(() => {
-    refetchConcertDetail();
-  }, [lang, refetchConcertDetail]);
+    if (concertDetail) {
+      console.log("Concert Detail:", concertDetail);
+      console.log("Setlist:", concertDetail.setlist);
+      console.log("ConcertDate:", concertDetail.concertDate);
+    }
+  }, [concertDetail]);
 
   if (isLoading) {
-    return <Loading />
+    return <Loading />;
   }
 
   if (!id || !concertDetail) {
     return <NotFound content="정보가 없습니다." />;
   }
 
-  const hasSetlist = Array.isArray(concertDetail.setlist) && concertDetail.setlist.length > 0;
-  const hasConcertDate = Array.isArray(concertDetail.concertDate) && concertDetail.concertDate.length > 0;
-
-  const concertDates: string[] =
-    hasSetlist
-      ? concertDetail.setlist.map((set: { date: string }) => set.date)
-      : hasConcertDate
-        ? concertDetail.concertDate.map((d: { date: string }) => d.date)
-        : [];
-
-  const augmentedConcertDetail: Concert = {
-    ...concertDetail,
-    date: concertDates,
-    concertDate:
-      hasConcertDate
-        ? concertDetail.concertDate
-        : hasSetlist
-          ? concertDetail.setlist.map(
-            (set: { date: string; start_time: string; duration_minutes: string }) => ({
-              date: set.date,
-              start_time: set.start_time,
-              duration_minutes: set.duration_minutes,
-            })
-          )
-          : [],
-    durationMinutes:
-      hasSetlist && concertDetail.setlist[0]?.duration_minutes
-        ? concertDetail.setlist[0].duration_minutes
-        : hasConcertDate && concertDetail.concertDate[0]?.duration_minutes
-          ? concertDetail.concertDate[0].duration_minutes
-          : 0,
+  // Normalize duration_minutes to number
+  const normalizeConcertData = (concert: Concert): Concert => {
+    return {
+      ...concert,
+      concertDate: concert.concertDate?.map((d) => ({
+        ...d,
+        duration_minutes: Number(d.duration_minutes) || 0,
+      })) || [],
+      setlist: concert.setlist?.map((s) => ({
+        ...s,
+        duration_minutes: Number(s.duration_minutes) || 0,
+      })) || [],
+      durationMinutes: Number(concert.durationMinutes) || 0,
+    };
   };
 
+  const normalizedConcertDetail = normalizeConcertData(concertDetail);
+
+  const hasSetlist = Array.isArray(normalizedConcertDetail.setlist) && normalizedConcertDetail.setlist.length > 0;
+  const hasConcertDate =
+    Array.isArray(normalizedConcertDetail.concertDate) && normalizedConcertDetail.concertDate.length > 0;
+
+  const concertDates: string[] = hasSetlist && normalizedConcertDetail.setlist
+    ? normalizedConcertDetail.setlist.map((set) => set.date)
+    : hasConcertDate
+      ? normalizedConcertDetail.concertDate.map((d) => d.date)
+      : [];
+
+  const augmentedConcertDetail: Concert = {
+    ...normalizedConcertDetail,
+    date: concertDates,
+    concertDate: hasConcertDate
+      ? normalizedConcertDetail.concertDate
+      : hasSetlist && normalizedConcertDetail.setlist
+        ? normalizedConcertDetail.setlist.map((set) => ({
+          date: set.date,
+          start_time: set.start_time,
+          duration_minutes: Number(set.duration_minutes) || 0,
+        }))
+        : [],
+    durationMinutes: hasSetlist && normalizedConcertDetail.setlist?.[0]?.duration_minutes
+      ? Number(normalizedConcertDetail.setlist[0].duration_minutes)
+      : hasConcertDate && normalizedConcertDetail.concertDate?.[0]?.duration_minutes
+        ? Number(normalizedConcertDetail.concertDate[0].duration_minutes)
+        : 0,
+  };
 
   const isEventTodayOrFuture = (dates: string[]): boolean => {
     if (!dates || dates.length === 0) return false;
@@ -259,10 +273,7 @@ const DetailPage: React.FC = () => {
           </Flex>
 
           <Flex flexDirection="column" justifyContent="space-between" flex={1} gap={4}>
-            <Box bg={cardBgColor} p={6} border="1px solid"
-              borderRadius="2xl"
-              boxShadow="xl"
-              borderColor="purple.100">
+            <Box bg={cardBgColor} p={6} border="1px solid" borderRadius="2xl" boxShadow="xl" borderColor="purple.100">
               <Badge colorScheme="red" fontSize="md" mb={2}>
                 {augmentedConcertDetail.type}
               </Badge>
@@ -278,7 +289,7 @@ const DetailPage: React.FC = () => {
                 <HStack align="start">
                   <Icon as={CalendarIcon} color="gray.500" mt={2} />
                   <VStack align="start" spacing={2}>
-                    {augmentedConcertDetail.setlist && augmentedConcertDetail.setlist.length > 0 ? (
+                    {hasSetlist && augmentedConcertDetail.setlist ? (
                       augmentedConcertDetail.setlist.map((set, index) => (
                         <Text
                           key={index}
@@ -291,12 +302,14 @@ const DetailPage: React.FC = () => {
                           <Text as="span" color="purple.600" fontWeight="semibold" ml={2}>
                             {formatTime(set.start_time)}
                           </Text>
-                          <Text as="span" color="gray.500" fontWeight="medium" ml={2}>
-                            {set.duration_minutes}{set.duration_minutes && t("minutes")}
-                          </Text>
+                          {set.duration_minutes !== "0" && set.duration_minutes !== "00" && Number(set.duration_minutes) > 0 && (
+                            <Text as="span" color="gray.500" fontWeight="medium" ml={2}>
+                              {set.duration_minutes}{t("minutes")}
+                            </Text>
+                          )}
                         </Text>
                       ))
-                    ) : augmentedConcertDetail.concertDate && augmentedConcertDetail.concertDate.length > 0 ? (
+                    ) : hasConcertDate ? (
                       augmentedConcertDetail.concertDate.map((d, index) => (
                         <Text
                           key={index}
@@ -309,17 +322,16 @@ const DetailPage: React.FC = () => {
                           <Text as="span" color="purple.600" fontWeight="semibold" ml={2}>
                             {formatTime(d.start_time)}
                           </Text>
-                          <Text as="span" color="gray.500" fontWeight="medium" ml={2}>
-                            {d.duration_minutes}{d.duration_minutes && t("minutes")}
-                          </Text>
+                          {d.duration_minutes && d.duration_minutes !== "0" && d.duration_minutes !== "00" && Number(d.duration_minutes) > 0 && (
+                            <Text as="span" color="gray.500" fontWeight="medium" ml={2}>
+                              {d.duration_minutes}{t("minutes")}
+                            </Text>
+                          )}
                         </Text>
                       ))
                     ) : (
-                      <Text
-                        fontSize={{ base: "md", md: "lg" }}
-                        py={0.5}
-                      >
-                        -
+                      <Text fontSize={{ base: "md", md: "lg" }} py={0.5}>
+                        {t("no_date_available")}
                       </Text>
                     )}
                   </VStack>
@@ -327,26 +339,32 @@ const DetailPage: React.FC = () => {
               </VStack>
             </Box>
 
-            <Box bg={cardBgColor} p={6} border="1px solid"
-              borderRadius="2xl"
-              boxShadow="xl"
-              borderColor="purple.100">
+            <Box bg={cardBgColor} p={6} border="1px solid" borderRadius="2xl" boxShadow="xl" borderColor="purple.100">
               <Text fontSize="xl" fontWeight="semibold" mb={3}>
                 {t("performers")}
               </Text>
               <Flex wrap="wrap" gap={2}>
-                {augmentedConcertDetail.artists.map((artist: string, index: number) => (
-                  <Box key={index} fontSize="md">
-                    <Text as="span" fontWeight={artist === "N.Flying" ? "bold" : "md"} color={artist === "N.Flying" ? "purple.500" : "black"}>{artist}</Text>
-                  </Box>
-                ))}
+                {augmentedConcertDetail.artists?.length ? (
+                  augmentedConcertDetail.artists.map((artist, index) => (
+                    <Box key={index} fontSize="md">
+                      <Text
+                        as="span"
+                        fontWeight={artist === "N.Flying" ? "bold" : "md"}
+                        color={artist === "N.Flying" ? "purple.500" : "black"}
+                      >
+                        {artist}
+                      </Text>
+                    </Box>
+                  ))
+                ) : (
+                  <Text fontSize="md" color="gray.500">
+                    {t("no_artists_available")}
+                  </Text>
+                )}
               </Flex>
             </Box>
 
-            <Box bg={cardBgColor} p={6} border="1px solid"
-              borderRadius="2xl"
-              boxShadow="xl"
-              borderColor="purple.100">
+            <Box bg={cardBgColor} p={6} border="1px solid" borderRadius="2xl" boxShadow="xl" borderColor="purple.100">
               <Text fontSize="xl" fontWeight="semibold" mb={3}>
                 {augmentedConcertDetail.type === "행사" || augmentedConcertDetail.type === "Event"
                   ? t("performanceInfo")
@@ -362,10 +380,10 @@ const DetailPage: React.FC = () => {
                   )}
                 </Flex>
 
-                {augmentedConcertDetail.ticketLink.length > 1 ? (
+                {augmentedConcertDetail.ticketLink?.length > 1 ? (
                   <>
                     <Button
-                      onClick={onDrawerOpen} // 드로어든 모달이든 여는 트리거는 이걸로 통일
+                      onClick={onDrawerOpen}
                       bg="#9F7AEA"
                       color="white"
                       _hover={{ bg: "#9F7AEA" }}
@@ -384,7 +402,7 @@ const DetailPage: React.FC = () => {
                     ) : (
                       <TicketModal
                         links={augmentedConcertDetail.ticketLink}
-                        isOpen={isDrawerOpen} // 똑같이 드로어용 상태 재활용
+                        isOpen={isDrawerOpen}
                         onClose={onDrawerClose}
                         lang={lang}
                         t={t}
@@ -394,16 +412,16 @@ const DetailPage: React.FC = () => {
                 ) : (
                   <Button
                     as={Link}
-                    href={augmentedConcertDetail.ticketLink[0]}
+                    href={augmentedConcertDetail.ticketLink?.[0] || "#"}
                     isExternal
-                    bg='#9F7AEA'
+                    bg="#9F7AEA"
                     color="white"
                     _hover={{ bg: "brand.main" }}
+                    isDisabled={!augmentedConcertDetail.ticketLink?.[0]}
                   >
                     {getButtonText(augmentedConcertDetail, isPastEvent, timeRemaining)}
                   </Button>
                 )}
-
               </Flex>
             </Box>
           </Flex>
@@ -454,7 +472,7 @@ const DetailPage: React.FC = () => {
                   _selected={{
                     color: "white",
                     bg: "purple.400",
-                    borderColor: "purple.200"
+                    borderColor: "purple.200",
                   }}
                   borderRadius="lg"
                   px={4}
@@ -496,13 +514,12 @@ const DetailPage: React.FC = () => {
                               </Text>
                             </>
                           )}
-                          {augmentedConcertDetail.note && augmentedConcertDetail.note.length > 0 && (
+                          {augmentedConcertDetail.note?.length && (
                             <>
                               <Text fontSize="lg" color="gray.800">
                                 <strong>{t("notes")}</strong>
-                                <br />
                               </Text>
-                              {augmentedConcertDetail.note.map((note: string, index: number) =>
+                              {augmentedConcertDetail.note.map((note, index) =>
                                 note.endsWith(".png") ||
                                   note.endsWith(".jpg") ||
                                   note.endsWith(".jpeg") ||
@@ -525,26 +542,26 @@ const DetailPage: React.FC = () => {
                             </>
                           )}
                           <SimpleGrid columns={1} spacing={4}>
-                            {augmentedConcertDetail.infoImage && augmentedConcertDetail.infoImage.length > 0 && augmentedConcertDetail?.infoImage.map((info: { image: string }, index: number) =>
-                              info.image ? (
-                                <Image
-                                  key={index}
-                                  src={info.image}
-                                  alt={`좌석 배치도 ${index + 1}`}
-                                  borderRadius="md"
-                                  boxShadow="md"
-                                  objectFit="cover"
-                                  w="100%"
-                                />
-                              ) : null
-                            )}
+                            {augmentedConcertDetail.infoImage?.length &&
+                              augmentedConcertDetail.infoImage.map((info, index) =>
+                                info.image ? (
+                                  <Image
+                                    key={index}
+                                    src={info.image}
+                                    alt={`좌석 배치도 ${index + 1}`}
+                                    borderRadius="md"
+                                    boxShadow="md"
+                                    objectFit="cover"
+                                    w="100%"
+                                  />
+                                ) : null
+                              )}
                           </SimpleGrid>
                         </VStack>
                       </Box>
                     )}
-                    {augmentedConcertDetail.seats &&
-                      augmentedConcertDetail.seats.length > 0 &&
-                      augmentedConcertDetail.seats.some((seat: { image: string }) => seat.image) && (
+                    {augmentedConcertDetail.seats?.length &&
+                      augmentedConcertDetail.seats.some((seat) => seat.image) && (
                         <Box>
                           <HStack mb={3}>
                             <Icon as={UsersIcon} color="orange.600" />
@@ -553,7 +570,7 @@ const DetailPage: React.FC = () => {
                             </Text>
                           </HStack>
                           <SimpleGrid columns={1} spacing={4}>
-                            {augmentedConcertDetail.seats.map((seat: { image: string }, index: number) =>
+                            {augmentedConcertDetail.seats.map((seat, index) =>
                               seat.image ? (
                                 <Image
                                   key={index}

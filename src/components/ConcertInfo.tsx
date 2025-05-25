@@ -94,6 +94,7 @@ const ConcertInfo = ({
   return (
     <VStack spacing={4} align="start" height="100%">
       <Input
+        borderColor="purple.200"
         ref={searchInputRef}
         placeholder={t("mapSearchPlaceholder")} // JSON 파일에서 번역된 문자열
         value={query}
@@ -109,6 +110,7 @@ const ConcertInfo = ({
             rightIcon={<ChevronDownIcon />}
             bg="white"
             borderWidth="1px"
+            borderColor="purple.200"
             color="gray.800"
             fontSize="sm"
             fontWeight="medium"
@@ -232,6 +234,7 @@ const ConcertInfo = ({
               p="10px"
               margin="10px 0"
               border="1px solid #eee"
+              borderColor="purple.200"
               borderRadius="4px"
               w="100%"
               _hover={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}
