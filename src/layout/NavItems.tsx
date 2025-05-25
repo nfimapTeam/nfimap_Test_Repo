@@ -3,6 +3,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { RiListUnordered, RiMapPinLine, RiUser3Line, RiMusicLine } from "@remixicon/react";
 import { useTranslation } from "react-i18next";
+import { MdOndemandVideo } from "react-icons/md";
 
 interface NavItemsProps {
   direction: "row" | "column";
@@ -87,10 +88,10 @@ const NavItems: React.FC<NavItemsProps> = ({
         alignItems="center"
         gap="2px"
         cursor="pointer"
-        onClick={() => navigate("/music")}
+        onClick={() => navigate("/content")}
       >
-        {!textOnly && <RiMusicLine color={getLinkColorIcon("/music")} size={iconSize} />}
-        <Text fontSize={fontSize} color={getLinkColor("/music")} fontWeight={600} textAlign="center">
+        {!textOnly && <MdOndemandVideo color={getLinkColorIcon("/content")} size={iconSize} />}
+        <Text fontSize={fontSize} color={getLinkColor("/content")} fontWeight={600} textAlign="center">
           {t("content")}
         </Text>
       </Flex>

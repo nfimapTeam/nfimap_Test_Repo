@@ -18,7 +18,6 @@ const App = () => {
         <Route path="/map" element={<MapPage />} />
         <Route path="/:id" element={<DetailPage />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/music" element={<Music />} />
         <Route path="/content" element={<Content />} />
         <Route path="*" element={<NotFound content={t("notFound")} />} />
       </Routes>
