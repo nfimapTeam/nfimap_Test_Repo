@@ -303,7 +303,7 @@ const DetailPage: React.FC = () => {
                           <Text as="span" color="purple.600" fontWeight="semibold" ml={2}>
                             {formatTime(set.start_time)}
                           </Text>
-                          {set.duration_minutes !== "0" && set.duration_minutes !== "00" && Number(set.duration_minutes) > 0 && (
+                          {set.duration_minutes !== "0" && set.duration_minutes !== "00" && set.duration_minutes !== "00:00" && Number(set.duration_minutes) > 0 && (
                             <Text as="span" color="gray.500" fontWeight="medium" ml={2}>
                               {set.duration_minutes}{t("minutes")}
                             </Text>
@@ -542,22 +542,24 @@ const DetailPage: React.FC = () => {
                               )}
                             </>
                           )}
-                          <SimpleGrid columns={1} spacing={4}>
-                            {augmentedConcertDetail.infoImage?.length &&
-                              augmentedConcertDetail.infoImage.map((info, index) =>
-                                info.image ? (
-                                  <Image
-                                    key={index}
-                                    src={info.image}
-                                    alt={`좌석 배치도 ${index + 1}`}
-                                    borderRadius="md"
-                                    boxShadow="md"
-                                    objectFit="cover"
-                                    w="100%"
-                                  />
-                                ) : null
-                              )}
-                          </SimpleGrid>
+                          {augmentedConcertDetail.infoImage &&
+                            <SimpleGrid columns={1} spacing={4}>
+                              {augmentedConcertDetail.infoImage?.length &&
+                                augmentedConcertDetail.infoImage.map((info, index) =>
+                                  info.image ? (
+                                    <Image
+                                      key={index}
+                                      src={info.image}
+                                      alt={`좌석 배치도 ${index + 1}`}
+                                      borderRadius="md"
+                                      boxShadow="md"
+                                      objectFit="cover"
+                                      w="100%"
+                                    />
+                                  ) : null
+                                )}
+                            </SimpleGrid>
+                          }
                         </VStack>
                       </Box>
                     )}
