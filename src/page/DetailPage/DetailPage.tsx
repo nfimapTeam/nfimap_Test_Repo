@@ -515,7 +515,7 @@ const DetailPage: React.FC = () => {
                               </Text>
                             </>
                           )}
-                          {augmentedConcertDetail.note?.length && (
+                          {augmentedConcertDetail.note?.length&& augmentedConcertDetail.note?.length >= 0 && (
                             <>
                               <Text fontSize="lg" color="gray.800">
                                 <strong>{t("notes")}</strong>
@@ -542,7 +542,7 @@ const DetailPage: React.FC = () => {
                               )}
                             </>
                           )}
-                          {augmentedConcertDetail.infoImage &&
+                          {augmentedConcertDetail.infoImage && augmentedConcertDetail.infoImage?.length >= 0 &&
                             <SimpleGrid columns={1} spacing={4}>
                               {augmentedConcertDetail.infoImage?.length &&
                                 augmentedConcertDetail.infoImage.map((info, index) =>
@@ -563,7 +563,7 @@ const DetailPage: React.FC = () => {
                         </VStack>
                       </Box>
                     )}
-                    {augmentedConcertDetail.seats?.length &&
+                    {augmentedConcertDetail.seats?.length && augmentedConcertDetail.seats?.length >= 0 &&
                       augmentedConcertDetail.seats.some((seat) => seat.image) && (
                         <Box>
                           <HStack mb={3}>
