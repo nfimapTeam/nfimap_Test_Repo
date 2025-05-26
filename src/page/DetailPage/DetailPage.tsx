@@ -515,7 +515,7 @@ const DetailPage: React.FC = () => {
                               </Text>
                             </>
                           )}
-                          {augmentedConcertDetail.note?.length&& augmentedConcertDetail.note?.length >= 0 && (
+                          {augmentedConcertDetail.note?.length && augmentedConcertDetail.note?.length >= 0 && (
                             <>
                               <Text fontSize="lg" color="gray.800">
                                 <strong>{t("notes")}</strong>
@@ -542,11 +542,11 @@ const DetailPage: React.FC = () => {
                               )}
                             </>
                           )}
-                          {augmentedConcertDetail.infoImage && augmentedConcertDetail.infoImage?.length >= 0 &&
-                            <SimpleGrid columns={1} spacing={4}>
-                              {augmentedConcertDetail.infoImage?.length &&
-                                augmentedConcertDetail.infoImage.map((info, index) =>
-                                  info.image ? (
+                          {augmentedConcertDetail?.infoImage &&
+                            augmentedConcertDetail.infoImage.length > 0 && (
+                              <SimpleGrid columns={1} spacing={4}>
+                                {augmentedConcertDetail.infoImage.map((info, index) =>
+                                  info.image && (
                                     <Image
                                       key={index}
                                       src={info.image}
@@ -556,9 +556,10 @@ const DetailPage: React.FC = () => {
                                       objectFit="cover"
                                       w="100%"
                                     />
-                                  ) : null
+                                  )
                                 )}
-                            </SimpleGrid>
+                              </SimpleGrid>
+                            )
                           }
                         </VStack>
                       </Box>
