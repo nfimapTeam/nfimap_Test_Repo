@@ -78,6 +78,7 @@ interface Concert {
       music: {
         name: string;
         youtube_url: string;
+        image: string | null;
       };
       status: string;
       play_order: number;
@@ -242,6 +243,14 @@ const DetailPage: React.FC = () => {
     augmentedConcertDetail.ticketOpen.date,
     augmentedConcertDetail.ticketOpen.time
   );
+
+  // Determine if the last setlist date is in the past
+  const isLastSetlistDatePast = hasSetlist && normalizedConcertDetail.setlist
+    ? moment(normalizedConcertDetail.setlist[normalizedConcertDetail.setlist.length - 1].date, "YYYY-MM-DD").isBefore(currentTime, "day")
+    : false;
+
+  // Set default tab index: 1 for "show_record" if last setlist date is past, 0 for "show_details" otherwise
+  const defaultTabIndex = isLastSetlistDatePast ? 1 : 0;
 
   return (
     <Box h={isMobileOrTablet ? "calc(100svh - 120px)" : "calc(100svh - 70px)"}>
@@ -439,6 +448,7 @@ const DetailPage: React.FC = () => {
               border="1px solid"
               borderColor="purple.100"
               p={6}
+              defaultIndex={defaultTabIndex} // Set default tab dynamically
             >
               <TabList mb={6}>
                 <Tab
