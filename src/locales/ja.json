@@ -40,7 +40,7 @@
   "Profile.title": "エンピマップ - 歌手N.Flyingを紹介します！",
   "Profile.description": "N.FimapはファンダムN.Fiaの応援をしています。",
   "Profile.og.description": "N.Fimapのサンプルページです。",
-  "Profile.og.image": "%PUBLIC_URL%/image/nfimap.png",
+  "Profile.og.image": "%PUBLIC_URL%/image/logo.svg",
   "Profile.og.url": "https://nfimap.co.kr",
   "Profile.debut": "デビュー",
   "Profile.debut_date": "デビュー日",
@@ -108,5 +108,8 @@
   "show_record": "公演記録",
   "selectTicketProvider": "チケット販売元を選択",
   "content": "コンテンツ",
-  "npart": "N-part"
+  "npart": "N-part",
+  "pwa_prompt": "アプリをインストールしてより便利に使いましょう！",
+  "install": "インストール",
+  "view_mobile_web": "モバイルウェブを表示"
 }

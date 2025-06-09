@@ -142,7 +142,7 @@ const Profile = () => {
           <title>{t("Profile.title")}</title>
           <meta name="description" content={t("Profile.description")} />
           <meta property="og:description" content={t("Profile.og.description")} />
-          <meta property="og:image" content="%PUBLIC_URL%/image/nfimap.png" />
+          <meta property="og:image" content="%PUBLIC_URL%/image/logo.svg" />
           <meta property="og:url" content="https://nfimap.co.kr" />
         </Helmet>
         <Flex justify={isMobile ? "center" : "flex-end"} gap={4} py={4} wrap="wrap">

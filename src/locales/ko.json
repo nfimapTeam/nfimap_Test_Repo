@@ -40,7 +40,7 @@
   "Profile.title": "엔피맵 - 가수 N.Flying을 소개합니다!",
   "Profile.description": "N.Fimap은 팬덤 N.Fia의 덕질을 응원합니다.",
   "Profile.og.description": "N.Fimap의 예제 페이지입니다.",
-  "Profile.og.image": "%PUBLIC_URL%/image/nfimap.png",
+  "Profile.og.image": "%PUBLIC_URL%/image/logo.svg",
   "Profile.og.url": "https://nfimap.co.kr",
   "Profile.debut": "데뷔",
   "Profile.debut_date": "데뷔일",
@@ -108,5 +108,8 @@
   "show_record": "공연 기록",
   "selectTicketProvider": "예매처 선택",
   "content": "콘텐츠",
-  "npart": "엔퍄트"
+  "npart": "엔퍄트",
+  "pwa_prompt": "앱을 설치하여 더 편리하게 사용하세요!",
+  "install": "설치하기",
+  "view_mobile_web": "모바일 웹 보기"
 }

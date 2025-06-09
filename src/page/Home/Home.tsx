@@ -308,7 +308,7 @@ const Home = () => {
         <Helmet>
           <title>{t("helmettitle")}</title>
           <meta name="description" content={t("helmetdescription")} />
-          <meta property="og:image" content="/image/nfimap.png" /> {/* 로컬 경로로 수정 */}
+          <meta property="og:image" content="/image/logo.svg" /> {/* 로컬 경로로 수정 */}
           <meta property="og:url" content="https://nfimap.co.kr" />
         </Helmet>
         <Box mb={4}>

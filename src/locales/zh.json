@@ -40,7 +40,7 @@
   "Profile.title": "N.Fimap - 介绍歌手N.Flying！",
   "Profile.description": "N.Fimap支持粉丝团N.Fia的追星活动。",
   "Profile.og.description": "N.Fimap的示例页面。",
-  "Profile.og.image": "%PUBLIC_URL%/image/nfimap.png",
+  "Profile.og.image": "%PUBLIC_URL%/image/logo.svg",
   "Profile.og.url": "https://nfimap.co.kr",
   "Profile.debut": "出道",
   "Profile.debut_date": "出道日期",
@@ -108,5 +108,8 @@
   "show_record": "演唱会记录",
   "selectTicketProvider": "选择购票渠道",
   "content": "内容",
-  "npart": "N-part"
+  "npart": "N-part",
+  "pwa_prompt": "安装应用程序以获得更便捷的体验！",
+  "install": "安装",
+  "view_mobile_web": "查看移动网页"
 }

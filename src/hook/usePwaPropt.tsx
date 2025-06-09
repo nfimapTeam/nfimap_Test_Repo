@@ -5,6 +5,18 @@ export const usePwaPrompt = () => {
   const [isPromptVisible, setIsPromptVisible] = useState(false);
 
   useEffect(() => {
+    const dismissedAt = localStorage.getItem("pwa-install-dismissed");
+    if (dismissedAt) {
+      const dismissedTime = new Date(dismissedAt).getTime();
+      const now = Date.now();
+      const diffInDays = (now - dismissedTime) / (1000 * 60 * 60 * 24);
+      if (diffInDays < 14) {
+        return; // 14일 안 지났으면 안 보이게
+      } else {
+        localStorage.removeItem("pwa-install-dismissed"); // 오래됐으면 삭제
+      }
+    }
+
     const handler = (e: any) => {
       e.preventDefault();
       setDeferredPrompt(e);
@@ -19,18 +31,16 @@ export const usePwaPrompt = () => {
   }, []);
 
   const promptInstall = async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const choiceResult = await deferredPrompt.userChoice;
-      if (choiceResult.outcome === "accepted") {
-        console.log("User accepted the install prompt");
-      } else {
-        console.log("User dismissed the install prompt");
-      }
-      setDeferredPrompt(null);
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === "accepted") {
       setIsPromptVisible(false);
     }
   };
 
-  return { isPromptVisible, promptInstall };
+  return {
+    isPromptVisible,
+    promptInstall,
+  };
 };
