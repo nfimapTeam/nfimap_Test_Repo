@@ -9,9 +9,6 @@ import {
   useDisclosure,
   Text,
   Checkbox,
-  VStack,
-  HStack,
-  Icon,
   Flex,
   Button,
 } from "@chakra-ui/react";
@@ -38,6 +35,7 @@ const images: { [key: string]: string[] } = {
   유회승: ["/image/toro/hs.jpeg"],
   서동성: ["/image/toro/ds.png"],
 };
+
 
 // 생일 축하 메시지 배열
 // const shareMessages: string[] = [
@@ -134,6 +132,7 @@ const images: { [key: string]: string[] } = {
 
 // #NFlying #엔플라잉 #유회승 #승구 #생일축하 #엔피아`
 // ];
+
 const shareMessages: string[] = [
   `동성아, 생일 축하해! 🎉
 네가 들려주는 베이스 연주 덕분에,
@@ -220,7 +219,6 @@ const Birthday = () => {
   };
 
   const handleShare = () => {
-    // 랜덤으로 멘트를 선택
     const randomMessage =
       shareMessages[Math.floor(Math.random() * shareMessages.length)];
     const url = encodeURIComponent("https://nfimap.co.kr/");
@@ -248,6 +246,18 @@ const Birthday = () => {
                 alt={`${birthdayMember.name} 생일 이미지`}
                 cursor="pointer"
                 onClick={handleDownloadImage}
+                objectFit="contain"
+                width="100%"
+                maxH="400px"
+                mx="auto"
+                fallbackSrc="https://via.placeholder.com/300x400?text=Loading..."
+                loading="lazy"
+                srcSet={`
+                  ${randomImage}?w=300 300w,
+                  ${randomImage}?w=600 600w,
+                  ${randomImage}?w=900 900w
+                `}
+                sizes="(max-width: 600px) 300px, (max-width: 900px) 600px, 900px"
               />
               <Text fontSize="sm" color="gray.500" mt={2}>
                 이미지를 클릭하면 저장됩니다.
