@@ -40,7 +40,7 @@
   "Profile.title": "N.Fimap - 介绍歌手N.Flying！",
   "Profile.description": "N.Fimap支持粉丝团N.Fia的追星活动。",
   "Profile.og.description": "N.Fimap的示例页面。",
-  "Profile.og.image": "%PUBLIC_URL%/image/logo.svg",
+  "Profile.og.image": "%PUBLIC_URL%/image/nfimap.png",
   "Profile.og.url": "https://nfimap.co.kr",
   "Profile.debut": "出道",
   "Profile.debut_date": "出道日期",

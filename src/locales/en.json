@@ -40,7 +40,7 @@
   "Profile.title": "N.Fimap - Introducing the Singer N.Flying!",
   "Profile.description": "N.Fimap supports the fandom N.Fia's activities.",
   "Profile.og.description": "This is an example page of N.Fimap.",
-  "Profile.og.image": "%PUBLIC_URL%/image/logo.svg",
+  "Profile.og.image": "%PUBLIC_URL%/image/nfimap.png",
   "Profile.og.url": "https://nfimap.co.kr",
   "Profile.debut_date": "Debut Date",
   "Profile.debut_song": "Debut Song",
@@ -107,8 +107,5 @@
   "show_record": "Show Record",
   "selectTicketProvider": "Select Ticket Provider",
   "content": "Content",
-  "npart": "N-part",
-  "pwa_prompt": "Install the app for a more convenient experience!",
-  "install": "Install",
-  "view_mobile_web": "View Mobile Web"
+  "npart": "N-part"
 }

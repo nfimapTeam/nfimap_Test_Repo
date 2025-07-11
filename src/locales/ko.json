@@ -40,7 +40,7 @@
   "Profile.title": "엔피맵 - 가수 N.Flying을 소개합니다!",
   "Profile.description": "N.Fimap은 팬덤 N.Fia의 덕질을 응원합니다.",
   "Profile.og.description": "N.Fimap의 예제 페이지입니다.",
-  "Profile.og.image": "%PUBLIC_URL%/image/logo.svg",
+  "Profile.og.image": "%PUBLIC_URL%/image/nfimap.png",
   "Profile.og.url": "https://nfimap.co.kr",
   "Profile.debut": "데뷔",
   "Profile.debut_date": "데뷔일",
