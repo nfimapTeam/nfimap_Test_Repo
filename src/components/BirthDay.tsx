@@ -19,7 +19,7 @@ type Member = { name: string; date: string };
 const members: Member[] = [
   { name: "이승협", date: "10-31" },
   { name: "차훈", date: "07-12" },
-  { name: "김재현", date: "07-14" },
+  { name: "김재현", date: "07-15" },
   { name: "유회승", date: "02-26" },
   { name: "서동성", date: "04-09" },
 ];
