@@ -76,7 +76,7 @@ const SetlistComponent: React.FC<SetlistComponentProps> = ({
   // Function to copy setlist to clipboard
   const handleCopySetlist = (set: Setlist): void => {
     const setlistText = set.music
-      .map((song: Song, index: number) => `${index + 1}. ${song.music.name}`)
+      .map((song: Song, index: number) => `${index + 1}. ${song.music.name}${songStatus(song.status)}`)
       .join('\n');
 
     const fullText = `${augmentedConcertDetail.name}\n${moment(set.date, 'YYYY-MM-DD').format('YYYY/MM/DD')} ${t('setlist')}\n\n${setlistText}`;
