@@ -13,6 +13,7 @@ import { RiAddLine, RiCloseLine, RiSettings3Line } from "@remixicon/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import SettingsModal from "../components/SettingsModal";
+import { MdLanguage } from "react-icons/md";
 
 const MotionBox = chakra(motion.div);
 
@@ -147,7 +148,7 @@ const FnbButton = ({ isMobileOrTablet }: FnbButtonProps) => {
               <IconButton
                 onClick={onSettingsOpen}
                 aria-label="설정"
-                icon={<RiSettings3Line size={24} />}
+                icon={<MdLanguage size={24} />}
                 bg="white"
                 color="gray.700"
                 isRound
