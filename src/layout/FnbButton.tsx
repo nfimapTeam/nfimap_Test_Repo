@@ -1,9 +1,18 @@
 import React, { useState } from "react";
-import { Box, IconButton, VStack, useOutsideClick, chakra, Image } from "@chakra-ui/react";
-import { RiAddLine, RiCloseLine } from "@remixicon/react";
+import {
+  Box,
+  IconButton,
+  VStack,
+  useOutsideClick,
+  chakra,
+  Image,
+  useDisclosure,
+  Link as ChakraLink,
+} from "@chakra-ui/react";
+import { RiAddLine, RiCloseLine, RiSettings3Line } from "@remixicon/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MdOndemandVideo } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import SettingsModal from "../components/SettingsModal";
 
 const MotionBox = chakra(motion.div);
 
@@ -14,6 +23,11 @@ interface FnbButtonProps {
 const FnbButton = ({ isMobileOrTablet }: FnbButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const {
+    isOpen: isSettingsOpen,
+    onOpen: onSettingsOpen,
+    onClose: onSettingsClose,
+  } = useDisclosure();
 
   const ref = React.useRef(null);
   useOutsideClick({
@@ -22,14 +36,14 @@ const FnbButton = ({ isMobileOrTablet }: FnbButtonProps) => {
   });
 
   const handleButtonClick = () => {
-    window.open('https://nfimap-plus.co.kr/', '_blank');
+    window.open("https://nfimap-plus.co.kr/", "_blank");
     setIsOpen(false);
   };
 
   const goToContentLink = () => {
     navigate("/content");
     setIsOpen(false);
-  }
+  };
 
   return (
     <Box ref={ref}>
@@ -74,10 +88,10 @@ const FnbButton = ({ isMobileOrTablet }: FnbButtonProps) => {
           boxShadow="0px 4px 12px rgba(0, 0, 0, 0.15)"
           _hover={{
             transform: "scale(1.05)",
-            boxShadow: "0px 6px 16px rgba(0, 0, 0, 0.2)"
+            boxShadow: "0px 6px 16px rgba(0, 0, 0, 0.2)",
           }}
           _active={{
-            transform: "scale(0.95)"
+            transform: "scale(0.95)",
           }}
           transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
         />
@@ -95,6 +109,21 @@ const FnbButton = ({ isMobileOrTablet }: FnbButtonProps) => {
               alignItems="center"
               zIndex={3}
             >
+              <ChakraLink
+                href="https://x.com/nfimap"
+                isExternal
+                _hover={{ textDecoration: "none" }}
+                aria-label={`Visit https://x.com/nfimap`}
+              >
+                <Image
+                  src="/image/icon/sns/x.png"
+                  w="56px"
+                  h="56px"
+                  borderRadius="full"
+                  boxShadow="0 4px 10px rgba(157, 188, 191, 0.5)"
+                />
+              </ChakraLink>
+
               <IconButton
                 onClick={handleButtonClick}
                 aria-label="추가 버튼 1"
@@ -108,10 +137,29 @@ const FnbButton = ({ isMobileOrTablet }: FnbButtonProps) => {
                 boxShadow="0px 4px 12px rgba(0, 0, 0, 0.1)"
                 _hover={{
                   transform: "scale(1.05)",
-                  boxShadow: "0px 6px 16px rgba(0, 0, 0, 0.15)"
+                  boxShadow: "0px 6px 16px rgba(0, 0, 0, 0.15)",
                 }}
                 _active={{
-                  transform: "scale(0.95)"
+                  transform: "scale(0.95)",
+                }}
+                transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
+              />
+              <IconButton
+                onClick={onSettingsOpen}
+                aria-label="설정"
+                icon={<RiSettings3Line size={24} />}
+                bg="white"
+                color="gray.700"
+                isRound
+                width="56px"
+                height="56px"
+                boxShadow="0px 4px 12px rgba(0, 0, 0, 0.1)"
+                _hover={{
+                  transform: "scale(1.05)",
+                  boxShadow: "0px 6px 16px rgba(0, 0, 0, 0.15)",
+                }}
+                _active={{
+                  transform: "scale(0.95)",
                 }}
                 transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
               />
@@ -119,6 +167,7 @@ const FnbButton = ({ isMobileOrTablet }: FnbButtonProps) => {
           )}
         </AnimatePresence>
       </Box>
+      <SettingsModal isOpen={isSettingsOpen} onClose={onSettingsClose} />
     </Box>
   );
 };

@@ -7,7 +7,7 @@ export const getTicketSiteName = (ticketLink: string, lang: string): string => {
     return isKorean ? "예스24 티켓" : "Yes24 Ticket";
   }
   if (/tickets\.interpark\.com/i.test(ticketLink)) {
-    return isKorean ? "인터파크 티켓" : "Interpark Ticket";
+    return isKorean ? "놀티켓" : "NOL Ticket";
   }
   if (/ticket\.melon\.com/i.test(ticketLink)) {
     return isKorean ? "멜론 티켓" : "Melon Ticket";

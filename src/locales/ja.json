@@ -108,5 +108,7 @@
   "show_record": "公演記録",
   "selectTicketProvider": "チケット販売元を選択",
   "content": "コンテンツ",
-  "npart": "N-part"
+  "npart": "N-part",
+  "setting": "設定",
+  "confirm": "確認"
 }

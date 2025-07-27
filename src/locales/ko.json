@@ -111,5 +111,7 @@
   "npart": "엔퍄트",
   "pwa_prompt": "앱을 설치하여 더 편리하게 사용하세요!",
   "install": "설치하기",
-  "view_mobile_web": "모바일 웹 보기"
+  "view_mobile_web": "모바일 웹 보기",
+  "setting": "설정",
+  "confirm": "확인"
 }

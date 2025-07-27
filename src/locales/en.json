@@ -107,5 +107,7 @@
   "show_record": "Show Record",
   "selectTicketProvider": "Select Ticket Provider",
   "content": "Content",
-  "npart": "N-part"
+  "npart": "N-part",
+  "setting": "Settings",
+  "confirm": "Confirm"
 }

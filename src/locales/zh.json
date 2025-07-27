@@ -111,5 +111,7 @@
   "npart": "N-part",
   "pwa_prompt": "安装应用程序以获得更便捷的体验！",
   "install": "安装",
-  "view_mobile_web": "查看移动网页"
+  "view_mobile_web": "查看移动网页",
+  "setting": "设置",
+  "confirm": "确认"
 }
