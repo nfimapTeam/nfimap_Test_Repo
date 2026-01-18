@@ -47,11 +47,13 @@ const Content = () => {
       <Box maxWidth="1200px" margin="auto" pb={12}>
         <Flex justifyContent="center" my={4}>
           <ButtonGroup isAttached spacing={0}>
-            {["video", "npart", "music"].map((cat) => (
+            {/* {["video", "npart", "music"].map((cat) => ( */}
+            {["video", "npart"].map((cat) => (
               <Button
                 key={cat}
                 onClick={() => {
-                  setCategory(cat as "video" | "npart" | "music");
+                  // setCategory(cat as "video" | "npart" | "music");
+                  setCategory(cat as "video" | "npart");
                   if (cat !== "npart") setMediaType("videos"); // Reset mediaType for non-npart
                 }}
                 bg={category === cat ? "purple.400" : "white"}

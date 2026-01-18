@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   Input,
@@ -22,6 +22,12 @@ import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { toggleState } from "../../atom/toggleState";
+import { 
+  searchQueryState, 
+  sortOrderState, 
+  selectedYearState, 
+  scrollPositionState 
+} from "../../atom/listState";
 import Card from "./component/Card";
 import "react-calendar/dist/Calendar.css";
 import { Helmet } from "react-helmet-async";
@@ -61,14 +67,26 @@ const Home = () => {
   const columns = useBreakpointValue({ base: 1, md: 2, lg: 3 });
   const isMobileOrTablet = useBreakpointValue({ base: true, md: true, lg: false });
   const [currentTime, setCurrentTime] = useState(moment());
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortOrder, setSortOrder] = useState(t("latest"));
+  
+  // 전역 상태로 관리
+  const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState);
+  const [sortOrder, setSortOrder] = useRecoilState(sortOrderState);
+  const [selectedYear, setSelectedYear] = useRecoilState(selectedYearState);
+  const [scrollPosition, setScrollPosition] = useRecoilState(scrollPositionState);
+  
   const [toggle, setToggle] = useRecoilState(toggleState);
-  const [selectedType, setSelectedType] = useState("");
   const navigate = useNavigate();
   const [lang, setLang] = useState("");
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const { data: concertsData, refetch: refetchConcertsData } = useConcertList(lang);
+
+  // 2024년부터 현재 연도까지의 배열 생성
+  const currentYear = moment().year();
+  const yearOptions = Array.from(
+    { length: currentYear - 2024 + 2 },
+    (_, i) => 2024 + i
+  );
 
   useEffect(() => {
     if (i18n.language === "ko") {
@@ -91,20 +109,40 @@ const Home = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // sortOrder 초기값 설정
+  useEffect(() => {
+    if (!sortOrder) {
+      setSortOrder(t("latest"));
+    }
+  }, [sortOrder, setSortOrder, t]);
+
   useEffect(() => {
     if (toggle) {
       setSortOrder(t("latest"));
     }
   }, [toggle, t]);
 
+  // 스크롤 위치 복원
   useEffect(() => {
-    setSortOrder(t("latest"));
-    setSelectedType("");
-  }, [i18n.language, t]);
+    if (scrollContainerRef.current && scrollPosition > 0) {
+      scrollContainerRef.current.scrollTop = scrollPosition;
+    }
+  }, [scrollPosition]);
 
+  // 스크롤 위치 저장
   useEffect(() => {
-    translateType(selectedType)
-  }, [selectedType])
+    const handleScroll = () => {
+      if (scrollContainerRef.current) {
+        setScrollPosition(scrollContainerRef.current.scrollTop);
+      }
+    };
+
+    const scrollContainer = scrollContainerRef.current;
+    if (scrollContainer) {
+      scrollContainer.addEventListener("scroll", handleScroll);
+      return () => scrollContainer.removeEventListener("scroll", handleScroll);
+    }
+  }, [setScrollPosition]);
 
   const clearSearch = () => {
     setSearchQuery("");
@@ -158,14 +196,12 @@ const Home = () => {
   };
 
   const isEventTodayOrFuture = (dates: string[]) => {
-    // 수정: 배열에 오늘 또는 미래 날짜가 하나라도 있으면 true 반환
     return dates.some((date) =>
       moment(date, "YYYY-MM-DD").isSameOrAfter(currentTime, "day")
     );
   };
 
   const isEventToday = (dates: string[]) => {
-    // 수정: 배열에 오늘 날짜가 하나라도 있으면 true 반환
     const today = moment().format("YYYY-MM-DD");
     return dates.includes(today);
   };
@@ -189,7 +225,6 @@ const Home = () => {
       if (!ticketOpenA && ticketOpenB) return 1;
 
       if (sortOrder === t("latest")) {
-        // 다가오는 공연은 가장 이른 날짜로 정렬
         const dateA = moment(
           a.date.reduce((earliest, date) =>
             moment(date, "YYYY-MM-DD").isBefore(moment(earliest, "YYYY-MM-DD"))
@@ -216,7 +251,6 @@ const Home = () => {
     upcomingConcerts.sort(sortFunction);
     pastConcerts.sort((a, b) => {
       if (sortOrder === t("latest")) {
-        // 과거 공연은 가장 늦은 날짜로 내림차순 정렬
         const dateA = moment(
           a.date.reduce((latest, date) =>
             moment(date, "YYYY-MM-DD").isAfter(moment(latest, "YYYY-MM-DD"))
@@ -233,7 +267,7 @@ const Home = () => {
           ),
           "YYYY-MM-DD"
         );
-        return dateB.diff(dateA); // Reverse for past concerts
+        return dateB.diff(dateA);
       }
       return sortFunction(a, b);
     });
@@ -257,30 +291,28 @@ const Home = () => {
     }
   };
 
-  // API type 값을 정규화
-  const normalizeType = (type: string) => {
-    return type.toLowerCase().trim();
-  };
-
   const filteredAndSortedConcerts = (concertsData || []).filter((concert: RawConcert) => {
     const matchesSearch =
       (concert.name && concert.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (concert.location && concert.location.toLowerCase().includes(searchQuery.toLowerCase()));
 
-    // 필터링: selectedType이 비어있거나 정규화된 concert.type과 일치하는지 확인
-    const matchesType =
-      selectedType === "" || normalizeType(concert.type) === normalizeType(selectedType);
+    // 연도 필터링: selectedYear가 비어있거나 concertDate에 해당 연도가 포함되어 있는지 확인
+    const matchesYear =
+      selectedYear === "" ||
+      concert.concertDate.some((item) => {
+        const year = moment(item.date, "YYYY-MM-DD").year();
+        return year === parseInt(selectedYear);
+      });
 
-    // 수정: 오늘 또는 미래 날짜가 있는지 확인
     const isFutureOrToday = concert.concertDate.some((item) =>
       moment(item.date, "YYYY-MM-DD").isSameOrAfter(currentTime, "day")
     );
     const isPastEvent = !isFutureOrToday;
 
     if (toggle) {
-      return matchesSearch && isPastEvent && matchesType;
+      return matchesSearch && isPastEvent && matchesYear;
     } else {
-      return matchesSearch && isFutureOrToday && matchesType;
+      return matchesSearch && isFutureOrToday && matchesYear;
     }
   }).map((concert: RawConcert): Concert => ({
     ...concert,
@@ -291,6 +323,7 @@ const Home = () => {
 
   return (
     <Box
+      ref={scrollContainerRef}
       h={isMobileOrTablet ? "calc(100svh - 120px)" : "calc(100svh - 70px)"}
       width="100%"
       mx="auto"
@@ -308,7 +341,7 @@ const Home = () => {
         <Helmet>
           <title>{t("helmettitle")}</title>
           <meta name="description" content={t("helmetdescription")} />
-          <meta property="og:image" content="/image/nfimap.png" /> {/* 로컬 경로로 수정 */}
+          <meta property="og:image" content="/image/nfimap.png" />
           <meta property="og:url" content="https://nfimap.co.kr" />
         </Helmet>
         <Box mb={4}>
@@ -344,6 +377,7 @@ const Home = () => {
           </InputGroup>
 
           <Flex width="100%" justifyContent="start" gap={4} alignItems="center">
+            {/* Year Filter Dropdown */}
             <FormControl maxW="100px">
               <Menu>
                 <MenuButton
@@ -376,7 +410,7 @@ const Home = () => {
                   justifyContent="space-between"
                   px={3}
                 >
-                  {selectedType ? translateType(selectedType) : t("all")}
+                  {selectedYear ? selectedYear : t("all")}
                 </MenuButton>
                 <MenuList
                   bg="white"
@@ -389,7 +423,7 @@ const Home = () => {
                   mt={1}
                 >
                   <MenuItem
-                    onClick={() => setSelectedType("")}
+                    onClick={() => setSelectedYear("")}
                     bg="white"
                     color="gray.800"
                     fontSize="sm"
@@ -400,42 +434,21 @@ const Home = () => {
                   >
                     {t("all")}
                   </MenuItem>
-                  <MenuItem
-                    onClick={() => setSelectedType(i18n.language === "ko" ? "콘서트" : "concert")}
-                    bg="white"
-                    color="gray.800"
-                    fontSize="sm"
-                    _hover={{ bg: "purple.50", color: "purple.700" }}
-                    _focus={{ bg: "purple.50" }}
-                    px={4}
-                    py={2}
-                  >
-                    {t("concert")}
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => setSelectedType(i18n.language === "ko" ? "페스티벌" : "festival")} // API type에 맞게 고정
-                    bg="white"
-                    color="gray.800"
-                    fontSize="sm"
-                    _hover={{ bg: "purple.50", color: "purple.700" }}
-                    _focus={{ bg: "purple.50" }}
-                    px={4}
-                    py={2}
-                  >
-                    {t("festival")}
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => setSelectedType(i18n.language === "ko" ? "행사" : "event")} // API type에 맞게 고정
-                    bg="white"
-                    color="gray.800"
-                    fontSize="sm"
-                    _hover={{ bg: "purple.50", color: "purple.700" }}
-                    _focus={{ bg: "purple.50" }}
-                    px={4}
-                    py={2}
-                  >
-                    {t("event")}
-                  </MenuItem>
+                  {yearOptions.map((year) => (
+                    <MenuItem
+                      key={year}
+                      onClick={() => setSelectedYear(year.toString())}
+                      bg="white"
+                      color="gray.800"
+                      fontSize="sm"
+                      _hover={{ bg: "purple.50", color: "purple.700" }}
+                      _focus={{ bg: "purple.50" }}
+                      px={4}
+                      py={2}
+                    >
+                      {year}
+                    </MenuItem>
+                  ))}
                 </MenuList>
               </Menu>
             </FormControl>
@@ -538,9 +551,7 @@ const Home = () => {
 
         <SimpleGrid columns={columns} spacing={6}>
           {sortedConcerts.map((concert, index) => {
-            // 수정: isTodayEvent는 배열에 오늘 날짜가 포함되어 있는지 확인
             const isTodayEvent = isEventToday(concert.date);
-            // 수정: isPastEvent는 배열에 오늘 또는 미래 날짜가 하나도 없는 경우
             const isFutureOrToday = isEventTodayOrFuture(concert.date);
             const isPastEvent = !isFutureOrToday;
 

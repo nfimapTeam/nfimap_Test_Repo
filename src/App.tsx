@@ -8,9 +8,19 @@ import Profile from "./page/Profile/Profile";
 import Music from "./page/Content/Components/Music";
 import { useTranslation } from "react-i18next";
 import Content from "./page/Content/Content";
+import Maintenance from "./components/Maintenance";
 
 const App = () => {
   const { t } = useTranslation();
+  // if (true) {
+  //   return (
+  //     <Layout>
+  //       <Routes>
+  //         <Route path="*" element={<Maintenance />} />
+  //       </Routes>
+  //     </Layout>
+  //   );
+  // }
   return (
     <Layout>
       <Routes>
