@@ -22,11 +22,11 @@ import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { toggleState } from "../../atom/toggleState";
-import { 
-  searchQueryState, 
-  sortOrderState, 
-  selectedYearState, 
-  scrollPositionState 
+import {
+  searchQueryState,
+  sortOrderState,
+  selectedYearState,
+  scrollPositionState
 } from "../../atom/listState";
 import Card from "./component/Card";
 import "react-calendar/dist/Calendar.css";
@@ -67,13 +67,13 @@ const Home = () => {
   const columns = useBreakpointValue({ base: 1, md: 2, lg: 3 });
   const isMobileOrTablet = useBreakpointValue({ base: true, md: true, lg: false });
   const [currentTime, setCurrentTime] = useState(moment());
-  
+
   // 전역 상태로 관리
   const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState);
   const [sortOrder, setSortOrder] = useRecoilState(sortOrderState);
   const [selectedYear, setSelectedYear] = useRecoilState(selectedYearState);
   const [scrollPosition, setScrollPosition] = useRecoilState(scrollPositionState);
-  
+
   const [toggle, setToggle] = useRecoilState(toggleState);
   const navigate = useNavigate();
   const [lang, setLang] = useState("");
@@ -111,16 +111,16 @@ const Home = () => {
 
   // sortOrder 초기값 설정
   useEffect(() => {
-    if (!sortOrder) {
-      setSortOrder(t("latest"));
+    if (sortOrder !== "latest" && sortOrder !== "byName") {
+      setSortOrder("latest");
     }
-  }, [sortOrder, setSortOrder, t]);
+  }, [sortOrder, setSortOrder]);
 
   useEffect(() => {
     if (toggle) {
-      setSortOrder(t("latest"));
+      setSortOrder("latest");
     }
-  }, [toggle, t]);
+  }, [toggle, setSortOrder]);
 
   // 스크롤 위치 복원
   useEffect(() => {
@@ -224,7 +224,7 @@ const Home = () => {
       if (ticketOpenA && !ticketOpenB) return -1;
       if (!ticketOpenA && ticketOpenB) return 1;
 
-      if (sortOrder === t("latest")) {
+      if (sortOrder === "latest") {
         const dateA = moment(
           a.date.reduce((earliest, date) =>
             moment(date, "YYYY-MM-DD").isBefore(moment(earliest, "YYYY-MM-DD"))
@@ -242,7 +242,7 @@ const Home = () => {
           "YYYY-MM-DD"
         );
         return dateA.diff(dateB);
-      } else if (sortOrder === t("byName")) {
+      } else if (sortOrder === "byName") {
         return a.name.localeCompare(b.name);
       }
       return 0;
@@ -250,7 +250,7 @@ const Home = () => {
 
     upcomingConcerts.sort(sortFunction);
     pastConcerts.sort((a, b) => {
-      if (sortOrder === t("latest")) {
+      if (sortOrder === "latest") {
         const dateA = moment(
           a.date.reduce((latest, date) =>
             moment(date, "YYYY-MM-DD").isAfter(moment(latest, "YYYY-MM-DD"))
@@ -485,7 +485,7 @@ const Home = () => {
                   justifyContent="space-between"
                   px={3}
                 >
-                  {sortOrder}
+                  {t(sortOrder)}
                 </MenuButton>
                 <MenuList
                   bg="white"
@@ -497,7 +497,7 @@ const Home = () => {
                   mt={1}
                 >
                   <MenuItem
-                    onClick={() => setSortOrder(t("latest"))}
+                    onClick={() => setSortOrder("latest")}
                     bg="white"
                     color="gray.800"
                     fontSize="sm"
@@ -509,7 +509,7 @@ const Home = () => {
                     {t("latest")}
                   </MenuItem>
                   <MenuItem
-                    onClick={() => setSortOrder(t("byName"))}
+                    onClick={() => setSortOrder("byName")}
                     bg="white"
                     color="gray.800"
                     fontSize="sm"
