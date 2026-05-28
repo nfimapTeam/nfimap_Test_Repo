@@ -7,18 +7,16 @@ import {
   VStack,
   Badge,
   Button,
-  Link,
   useBreakpointValue,
   useDisclosure,
 } from "@chakra-ui/react";
 import { keyframes } from "@chakra-ui/react";
-import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { TicketModal } from "../../DetailPage/components/TicketModal";
 import { TicketDrawer } from "../../DetailPage/components/Drawer";
 
-// Concert 타입 정의 (Home과 동일)
+// Concert 타입 정의
 interface Concert {
   id: number;
   name: string;
@@ -58,33 +56,34 @@ interface CardProps {
   ) => void;
 }
 
+// Sophisticated Border Glow keyframes
 const borderGlow = keyframes`
   0% {
-    border-color: rgba(121, 174, 242, 0.5);
-    box-shadow: 0 0 8px rgba(121, 174, 242, 0.5);
+    border-color: rgba(6, 182, 212, 0.4);
+    box-shadow: 0 4px 15px rgba(6, 182, 212, 0.15);
   }
   50% {
-    border-color: rgba(121, 174, 242, 0.7);
-    box-shadow: 0 0 12px rgba(121, 174, 242, 0.7);
+    border-color: rgba(6, 182, 212, 0.7);
+    box-shadow: 0 4px 25px rgba(6, 182, 212, 0.35);
   }
   100% {
-    border-color: rgba(121, 174, 242, 0.5);
-    box-shadow: 0 0 8px rgba(121, 174, 242, 0.5);
+    border-color: rgba(6, 182, 212, 0.4);
+    box-shadow: 0 4px 15px rgba(6, 182, 212, 0.15);
   }
 `;
 
 const lavenderGlow = keyframes`
   0% {
-    border-color: rgba(186, 85, 211, 0.5); // Lavender purple
-    box-shadow: 0 0 8px rgba(186, 85, 211, 0.5);
+    border-color: rgba(139, 92, 246, 0.4);
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.15);
   }
   50% {
-    border-color: rgba(186, 85, 211, 0.7); // Lavender purple
-    box-shadow: 0 0 12px rgba(186, 85, 211, 0.7);
+    border-color: rgba(139, 92, 246, 0.7);
+    box-shadow: 0 4px 25px rgba(139, 92, 246, 0.35);
   }
   100% {
-    border-color: rgba(186, 85, 211, 0.5); // Lavender purple
-    box-shadow: 0 0 8px rgba(186, 85, 211, 0.5);
+    border-color: rgba(139, 92, 246, 0.4);
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.15);
   }
 `;
 
@@ -104,197 +103,253 @@ const Card = ({
   const { isOpen: isDrawerOpen, onOpen: onDrawerOpen, onClose: onDrawerClose } = useDisclosure();
 
   const handleTicketButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation(); // 카드 클릭 이벤트와 분리
+    e.stopPropagation();
+    const links = concert.ticketLink || [];
     if (isPastEvent) {
-      handleButtonClick(e, concert, isPastEvent); // 과거 이벤트는 기존 로직
-    } else if (concert.ticketLink.length === 1 && concert.ticketLink[0]) {
-      window.open(concert.ticketLink[0], "_blank"); // 링크 1개면 바로 이동
-    } else if (concert.ticketLink.length > 1) {
-      onDrawerOpen(); // 링크 2개 이상이면 모달/드로어 열기
+      handleButtonClick(e, concert, isPastEvent);
+    } else if (links.length === 1 && links[0]) {
+      window.open(links[0], "_blank");
+    } else if (links.length > 1) {
+      onDrawerOpen();
     }
   };
+
   return (
     <Box
       position="relative"
       onClick={() => navigate(`/${concert.id}`)}
-      // overflow="hidden"
-      borderRadius="md"
-      sx={{
-        transition: "transform 0.3s ease, box-shadow 0.3s ease",
-        "&:hover": {
-          transform: "translateY(-10px)",
-          boxShadow: "0 10px 20px rgba(0, 0, 0, 0.2)",
-        },
+      borderRadius="24px"
+      bg="white"
+      borderWidth="1px"
+      borderColor={isTodayEvent ? "brand.sub2" : "gray.100"}
+      animation={
+        isTodayEvent
+          ? `${borderGlow} 2s ease-in-out infinite`
+          : isTicketOpen
+            ? `${lavenderGlow} 2s ease-in-out infinite`
+            : "none"
+      }
+      boxShadow="soft"
+      role="group"
+      cursor="pointer"
+      display="flex"
+      flexDirection="column"
+      overflow="hidden"
+      height="100%"
+      transition="all 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
+      _hover={{
+        transform: "translateY(-6px)",
+        boxShadow: "elevated",
+        borderColor: "brand.main",
       }}
     >
+      {/* Poster Image Container */}
       <Box
-        p={4}
-        borderWidth="1px"
-        borderRadius="lg"
-        overflow="hidden"
-        boxShadow="md"
-        bg="white"
-        alignItems="flex-start"
-        borderColor={isTodayEvent ? "brand.sub" : "gray.200"}
-        animation={
-          isTodayEvent
-            ? `${borderGlow} 1.5s ease-in-out infinite`
-            : isTicketOpen
-              ? `${lavenderGlow} 1.5s ease-in-out infinite`
-              : "none"
-        }
         position="relative"
-        zIndex={1}
-        cursor="pointer"
+        width="100%"
+        paddingBottom="125%" // 4:5 aspect ratio
+        overflow="hidden"
+        bg="gray.50"
+        filter={isPastEvent ? "grayscale(100%)" : "none"}
+        opacity={isPastEvent ? 0.8 : 1}
+        transition="all 0.4s ease"
       >
-        <HStack alignItems="flex-start" spacing={4}>
-          <Box
-            w="150px"
-            h="200px"
-            overflow="hidden"
-            borderRadius="md"
-            flexShrink={0}
-            filter={isPastEvent ? "grayscale(100%)" : "none"}
-            opacity={isPastEvent ? 0.9 : 1}
-            transition="all 0.3s ease"
-          >
-            <Image
-              src={concert.poster}
-              alt={concert.name}
-              objectFit="cover"
-              w="100%"
-              h="100%"
-              fallbackSrc="/image/logo/logo.svg"
-            />
-          </Box>
-          <VStack align="start" spacing={2} flex="1">
-            <Box>
-              {isTodayEvent ? (
-                <Badge colorScheme="blue" mb={2}>
-                  {t("today_concert")}
-                </Badge>
-              ) : isPastEvent ? (
-                <Badge colorScheme="gray" mb={2}>
-                  {t("concert_ended")}
-                </Badge>
-              ) : (
-                <Badge colorScheme="green" mb={2}>
-                  {t("concert_upcoming")}
-                </Badge>
-              )}
+        <Image
+          src={concert.poster}
+          alt={concert.name}
+          objectFit="cover"
+          position="absolute"
+          top={0}
+          left={0}
+          width="100%"
+          height="100%"
+          fallbackSrc="/image/logo/logo.svg"
+          transition="transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)"
+          _groupHover={{
+            transform: "scale(1.05)",
+          }}
+        />
 
-              <Text
-                fontSize="lg"
-                fontWeight="bold"
-                noOfLines={2}
-                mb={2}
-                minHeight="3rem"
+        {/* Shadow overlay at the bottom of the poster */}
+        <Box
+          position="absolute"
+          bottom={0}
+          left={0}
+          right={0}
+          height="40%"
+          bgGradient="linear(to-t, rgba(0,0,0,0.15), transparent)"
+          pointerEvents="none"
+        />
+
+        {/* State Badges (Absolute overlay) */}
+        <Box position="absolute" top={3} left={3} zIndex={2}>
+          {isTodayEvent ? (
+            <Badge
+              bg="brand.sub2"
+              color="white"
+              boxShadow="0 2px 10px rgba(6, 182, 212, 0.3)"
+              fontSize="xs"
+              px={3}
+              py={1}
+            >
+              {t("today_concert")}
+            </Badge>
+          ) : isPastEvent ? (
+            <Badge
+              bg="gray.400"
+              color="white"
+              fontSize="xs"
+              px={3}
+              py={1}
+            >
+              {t("concert_ended")}
+            </Badge>
+          ) : (
+            <Badge
+              bg="brand.main"
+              color="white"
+              boxShadow="0 2px 10px rgba(139, 92, 246, 0.3)"
+              fontSize="xs"
+              px={3}
+              py={1}
+            >
+              {t("concert_upcoming")}
+            </Badge>
+          )}
+        </Box>
+      </Box>
+
+      {/* Card Content Area */}
+      <VStack p={4} spacing={3} align="stretch" flex="1" justify="space-between" height="100%">
+        <VStack align="start" spacing={2} width="100%">
+          {/* Tag Badges */}
+          <HStack spacing={1.5} flexWrap="wrap">
+            {(concert.type === "콘서트" || concert.type === "Concert") && (
+              <Badge
+                bg="pink.50"
+                color="pink.600"
+                fontSize="10px"
+                fontWeight="extrabold"
+                px={2.5}
+                py={0.5}
               >
-                {concert.name}
-              </Text>
+                {t("concert_type_concert")}
+              </Badge>
+            )}
+            {(concert.type === "페스티벌" || concert.type === "Festival") && (
+              <Badge
+                bg="blue.50"
+                color="blue.600"
+                fontSize="10px"
+                fontWeight="extrabold"
+                px={2.5}
+                py={0.5}
+              >
+                {t("concert_type_festival")}
+              </Badge>
+            )}
+            {(concert.type === "행사" || concert.type === "Event") && (
+              <Badge
+                bg="amber.50"
+                color="amber.600"
+                fontSize="10px"
+                fontWeight="extrabold"
+                px={2.5}
+                py={0.5}
+              >
+                {t("concert_type_event")}
+              </Badge>
+            )}
+            {(concert.performanceType === "단독" || concert.performanceType === "Solo") && (
+              <Badge
+                bg="purple.50"
+                color="brand.main"
+                fontSize="10px"
+                fontWeight="extrabold"
+                px={2.5}
+                py={0.5}
+              >
+                {t("performance_type_solo")}
+              </Badge>
+            )}
+            {(concert.performanceType === "합동" || concert.performanceType === "Joint") && (
+              <Badge
+                bg="teal.50"
+                color="teal.600"
+                fontSize="10px"
+                fontWeight="extrabold"
+                px={2.5}
+                py={0.5}
+              >
+                {t("performance_type_joint")}
+              </Badge>
+            )}
+            {(concert.performanceType === "출연" || concert.performanceType === "Guest") && (
+              <Badge
+                bg="orange.50"
+                color="orange.600"
+                fontSize="10px"
+                fontWeight="extrabold"
+                px={2.5}
+                py={0.5}
+              >
+                {t("performance_type_guest")}
+              </Badge>
+            )}
+          </HStack>
 
-              <Text fontSize="md" noOfLines={1} mb={2}>
-                {concert.location}
-              </Text>
+          {/* Concert Name */}
+          <Text
+            fontSize="md"
+            fontWeight="extrabold"
+            color="gray.800"
+            noOfLines={2}
+            minHeight="2.6rem"
+            lineHeight="shorter"
+            transition="color 0.2s"
+            _groupHover={{ color: "brand.main" }}
+          >
+            {concert.name}
+          </Text>
 
-              <Text fontSize="sm" color="gray.500" noOfLines={1} mb={4}>
-                {concert.date.join(", ")}
-              </Text>
-
-              <HStack spacing={2}>
-                {(concert.type === "콘서트" || concert.type === "Concert") && (
-                  <Badge
-                    bg="pink.100"
-                    color="pink.600"
-                    p="4px 8px"
-                    borderRadius={4}
-                    fontWeight="900"
-                  >
-                    {t("concert_type_concert")}
-                  </Badge>
-                )}
-                {(concert.type === "페스티벌" ||
-                  concert.type === "Festival") && (
-                    <Badge
-                      bg="blue.100"
-                      color="blue.600"
-                      p="4px 8px"
-                      borderRadius={4}
-                      fontWeight="900"
-                    >
-                      {t("concert_type_festival")}
-                    </Badge>
-                  )}
-                {(concert.type === "행사" || concert.type === "Event") && (
-                  <Badge
-                    bg="yellow.100"
-                    color="yellow.600"
-                    p="4px 8px"
-                    borderRadius={4}
-                    fontWeight="900"
-                  >
-                    {t("concert_type_event")}
-                  </Badge>
-                )}
-                {(concert.performanceType === "단독" ||
-                  concert.performanceType === "Solo") && (
-                    <Badge
-                      bg="purple.100"
-                      color="purple.600"
-                      p="4px 8px"
-                      borderRadius={4}
-                      fontWeight="900"
-                    >
-                      {t("performance_type_solo")}
-                    </Badge>
-                  )}
-                {(concert.performanceType === "합동" ||
-                  concert.performanceType === "Joint") && (
-                    <Badge
-                      bg="teal.100"
-                      color="teal.600"
-                      p="4px 8px"
-                      borderRadius={4}
-                      fontWeight="900"
-                    >
-                      {t("performance_type_joint")}
-                    </Badge>
-                  )}
-                {(concert.performanceType === "출연" ||
-                  concert.performanceType === "Guest") && (
-                    <Badge
-                      bg="orange.100"
-                      color="orange.600"
-                      p="4px 8px"
-                      borderRadius={4}
-                      fontWeight="900"
-                    >
-                      {t("performance_type_guest")}
-                    </Badge>
-                  )}
-              </HStack>
-            </Box>
+          {/* Location & Date info */}
+          <VStack align="start" spacing={1} width="100%">
+            <Text fontSize="xs" fontWeight="semibold" color="gray.600" noOfLines={1}>
+              {concert.location}
+            </Text>
+            <Text fontSize="11px" color="gray.400" noOfLines={1}>
+              {concert.date ? concert.date.join(", ") : ""}
+            </Text>
           </VStack>
-        </HStack>
+        </VStack>
+
+        {/* CTA Button */}
         {!isPastEvent && (
           <Button
-            mt={4}
-            border="2px solid #eee"
-            bg="purple.400"
-            _hover={{ bg: "brand.main" }}
+            size="sm"
             width="100%"
-            fontSize="13px"
-            onClick={handleTicketButtonClick}
-            isDisabled={concert.ticketLink.length === 0 || concert.ticketLink[0] === ""}
+            fontSize="12px"
+            height="36px"
+            mt={2}
+            bgGradient="linear(to-r, brand.main, brand.sub)"
             color="white"
+            borderRadius="full"
+            boxShadow="soft"
+            _hover={{
+              bgGradient: "linear(to-r, purple.600, brand.sub)",
+              boxShadow: "glow",
+            }}
+            onClick={handleTicketButtonClick}
+            isDisabled={!concert.ticketLink || concert.ticketLink.length === 0 || concert.ticketLink[0] === ""}
           >
             {getButtonText(concert, isPastEvent, timeRemaining)}
           </Button>
         )}
-      </Box>
+      </VStack>
+
       {isMobile ? (
         <TicketDrawer
-          links={concert.ticketLink}
+          links={concert.ticketLink || []}
           isOpen={isDrawerOpen}
           onClose={onDrawerClose}
           lang={lang}
@@ -302,7 +357,7 @@ const Card = ({
         />
       ) : (
         <TicketModal
-          links={concert.ticketLink}
+          links={concert.ticketLink || []}
           isOpen={isDrawerOpen}
           onClose={onDrawerClose}
           lang={lang}

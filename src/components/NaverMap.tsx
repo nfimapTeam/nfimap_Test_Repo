@@ -135,7 +135,7 @@ const NaverMap = ({
   useEffect(() => {
     const mapContainer = mapContainerRef.current;
 
-    if (mapContainer && (window as any).naver && !mapRef.current) {
+    if (mapContainer && (window as any).naver && (window as any).naver.maps && !mapRef.current) {
       const naverMaps = (window as any).naver.maps;
       const map = new naverMaps.Map(mapContainer, {
         center: new naverMaps.LatLng(37.5665, 126.978),
@@ -152,7 +152,7 @@ const NaverMap = ({
   }, []);
 
   const updateMarkersVisibility = () => {
-    if (!mapRef.current || !(window as any).naver) return;
+    if (!mapRef.current || !(window as any).naver || !(window as any).naver.maps) return;
 
     const map = mapRef.current;
     const bounds = map.getBounds();
@@ -167,7 +167,7 @@ const NaverMap = ({
   };
 
   useEffect(() => {
-    if (!mapRef.current || !(window as any).naver) return;
+    if (!mapRef.current || !(window as any).naver || !(window as any).naver.maps) return;
 
     const naverMaps = (window as any).naver.maps;
     const map = mapRef.current;
@@ -348,7 +348,7 @@ const NaverMap = ({
   }, [concerts, nfiRoad, activeTabIndex, onOpen]);
 
   useEffect(() => {
-    if ((!selectedConcert && !selectedNfiRoad) || !mapRef.current) return;
+    if ((!selectedConcert && !selectedNfiRoad) || !mapRef.current || !(window as any).naver || !(window as any).naver.maps) return;
 
     if (currentInfoWindow) {
       currentInfoWindow.close();

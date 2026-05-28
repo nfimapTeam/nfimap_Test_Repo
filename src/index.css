@@ -1,11 +1,17 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   touch-action: manipulation; /* 터치 동작 제어 */
+  background-color: #F8F7FC;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.04) 0%, transparent 45%),
+    radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.03) 0%, transparent 45%);
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 
 code {
@@ -17,4 +23,160 @@ code {
   -webkit-touch-callout: none; /* 호출 방지 */
   -webkit-user-select: none; /* 선택 방지 */
   user-select: none; /* 선택 방지 */
+}
+
+/* Custom scrollbar styling for a premium look */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.15);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.3);
+}
+
+/* ═══════════════════════════════════════════════════
+   React Calendar Modern Premium Theme
+   ═══════════════════════════════════════════════════ */
+.react-calendar {
+  width: 100% !important;
+  max-width: 100% !important;
+  background: #FFFFFF !important;
+  border: none !important;
+  font-family: inherit !important;
+  border-radius: 24px !important;
+  padding: 16px !important;
+  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.04) !important;
+}
+
+/* Navigation */
+.react-calendar__navigation {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  height: 48px !important;
+  margin-bottom: 16px !important;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.06) !important;
+  padding-bottom: 8px !important;
+}
+
+.react-calendar__navigation button {
+  min-width: 36px !important;
+  height: 36px !important;
+  background: none !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  color: #4C1D95 !important;
+  border-radius: 12px !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus {
+  background-color: rgba(139, 92, 246, 0.06) !important;
+  color: #8B5CF6 !important;
+}
+
+/* Weekdays */
+.react-calendar__month-view__weekdays {
+  text-align: center !important;
+  font-weight: 800 !important;
+  font-size: 11px !important;
+  color: #8B5CF6 !important;
+  text-transform: uppercase !important;
+  padding-top: 4px !important;
+  padding-bottom: 12px !important;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.react-calendar__month-view__weekdays__weekday abbr {
+  text-decoration: none !important;
+  border-bottom: none !important;
+}
+
+/* Calendar Grid & Days */
+.react-calendar__month-view__days {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+}
+
+.react-calendar__tile {
+  aspect-ratio: 1 / 1 !important; /* Force tiles to be perfectly square/circle */
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: none !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: #1F2937 !important;
+  border-radius: 50% !important; /* Perfect circle hover shape */
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  position: relative !important;
+  margin: 2px !important;
+  padding: 0 !important;
+}
+
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+  background-color: rgba(139, 92, 246, 0.06) !important;
+  color: #8B5CF6 !important;
+}
+
+/* Today highlight */
+.react-calendar__tile--now {
+  background: rgba(139, 92, 246, 0.08) !important;
+  color: #8B5CF6 !important;
+  font-weight: 800 !important;
+  border: 1px solid rgba(139, 92, 246, 0.2) !important;
+}
+
+/* Selected Active Date */
+.react-calendar__tile--active {
+  background: #8B5CF6 !important;
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3) !important;
+}
+
+.react-calendar__tile--active:enabled:hover,
+.react-calendar__tile--active:enabled:focus {
+  background: #8B5CF6 !important;
+  color: #FFFFFF !important;
+}
+
+/* Neighboring month dates */
+.react-calendar__month-view__days__day--neighboringMonth {
+  color: #9CA3AF !important;
+  opacity: 0.4 !important;
+}
+
+/* Event marker dot positioning */
+.react-calendar-dot {
+  position: absolute !important;
+  bottom: 6px !important;
+  width: 4px !important;
+  height: 4px !important;
+  border-radius: 50% !important;
+  background-color: #8B5CF6 !important;
+  box-shadow: 0 0 4px rgba(139, 92, 246, 0.6) !important;
+}
+
+.react-calendar__tile--active .react-calendar-dot {
+  background-color: #FFFFFF !important;
+  box-shadow: none !important;
 }

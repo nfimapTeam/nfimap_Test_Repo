@@ -16,9 +16,13 @@ import {
   Button,
   MenuList,
   MenuItem,
+  VStack,
+  Text,
 } from "@chakra-ui/react";
 import { SearchIcon, CloseIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import moment from "moment";
+import { motion } from "framer-motion";
+import { List as ListIcon, Calendar as CalendarIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { toggleState } from "../../atom/toggleState";
@@ -29,6 +33,7 @@ import {
   scrollPositionState
 } from "../../atom/listState";
 import Card from "./component/Card";
+import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { Helmet } from "react-helmet-async";
 import NoData from "../../components/NoData";
@@ -36,7 +41,6 @@ import { useTranslation } from "react-i18next";
 import BirrthDay from "../../components/BirthDay";
 import { useConcertList } from "../../api/concerts/concertsApi";
 
-// RawConcert: API에서 오는 원시 데이터 타입
 interface RawConcert {
   id: number;
   name: string;
@@ -56,7 +60,6 @@ interface RawConcert {
   };
 }
 
-// Concert: 변환 후 Card에 전달될 타입
 interface Concert extends RawConcert {
   date: string[];
 }
@@ -64,11 +67,11 @@ interface Concert extends RawConcert {
 const Home = () => {
   const { t, i18n } = useTranslation();
 
-  const columns = useBreakpointValue({ base: 1, md: 2, lg: 3 });
+  // 1-column on mobile, 2-column on small screens, 3-column on tablet, 4-column on desktop to avoid layout squeezing
+  const columns = useBreakpointValue({ base: 1, sm: 2, md: 3, lg: 4 });
   const isMobileOrTablet = useBreakpointValue({ base: true, md: true, lg: false });
   const [currentTime, setCurrentTime] = useState(moment());
 
-  // 전역 상태로 관리
   const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState);
   const [sortOrder, setSortOrder] = useRecoilState(sortOrderState);
   const [selectedYear, setSelectedYear] = useRecoilState(selectedYearState);
@@ -79,9 +82,12 @@ const Home = () => {
   const [lang, setLang] = useState("");
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
+  // Calendar states
+  const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+
   const { data: concertsData, refetch: refetchConcertsData } = useConcertList(lang);
 
-  // 2024년부터 현재 연도까지의 배열 생성
   const currentYear = moment().year();
   const yearOptions = Array.from(
     { length: currentYear - 2024 + 2 },
@@ -109,7 +115,6 @@ const Home = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // sortOrder 초기값 설정
   useEffect(() => {
     if (sortOrder !== "latest" && sortOrder !== "byName") {
       setSortOrder("latest");
@@ -122,17 +127,15 @@ const Home = () => {
     }
   }, [toggle, setSortOrder]);
 
-  // 스크롤 위치 복원
   useEffect(() => {
-    if (scrollContainerRef.current && scrollPosition > 0) {
+    if (scrollContainerRef.current && scrollPosition > 0 && viewMode === "list") {
       scrollContainerRef.current.scrollTop = scrollPosition;
     }
-  }, [scrollPosition]);
+  }, [scrollPosition, viewMode]);
 
-  // 스크롤 위치 저장
   useEffect(() => {
     const handleScroll = () => {
-      if (scrollContainerRef.current) {
+      if (scrollContainerRef.current && viewMode === "list") {
         setScrollPosition(scrollContainerRef.current.scrollTop);
       }
     };
@@ -142,7 +145,7 @@ const Home = () => {
       scrollContainer.addEventListener("scroll", handleScroll);
       return () => scrollContainer.removeEventListener("scroll", handleScroll);
     }
-  }, [setScrollPosition]);
+  }, [setScrollPosition, viewMode]);
 
   const clearSearch = () => {
     setSearchQuery("");
@@ -275,36 +278,19 @@ const Home = () => {
     return [...upcomingConcerts, ...pastConcerts];
   };
 
-  const translateType = (type: string) => {
-    switch (type.toLowerCase().trim()) {
-      case "콘서트":
-      case "concert":
-        return t("concert");
-      case "페스티벌":
-      case "festival":
-        return t("festival");
-      case "행사":
-      case "event":
-        return t("event");
-      default:
-        return type;
-    }
-  };
-
   const filteredAndSortedConcerts = (concertsData || []).filter((concert: RawConcert) => {
     const matchesSearch =
       (concert.name && concert.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (concert.location && concert.location.toLowerCase().includes(searchQuery.toLowerCase()));
 
-    // 연도 필터링: selectedYear가 비어있거나 concertDate에 해당 연도가 포함되어 있는지 확인
     const matchesYear =
       selectedYear === "" ||
-      concert.concertDate.some((item) => {
+      (concert.concertDate && concert.concertDate.some((item) => {
         const year = moment(item.date, "YYYY-MM-DD").year();
         return year === parseInt(selectedYear);
-      });
+      }));
 
-    const isFutureOrToday = concert.concertDate.some((item) =>
+    const isFutureOrToday = concert.concertDate && concert.concertDate.some((item) =>
       moment(item.date, "YYYY-MM-DD").isSameOrAfter(currentTime, "day")
     );
     const isPastEvent = !isFutureOrToday;
@@ -316,10 +302,30 @@ const Home = () => {
     }
   }).map((concert: RawConcert): Concert => ({
     ...concert,
-    date: concert.concertDate.map((d: { date: string }) => d.date),
+    date: concert.concertDate ? concert.concertDate.map((d: { date: string }) => d.date) : [],
   }));
 
   const sortedConcerts = sortConcerts(filteredAndSortedConcerts);
+
+  // 캘린더 전용 헬퍼 함수
+  const hasConcertOnDate = (date: Date) => {
+    const dateStr = moment(date).format("YYYY-MM-DD");
+    return sortedConcerts.some((concert) => concert.date && concert.date.includes(dateStr));
+  };
+
+  const tileContent = ({ date, view }: { date: Date; view: string }) => {
+    if (view === "month" && hasConcertOnDate(date)) {
+      return (
+        <span className="react-calendar-dot" />
+      );
+    }
+    return null;
+  };
+
+  const getConcertsOnSelectedDate = () => {
+    const dateStr = moment(selectedDate).format("YYYY-MM-DD");
+    return sortedConcerts.filter((concert) => concert.date && concert.date.includes(dateStr));
+  };
 
   return (
     <Box
@@ -327,7 +333,7 @@ const Home = () => {
       h={isMobileOrTablet ? "calc(100svh - 120px)" : "calc(100svh - 70px)"}
       width="100%"
       mx="auto"
-      p="16px 16px 70px 16px"
+      p={{ base: "12px 12px 80px 12px", md: "24px 24px 80px 24px" }}
       overflowY="auto"
       css={{
         "&::-webkit-scrollbar": {
@@ -344,238 +350,399 @@ const Home = () => {
           <meta property="og:image" content="/image/nfimap.png" />
           <meta property="og:url" content="https://nfimap.co.kr" />
         </Helmet>
-        <Box mb={4}>
+        
+        {/* Top Search & Filter Panel */}
+        <Box mb={6} className="search-filter-panel">
           <BirrthDay />
-          <InputGroup size="lg">
+          
+          {/* Rounded Capsule Search Bar */}
+          <InputGroup size="lg" mb={4}>
             <Input
               placeholder={t("searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              mb={4}
-              borderColor="purple.200"
-              focusBorderColor="#9F7AEA"
-              bg="whiteAlpha.900"
-              _hover={{ borderColor: "#9F7AEA" }}
+              borderColor="purple.100"
+              focusBorderColor="brand.main"
+              bg="white"
+              _hover={{ borderColor: "purple.300" }}
               _placeholder={{ color: "gray.400" }}
               size="lg"
-              borderRadius="md"
-              boxShadow="md"
+              borderRadius="full"
+              boxShadow="soft"
+              height="50px"
+              pl={6}
+              pr={12}
+              transition="all 0.3s ease"
+              _focus={{
+                boxShadow: "glow",
+                transform: "translateY(-1px)"
+              }}
             />
-            <InputRightElement width="4.5rem">
+            <InputRightElement width="4rem" height="50px">
               {searchQuery ? (
                 <Icon
                   as={CloseIcon}
-                  color="gray.500"
+                  color="gray.400"
                   cursor="pointer"
                   onClick={clearSearch}
-                  boxSize="12px"
+                  boxSize="10px"
+                  _hover={{ color: "brand.main" }}
                 />
               ) : (
-                <Icon as={SearchIcon} color="gray.500" cursor="pointer" />
+                <Icon as={SearchIcon} color="gray.400" />
               )}
             </InputRightElement>
           </InputGroup>
 
-          <Flex width="100%" justifyContent="start" gap={4} alignItems="center">
-            {/* Year Filter Dropdown */}
-            <FormControl maxW="100px">
+          {/* Filtering & View Switch Row */}
+          <Flex 
+            width="100%" 
+            justifyContent="space-between" 
+            alignItems="center" 
+            flexWrap="wrap" 
+            gap={3}
+            bg="white"
+            p={3}
+            borderRadius="2xl"
+            boxShadow="soft"
+            borderWidth="1px"
+            borderColor="purple.50"
+          >
+            <Flex gap={3} alignItems="center" flexWrap="wrap">
+              {/* Year Filter Menu */}
               <Menu>
                 <MenuButton
-                  minW="100px"
                   as={Button}
                   rightIcon={<ChevronDownIcon />}
-                  borderColor="purple.200"
+                  borderColor="purple.100"
                   bg="white"
                   borderWidth="1px"
-                  color="gray.800"
-                  fontSize="sm"
-                  fontWeight="medium"
-                  height="40px"
-                  width="100px"
-                  borderRadius="md"
-                  boxShadow="sm"
+                  color="gray.700"
+                  fontSize="xs"
+                  fontWeight="bold"
+                  height="36px"
+                  minW="110px"
+                  borderRadius="full"
                   _hover={{
-                    borderColor: "purple.400",
-                    boxShadow: "md",
+                    borderColor: "purple.300",
+                    bg: "brand.purpleSoft",
                   }}
                   _active={{
-                    bg: "purple.50",
-                    borderColor: "purple.500",
-                  }}
-                  _focus={{
-                    borderColor: "purple.500",
-                    boxShadow: "0 0 0 1px #9F7AEA",
+                    bg: "brand.purpleSoft",
+                    borderColor: "brand.main",
                   }}
                   textAlign="left"
-                  justifyContent="space-between"
-                  px={3}
+                  px={4}
                 >
                   {selectedYear ? selectedYear : t("all")}
                 </MenuButton>
-                <MenuList
-                  bg="white"
-                  borderColor="purple.200"
-                  borderRadius="md"
-                  boxShadow="lg"
-                  minW="200px"
-                  zIndex={10}
-                  py={1}
-                  mt={1}
-                >
-                  <MenuItem
-                    onClick={() => setSelectedYear("")}
-                    bg="white"
-                    color="gray.800"
-                    fontSize="sm"
-                    _hover={{ bg: "purple.50", color: "purple.700" }}
-                    _focus={{ bg: "purple.50" }}
-                    px={4}
-                    py={2}
-                  >
+                <MenuList>
+                  <MenuItem onClick={() => setSelectedYear("")}>
                     {t("all")}
                   </MenuItem>
                   {yearOptions.map((year) => (
                     <MenuItem
                       key={year}
                       onClick={() => setSelectedYear(year.toString())}
-                      bg="white"
-                      color="gray.800"
-                      fontSize="sm"
-                      _hover={{ bg: "purple.50", color: "purple.700" }}
-                      _focus={{ bg: "purple.50" }}
-                      px={4}
-                      py={2}
                     >
                       {year}
                     </MenuItem>
                   ))}
                 </MenuList>
               </Menu>
-            </FormControl>
 
-            {/* Sort Order Dropdown */}
-            <FormControl maxW="100px">
+              {/* Sort Order Menu */}
               <Menu>
                 <MenuButton
-                  minW="100px"
                   as={Button}
                   rightIcon={<ChevronDownIcon />}
-                  borderColor="purple.200"
+                  borderColor="purple.100"
                   bg="white"
                   borderWidth="1px"
-                  color="gray.800"
-                  fontSize="sm"
-                  fontWeight="medium"
-                  height="40px"
-                  borderRadius="md"
-                  boxShadow="sm"
+                  color="gray.700"
+                  fontSize="xs"
+                  fontWeight="bold"
+                  height="36px"
+                  minW="110px"
+                  borderRadius="full"
                   _hover={{
-                    borderColor: "purple.400",
-                    boxShadow: "md",
+                    borderColor: "purple.300",
+                    bg: "brand.purpleSoft",
                   }}
                   _active={{
-                    bg: "purple.50",
-                    borderColor: "purple.500",
-                  }}
-                  _focus={{
-                    borderColor: "purple.500",
-                    boxShadow: "0 0 0 1px #9F7AEA",
+                    bg: "brand.purpleSoft",
+                    borderColor: "brand.main",
                   }}
                   textAlign="left"
-                  justifyContent="space-between"
-                  px={3}
+                  px={4}
                 >
                   {t(sortOrder)}
                 </MenuButton>
-                <MenuList
-                  bg="white"
-                  borderColor="purple.200"
-                  borderRadius="md"
-                  boxShadow="lg"
-                  minW="200px"
-                  zIndex={10}
-                  mt={1}
-                >
-                  <MenuItem
-                    onClick={() => setSortOrder("latest")}
-                    bg="white"
-                    color="gray.800"
-                    fontSize="sm"
-                    _hover={{ bg: "purple.50", color: "purple.700" }}
-                    _focus={{ bg: "purple.50" }}
-                    px={4}
-                    py={2}
-                  >
+                <MenuList>
+                  <MenuItem onClick={() => setSortOrder("latest")}>
                     {t("latest")}
                   </MenuItem>
-                  <MenuItem
-                    onClick={() => setSortOrder("byName")}
-                    bg="white"
-                    color="gray.800"
-                    fontSize="sm"
-                    _hover={{ bg: "purple.50", color: "purple.700" }}
-                    _focus={{ bg: "purple.50" }}
-                    px={4}
-                    py={2}
-                  >
+                  <MenuItem onClick={() => setSortOrder("byName")}>
                     {t("byName")}
                   </MenuItem>
                 </MenuList>
               </Menu>
-            </FormControl>
+
+              {/* View Switch ButtonGroup (List / Calendar) */}
+              {/* Premium Segmented Control for View Switch */}
+              <Flex 
+                bg="purple.50" 
+                p="4px" 
+                borderRadius="full" 
+                alignItems="center" 
+                borderWidth="1px" 
+                borderColor="purple.100"
+                boxShadow="inner"
+                position="relative"
+                width="210px"
+                flexShrink={0}
+                userSelect="none"
+              >
+                {/* List Tab */}
+                <Box
+                  position="relative"
+                  flex={1}
+                  height="34px"
+                >
+                  <Flex
+                    onClick={() => setViewMode("list")}
+                    height="100%"
+                    alignItems="center"
+                    justifyContent="center"
+                    gap={2}
+                    cursor="pointer"
+                    fontSize="xs"
+                    fontWeight="extrabold"
+                    color={viewMode === "list" ? "white" : "purple.500"}
+                    transition="color 0.25s"
+                    position="relative"
+                    zIndex={3}
+                    whiteSpace="nowrap"
+                  >
+                    <ListIcon size={14} strokeWidth={2.5} />
+                    <Box as="span">{t("list")}</Box>
+                  </Flex>
+                  {viewMode === "list" && (
+                    <motion.div
+                      layoutId="activeTabIndicator"
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: "#8B5CF6",
+                        borderRadius: "9999px",
+                        boxShadow: "0 4px 12px rgba(139, 92, 246, 0.35)",
+                        zIndex: 2,
+                      }}
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                </Box>
+
+                {/* Calendar Tab */}
+                <Box
+                  position="relative"
+                  flex={1}
+                  height="34px"
+                >
+                  <Flex
+                    onClick={() => setViewMode("calendar")}
+                    height="100%"
+                    alignItems="center"
+                    justifyContent="center"
+                    gap={2}
+                    cursor="pointer"
+                    fontSize="xs"
+                    fontWeight="extrabold"
+                    color={viewMode === "calendar" ? "white" : "purple.500"}
+                    transition="color 0.25s"
+                    position="relative"
+                    zIndex={3}
+                    whiteSpace="nowrap"
+                  >
+                    <CalendarIcon size={14} strokeWidth={2.5} />
+                    <Box as="span">{t("calendar") || "달력"}</Box>
+                  </Flex>
+                  {viewMode === "calendar" && (
+                    <motion.div
+                      layoutId="activeTabIndicator"
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: "#8B5CF6",
+                        borderRadius: "9999px",
+                        boxShadow: "0 4px 12px rgba(139, 92, 246, 0.35)",
+                        zIndex: 2,
+                      }}
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                </Box>
+              </Flex>
+            </Flex>
 
             {/* Toggle Switch */}
-            <FormControl display="flex" alignItems="center">
-              <FormLabel htmlFor="show-past-events" mb="0">
+            <FormControl 
+              display="flex" 
+              alignItems="center" 
+              width="auto"
+              bg="brand.purpleSoft"
+              px={4}
+              py={1.5}
+              borderRadius="full"
+              m={0}
+            >
+              <FormLabel 
+                htmlFor="show-past-events" 
+                mb="0" 
+                mr={3} 
+                fontSize="xs" 
+                fontWeight="extrabold" 
+                color="brand.main"
+                cursor="pointer"
+              >
                 {t("showPastEvents")}
               </FormLabel>
               <Switch
                 id="show-past-events"
+                colorScheme="purple"
+                size="md"
                 isChecked={toggle}
                 onChange={() => setToggle(!toggle)}
-                sx={{
-                  ".chakra-switch__track": {
-                    bg: toggle ? "#9F7AEA" : "gray.200",
-                  },
-                }}
               />
             </FormControl>
           </Flex>
         </Box>
 
         {sortedConcerts.length === 0 && (
-          <Box h={isMobileOrTablet ? "calc(100svh - 120px)" : "calc(100svh - 70px)"}>
+          <Box h="calc(100svh - 220px)">
             <NoData />
           </Box>
         )}
 
-        <SimpleGrid columns={columns} spacing={6}>
-          {sortedConcerts.map((concert, index) => {
-            const isTodayEvent = isEventToday(concert.date);
-            const isFutureOrToday = isEventTodayOrFuture(concert.date);
-            const isPastEvent = !isFutureOrToday;
-
-            const isTicketOpen = concert.ticketOpen?.date === moment().format("YYYY-MM-DD");
-            const timeRemaining = calculateTimeRemaining(
-              concert.ticketOpen.date,
-              concert.ticketOpen.time
-            );
-
-            return (
-              <Card
-                key={index}
-                lang={lang}
-                concert={concert}
-                isTodayEvent={isTodayEvent}
-                isTicketOpen={isTicketOpen}
-                isPastEvent={isPastEvent}
-                timeRemaining={timeRemaining}
-                getButtonText={getButtonText}
-                handleButtonClick={handleButtonClick}
+        {/* Dynamic View rendering */}
+        {viewMode === "calendar" ? (
+          <VStack spacing={6} align="stretch" width="100%" animation="fadeIn 0.4s ease">
+            {/* Calendar Widget Box */}
+            <Box 
+              bg="white" 
+              p={4} 
+              borderRadius="24px" 
+              boxShadow="soft" 
+              borderWidth="1px" 
+              borderColor="purple.50"
+              overflow="hidden"
+            >
+              <Calendar
+                onChange={(value) => {
+                  if (value instanceof Date) {
+                    setSelectedDate(value);
+                  } else if (Array.isArray(value) && value[0] instanceof Date) {
+                    setSelectedDate(value[0]);
+                  }
+                }}
+                value={selectedDate}
+                tileContent={tileContent}
+                locale={lang === "ko" ? "ko-KR" : "en-US"}
               />
-            );
-          })}
-        </SimpleGrid>
+            </Box>
+
+            {/* Selected Date Header */}
+            <Box borderLeft="4px solid" borderColor="brand.main" pl={3.5} py={1} mt={2}>
+              <Text fontSize="md" fontWeight="black" color="gray.800">
+                {moment(selectedDate).format(lang === "ko" ? "YYYY년 MM월 DD일 공연 일정" : "YYYY-MM-DD Concert Schedule")}
+              </Text>
+            </Box>
+
+            {/* Concert Grid filtered by date */}
+            {getConcertsOnSelectedDate().length === 0 ? (
+              <Box 
+                py={12} 
+                textAlign="center" 
+                bg="rgba(139, 92, 246, 0.02)" 
+                borderRadius="24px" 
+                borderStyle="dashed" 
+                borderWidth="2px" 
+                borderColor="purple.100"
+              >
+                <Text fontSize="sm" color="gray.400" fontWeight="bold">
+                  {lang === "ko" ? "해당 날짜에 예정된 공연이 없습니다." : "No concerts scheduled on this date."}
+                </Text>
+              </Box>
+            ) : (
+              <SimpleGrid columns={columns} spacing={{ base: 4, md: 6 }}>
+                {getConcertsOnSelectedDate().map((concert, index) => {
+                  const isTodayEvent = isEventToday(concert.date);
+                  const isFutureOrToday = isEventTodayOrFuture(concert.date);
+                  const isPastEvent = !isFutureOrToday;
+
+                  const isTicketOpen = concert.ticketOpen && concert.ticketOpen.date === moment().format("YYYY-MM-DD");
+                  const timeRemaining = concert.ticketOpen
+                    ? calculateTimeRemaining(
+                        concert.ticketOpen.date,
+                        concert.ticketOpen.time
+                      )
+                    : null;
+
+                  return (
+                    <Card
+                      key={index}
+                      lang={lang}
+                      concert={concert}
+                      isTodayEvent={isTodayEvent}
+                      isTicketOpen={isTicketOpen}
+                      isPastEvent={isPastEvent}
+                      timeRemaining={timeRemaining}
+                      getButtonText={getButtonText}
+                      handleButtonClick={handleButtonClick}
+                    />
+                  );
+                })}
+              </SimpleGrid>
+            )}
+          </VStack>
+        ) : (
+          /* List Mode rendering */
+          <SimpleGrid columns={columns} spacing={{ base: 4, md: 6 }}>
+            {sortedConcerts.map((concert, index) => {
+              const isTodayEvent = isEventToday(concert.date);
+              const isFutureOrToday = isEventTodayOrFuture(concert.date);
+              const isPastEvent = !isFutureOrToday;
+
+              const isTicketOpen = concert.ticketOpen && concert.ticketOpen.date === moment().format("YYYY-MM-DD");
+              const timeRemaining = concert.ticketOpen
+                ? calculateTimeRemaining(
+                    concert.ticketOpen.date,
+                    concert.ticketOpen.time
+                  )
+                : null;
+
+              return (
+                <Card
+                  key={index}
+                  lang={lang}
+                  concert={concert}
+                  isTodayEvent={isTodayEvent}
+                  isTicketOpen={isTicketOpen}
+                  isPastEvent={isPastEvent}
+                  timeRemaining={timeRemaining}
+                  getButtonText={getButtonText}
+                  handleButtonClick={handleButtonClick}
+                />
+              );
+            })}
+          </SimpleGrid>
+        )}
       </Box>
     </Box>
   );
