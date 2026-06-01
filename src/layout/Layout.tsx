@@ -11,9 +11,19 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   const isMobileOrTablet = useBreakpointValue({ base: true, md: true, lg: false });
   return (
-    <div style={{height: "100vh"}}>
+    <div style={{
+      display: "flex",
+      flexDirection: "column",
+      height: "100dvh",
+      overflow: "hidden"
+    }}>
       <Header />
-      <main>{children}</main>
+      <main style={{
+        flex: 1,
+        width: "100%",
+        position: "relative",
+        overflow: "hidden"
+      }}>{children}</main>
       <FnbButton isMobileOrTablet={isMobileOrTablet} /> 
       {isMobileOrTablet && <Footer />}
     </div>

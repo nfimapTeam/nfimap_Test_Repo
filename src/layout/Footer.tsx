@@ -22,12 +22,12 @@ const Footer = () => {
       px={4}
       py={2}
       bg="white"
-      borderTop="1px solid black"
-      position="fixed"
-      bottom="0"
+      borderTop="1px solid"
+      borderColor="purple.50"
       width="100%"
       height="70px" // Increased height to accommodate the stacked layout
       zIndex="2"
+      flexShrink={0}
     >
       <Flex justify="space-between" width="100%">
         {/* List Item */}

@@ -127,36 +127,86 @@ code {
   border-radius: 50% !important; /* Perfect circle hover shape */
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
   position: relative !important;
+  z-index: 1 !important; /* Establish stacking context so pseudo-element circles sit on top of calendar background */
   margin: 2px !important;
   padding: 0 !important;
 }
 
 .react-calendar__tile:enabled:hover,
 .react-calendar__tile:enabled:focus {
-  background-color: rgba(139, 92, 246, 0.06) !important;
+  background: none !important;
   color: #8B5CF6 !important;
+}
+
+.react-calendar__tile:enabled:hover::before,
+.react-calendar__tile:enabled:focus::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  background-color: rgba(139, 92, 246, 0.06) !important;
+  z-index: -1 !important;
 }
 
 /* Today highlight */
 .react-calendar__tile--now {
-  background: rgba(139, 92, 246, 0.08) !important;
+  background: none !important;
+  border: none !important;
   color: #8B5CF6 !important;
   font-weight: 800 !important;
+}
+
+.react-calendar__tile--now::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  background-color: rgba(139, 92, 246, 0.08) !important;
   border: 1px solid rgba(139, 92, 246, 0.2) !important;
+  z-index: -1 !important;
 }
 
 /* Selected Active Date */
-.react-calendar__tile--active {
-  background: #8B5CF6 !important;
+.react-calendar__tile--active,
+.react-calendar__tile--active abbr,
+.react-calendar__tile--active time {
+  background: none !important;
   color: #FFFFFF !important;
   font-weight: 800 !important;
+  box-shadow: none !important;
+}
+
+.react-calendar__tile--active::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  background-color: #8B5CF6 !important;
+  z-index: -1 !important;
   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3) !important;
 }
 
 .react-calendar__tile--active:enabled:hover,
 .react-calendar__tile--active:enabled:focus {
-  background: #8B5CF6 !important;
+  background: none !important;
   color: #FFFFFF !important;
+}
+
+.react-calendar__tile--active:enabled:hover::before,
+.react-calendar__tile--active:enabled:focus::before {
+  background-color: #8B5CF6 !important;
 }
 
 /* Neighboring month dates */

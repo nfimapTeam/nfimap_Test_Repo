@@ -67,9 +67,10 @@ interface Concert extends RawConcert {
 const Home = () => {
   const { t, i18n } = useTranslation();
 
-  // 1-column on mobile, 2-column on small screens, 3-column on tablet, 4-column on desktop to avoid layout squeezing
-  const columns = useBreakpointValue({ base: 1, sm: 2, md: 3, lg: 4 });
+  // 2-column on mobile, 2-column on small screens, 3-column on tablet, 4-column on desktop
+  const columns = useBreakpointValue({ base: 1, md: 3, lg: 4 });
   const isMobileOrTablet = useBreakpointValue({ base: true, md: true, lg: false });
+  const isMobile = useBreakpointValue({ base: true, md: false });
   const [currentTime, setCurrentTime] = useState(moment());
 
   const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState);
@@ -95,8 +96,9 @@ const Home = () => {
   );
 
   useEffect(() => {
-    if (i18n.language === "ko") {
-      setLang("ko");
+    const baseLang = i18n.language ? i18n.language.split("-")[0] : "ko";
+    if (["ko", "en", "zh", "ja"].includes(baseLang)) {
+      setLang(baseLang);
     } else {
       setLang("en");
     }
@@ -333,7 +335,7 @@ const Home = () => {
       h={isMobileOrTablet ? "calc(100svh - 120px)" : "calc(100svh - 70px)"}
       width="100%"
       mx="auto"
-      p={{ base: "12px 12px 80px 12px", md: "24px 24px 80px 24px" }}
+      p={{ base: "8px 8px 80px 8px", md: "24px 24px 80px 24px" }}
       overflowY="auto"
       css={{
         "&::-webkit-scrollbar": {
@@ -397,9 +399,7 @@ const Home = () => {
           {/* Filtering & View Switch Row */}
           <Flex 
             width="100%" 
-            justifyContent="space-between" 
-            alignItems="center" 
-            flexWrap="wrap" 
+            flexDirection="column"
             gap={3}
             bg="white"
             p={3}
@@ -408,7 +408,8 @@ const Home = () => {
             borderWidth="1px"
             borderColor="purple.50"
           >
-            <Flex gap={3} alignItems="center" flexWrap="wrap">
+            {/* Row 1: Dropdowns */}
+            <Flex gap={2.5} alignItems="center" justifyContent="flex-start" width="100%">
               {/* Year Filter Menu */}
               <Menu>
                 <MenuButton
@@ -487,19 +488,21 @@ const Home = () => {
                   </MenuItem>
                 </MenuList>
               </Menu>
+            </Flex>
 
+            {/* Row 2: View Switcher (left) & Past Shows Toggle (right) */}
+            <Flex justifyContent="space-between" alignItems="center" width="100%">
               {/* View Switch ButtonGroup (List / Calendar) */}
-              {/* Premium Segmented Control for View Switch */}
               <Flex 
                 bg="purple.50" 
-                p="4px" 
+                p={{ base: "2px", md: "4px" }} 
                 borderRadius="full" 
                 alignItems="center" 
                 borderWidth="1px" 
                 borderColor="purple.100"
                 boxShadow="inner"
                 position="relative"
-                width="210px"
+                width={{ base: "170px", md: "210px" }}
                 flexShrink={0}
                 userSelect="none"
               >
@@ -507,7 +510,7 @@ const Home = () => {
                 <Box
                   position="relative"
                   flex={1}
-                  height="34px"
+                  height={{ base: "28px", md: "34px" }}
                 >
                   <Flex
                     onClick={() => setViewMode("list")}
@@ -516,7 +519,7 @@ const Home = () => {
                     justifyContent="center"
                     gap={2}
                     cursor="pointer"
-                    fontSize="xs"
+                    fontSize={{ base: "11px", md: "xs" }}
                     fontWeight="extrabold"
                     color={viewMode === "list" ? "white" : "purple.500"}
                     transition="color 0.25s"
@@ -524,7 +527,7 @@ const Home = () => {
                     zIndex={3}
                     whiteSpace="nowrap"
                   >
-                    <ListIcon size={14} strokeWidth={2.5} />
+                    <ListIcon size={isMobile ? 12 : 14} strokeWidth={2.5} />
                     <Box as="span">{t("list")}</Box>
                   </Flex>
                   {viewMode === "list" && (
@@ -550,7 +553,7 @@ const Home = () => {
                 <Box
                   position="relative"
                   flex={1}
-                  height="34px"
+                  height={{ base: "28px", md: "34px" }}
                 >
                   <Flex
                     onClick={() => setViewMode("calendar")}
@@ -559,7 +562,7 @@ const Home = () => {
                     justifyContent="center"
                     gap={2}
                     cursor="pointer"
-                    fontSize="xs"
+                    fontSize={{ base: "11px", md: "xs" }}
                     fontWeight="extrabold"
                     color={viewMode === "calendar" ? "white" : "purple.500"}
                     transition="color 0.25s"
@@ -567,7 +570,7 @@ const Home = () => {
                     zIndex={3}
                     whiteSpace="nowrap"
                   >
-                    <CalendarIcon size={14} strokeWidth={2.5} />
+                    <CalendarIcon size={isMobile ? 12 : 14} strokeWidth={2.5} />
                     <Box as="span">{t("calendar") || "달력"}</Box>
                   </Flex>
                   {viewMode === "calendar" && (
@@ -589,42 +592,42 @@ const Home = () => {
                   )}
                 </Box>
               </Flex>
-            </Flex>
 
-            {/* Toggle Switch */}
-            <FormControl 
-              display="flex" 
-              alignItems="center" 
-              width="auto"
-              bg="brand.purpleSoft"
-              px={4}
-              py={1.5}
-              borderRadius="full"
-              m={0}
-            >
-              <FormLabel 
-                htmlFor="show-past-events" 
-                mb="0" 
-                mr={3} 
-                fontSize="xs" 
-                fontWeight="extrabold" 
-                color="brand.main"
-                cursor="pointer"
+              {/* Toggle Switch */}
+              <FormControl 
+                display="flex" 
+                alignItems="center" 
+                width="auto"
+                bg="brand.purpleSoft"
+                px={{ base: 3, md: 4 }}
+                py={{ base: 1, md: 1.5 }}
+                borderRadius="full"
+                m={0}
               >
-                {t("showPastEvents")}
-              </FormLabel>
-              <Switch
-                id="show-past-events"
-                colorScheme="purple"
-                size="md"
-                isChecked={toggle}
-                onChange={() => setToggle(!toggle)}
-              />
-            </FormControl>
+                <FormLabel 
+                  htmlFor="show-past-events" 
+                  mb="0" 
+                  mr={{ base: 2, md: 3 }} 
+                  fontSize={{ base: "10px", md: "xs" }} 
+                  fontWeight="extrabold" 
+                  color="brand.main"
+                  cursor="pointer"
+                >
+                  {t("showPastEvents")}
+                </FormLabel>
+                <Switch
+                  id="show-past-events"
+                  colorScheme="purple"
+                  size={isMobile ? "sm" : "md"}
+                  isChecked={toggle}
+                  onChange={() => setToggle(!toggle)}
+                />
+              </FormControl>
+            </Flex>
           </Flex>
         </Box>
 
-        {sortedConcerts.length === 0 && (
+        {viewMode === "list" && sortedConcerts.length === 0 && (
           <Box h="calc(100svh - 220px)">
             <NoData />
           </Box>
@@ -653,14 +656,45 @@ const Home = () => {
                 }}
                 value={selectedDate}
                 tileContent={tileContent}
-                locale={lang === "ko" ? "ko-KR" : "en-US"}
+                locale={
+                  lang === "ko"
+                    ? "ko-KR"
+                    : lang === "ja"
+                      ? "ja-JP"
+                      : lang === "zh"
+                        ? "zh-CN"
+                        : "en-US"
+                }
+                formatMonthYear={(locale, date) => {
+                  if (lang === "ko") return moment(date).format("YYYY년 M월");
+                  if (lang === "ja" || lang === "zh") return moment(date).format("YYYY年 M月");
+                  return moment(date).format("MMMM YYYY");
+                }}
+                formatShortWeekday={(locale, date) => {
+                  const day = date.getDay();
+                  const koDays = ["일", "월", "화", "수", "목", "금", "토"];
+                  const enDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+                  const jaDays = ["日", "月", "火", "水", "木", "金", "土"];
+                  const zhDays = ["日", "一", "二", "三", "四", "五", "六"];
+                  if (lang === "ko") return koDays[day];
+                  if (lang === "ja") return jaDays[day];
+                  if (lang === "zh") return zhDays[day];
+                  return enDays[day];
+                }}
+                formatDay={(locale, date) => moment(date).format("D")}
               />
             </Box>
 
             {/* Selected Date Header */}
             <Box borderLeft="4px solid" borderColor="brand.main" pl={3.5} py={1} mt={2}>
               <Text fontSize="md" fontWeight="black" color="gray.800">
-                {moment(selectedDate).format(lang === "ko" ? "YYYY년 MM월 DD일 공연 일정" : "YYYY-MM-DD Concert Schedule")}
+                {lang === "ko"
+                  ? moment(selectedDate).format("YYYY년 MM월 DD일 공연 일정")
+                  : lang === "ja"
+                    ? moment(selectedDate).format("YYYY年 MM月 DD日 公演日程")
+                    : lang === "zh"
+                      ? moment(selectedDate).format("YYYY年 MM月 DD日 演出日程")
+                      : moment(selectedDate).format("YYYY-MM-DD Concert Schedule")}
               </Text>
             </Box>
 
@@ -676,7 +710,13 @@ const Home = () => {
                 borderColor="purple.100"
               >
                 <Text fontSize="sm" color="gray.400" fontWeight="bold">
-                  {lang === "ko" ? "해당 날짜에 예정된 공연이 없습니다." : "No concerts scheduled on this date."}
+                  {lang === "ko"
+                    ? "해당 날짜에 예정된 공연이 없습니다."
+                    : lang === "ja"
+                      ? "該当日に予定されている公演はありません。"
+                      : lang === "zh"
+                        ? "该日期没有排定的演出。"
+                        : "No concerts scheduled on this date."}
                 </Text>
               </Box>
             ) : (

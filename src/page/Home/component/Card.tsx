@@ -13,6 +13,7 @@ import {
 import { keyframes } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import moment from "moment";
 import { TicketModal } from "../../DetailPage/components/TicketModal";
 import { TicketDrawer } from "../../DetailPage/components/Drawer";
 
@@ -102,6 +103,17 @@ const Card = ({
   const isMobile = useBreakpointValue({ base: true, md: false });
   const { isOpen: isDrawerOpen, onOpen: onDrawerOpen, onClose: onDrawerClose } = useDisclosure();
 
+  const formatConcertDates = (dates: string[]) => {
+    if (!dates || dates.length === 0) return "";
+    if (dates.length > 1) {
+      const sorted = [...dates].sort();
+      const start = moment(sorted[0]).format("YY.MM.DD");
+      const end = moment(sorted[sorted.length - 1]).format("YY.MM.DD");
+      return `${start} ~ ${end}`;
+    }
+    return moment(dates[0]).format("YY.MM.DD");
+  };
+
   const handleTicketButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     const links = concert.ticketLink || [];
@@ -118,36 +130,41 @@ const Card = ({
     <Box
       position="relative"
       onClick={() => navigate(`/${concert.id}`)}
-      borderRadius="24px"
-      bg="white"
-      borderWidth="1px"
+      flexDirection={{ base: "row", md: "column" }}
+      borderRadius={{ base: "0px", md: "24px" }}
+      bg={{ base: "transparent", md: "white" }}
+      borderWidth={{ base: "0px", md: "1px" }}
       borderColor={isTodayEvent ? "brand.sub2" : "gray.100"}
-      animation={
-        isTodayEvent
+      animation={{
+        base: "none",
+        md: isTodayEvent
           ? `${borderGlow} 2s ease-in-out infinite`
           : isTicketOpen
             ? `${lavenderGlow} 2s ease-in-out infinite`
-            : "none"
-      }
-      boxShadow="soft"
+            : "none",
+      }}
+      boxShadow={{ base: "none", md: "soft" }}
       role="group"
       cursor="pointer"
       display="flex"
-      flexDirection="column"
       overflow="hidden"
       height="100%"
+      p={{ base: "12px 0", md: "0px" }}
       transition="all 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
       _hover={{
-        transform: "translateY(-6px)",
-        boxShadow: "elevated",
-        borderColor: "brand.main",
+        transform: { base: "none", md: "translateY(-6px)" },
+        boxShadow: { base: "none", md: "elevated" },
+        borderColor: { base: "none", md: "brand.main" },
       }}
     >
       {/* Poster Image Container */}
       <Box
         position="relative"
-        width="100%"
-        paddingBottom="125%" // 4:5 aspect ratio
+        width={{ base: "90px", md: "100%" }}
+        minWidth={{ base: "90px", md: "100%" }}
+        height={{ base: "112.5px", md: "auto" }}
+        paddingBottom={{ base: "0", md: "125%" }} // 4:5 aspect ratio on desktop
+        borderRadius={{ base: "8px", md: "0px" }}
         overflow="hidden"
         bg="gray.50"
         filter={isPastEvent ? "grayscale(100%)" : "none"}
@@ -181,16 +198,16 @@ const Card = ({
           pointerEvents="none"
         />
 
-        {/* State Badges (Absolute overlay) */}
-        <Box position="absolute" top={3} left={3} zIndex={2}>
+        {/* State Badges (Absolute overlay - Desktop only) */}
+        <Box position="absolute" top={{ base: 1.5, md: 3 }} left={{ base: 1.5, md: 3 }} zIndex={2} display={{ base: "none", md: "block" }}>
           {isTodayEvent ? (
             <Badge
               bg="brand.sub2"
               color="white"
               boxShadow="0 2px 10px rgba(6, 182, 212, 0.3)"
-              fontSize="xs"
-              px={3}
-              py={1}
+              fontSize={{ base: "9px", md: "xs" }}
+              px={{ base: 1.5, md: 3 }}
+              py={{ base: 0.5, md: 1 }}
             >
               {t("today_concert")}
             </Badge>
@@ -198,9 +215,9 @@ const Card = ({
             <Badge
               bg="gray.400"
               color="white"
-              fontSize="xs"
-              px={3}
-              py={1}
+              fontSize={{ base: "9px", md: "xs" }}
+              px={{ base: 1.5, md: 3 }}
+              py={{ base: 0.5, md: 1 }}
             >
               {t("concert_ended")}
             </Badge>
@@ -209,9 +226,9 @@ const Card = ({
               bg="brand.main"
               color="white"
               boxShadow="0 2px 10px rgba(139, 92, 246, 0.3)"
-              fontSize="xs"
-              px={3}
-              py={1}
+              fontSize={{ base: "9px", md: "xs" }}
+              px={{ base: 1.5, md: 3 }}
+              py={{ base: 0.5, md: 1 }}
             >
               {t("concert_upcoming")}
             </Badge>
@@ -220,17 +237,58 @@ const Card = ({
       </Box>
 
       {/* Card Content Area */}
-      <VStack p={4} spacing={3} align="stretch" flex="1" justify="space-between" height="100%">
-        <VStack align="start" spacing={2} width="100%">
-          {/* Tag Badges */}
-          <HStack spacing={1.5} flexWrap="wrap">
+      <VStack p={{ base: "2px 0 2px 12px", md: 4 }} spacing={{ base: 1, md: 3 }} align="stretch" flex="1" justify="space-between" height="100%">
+        <VStack align="start" spacing={{ base: 1, md: 2 }} width="100%">
+          {/* State Badge on Mobile (like Interpark) */}
+          <Box display={{ base: "block", md: "none" }}>
+            {isTodayEvent ? (
+              <Badge
+                bg="cyan.50"
+                color="cyan.600"
+                fontSize="10px"
+                fontWeight="bold"
+                px={1.5}
+                py={0.5}
+                borderRadius="md"
+              >
+                {t("today_concert")}
+              </Badge>
+            ) : isPastEvent ? (
+              <Badge
+                bg="gray.100"
+                color="gray.600"
+                fontSize="10px"
+                fontWeight="bold"
+                px={1.5}
+                py={0.5}
+                borderRadius="md"
+              >
+                {t("concert_ended")}
+              </Badge>
+            ) : (
+              <Badge
+                bg="purple.50"
+                color="brand.main"
+                fontSize="10px"
+                fontWeight="bold"
+                px={1.5}
+                py={0.5}
+                borderRadius="md"
+              >
+                {t("concert_upcoming")}
+              </Badge>
+            )}
+          </Box>
+
+          {/* Tag Badges (Desktop only) */}
+          <HStack spacing={{ base: 0.5, md: 1.5 }} flexWrap="wrap" display={{ base: "none", md: "flex" }}>
             {(concert.type === "콘서트" || concert.type === "Concert") && (
               <Badge
                 bg="pink.50"
                 color="pink.600"
-                fontSize="10px"
+                fontSize={{ base: "8px", md: "10px" }}
                 fontWeight="extrabold"
-                px={2.5}
+                px={{ base: 1, md: 2.5 }}
                 py={0.5}
               >
                 {t("concert_type_concert")}
@@ -240,9 +298,9 @@ const Card = ({
               <Badge
                 bg="blue.50"
                 color="blue.600"
-                fontSize="10px"
+                fontSize={{ base: "8px", md: "10px" }}
                 fontWeight="extrabold"
-                px={2.5}
+                px={{ base: 1, md: 2.5 }}
                 py={0.5}
               >
                 {t("concert_type_festival")}
@@ -252,9 +310,9 @@ const Card = ({
               <Badge
                 bg="amber.50"
                 color="amber.600"
-                fontSize="10px"
+                fontSize={{ base: "8px", md: "10px" }}
                 fontWeight="extrabold"
-                px={2.5}
+                px={{ base: 1, md: 2.5 }}
                 py={0.5}
               >
                 {t("concert_type_event")}
@@ -264,9 +322,9 @@ const Card = ({
               <Badge
                 bg="purple.50"
                 color="brand.main"
-                fontSize="10px"
+                fontSize={{ base: "8px", md: "10px" }}
                 fontWeight="extrabold"
-                px={2.5}
+                px={{ base: 1, md: 2.5 }}
                 py={0.5}
               >
                 {t("performance_type_solo")}
@@ -276,9 +334,9 @@ const Card = ({
               <Badge
                 bg="teal.50"
                 color="teal.600"
-                fontSize="10px"
+                fontSize={{ base: "8px", md: "10px" }}
                 fontWeight="extrabold"
-                px={2.5}
+                px={{ base: 1, md: 2.5 }}
                 py={0.5}
               >
                 {t("performance_type_joint")}
@@ -288,9 +346,9 @@ const Card = ({
               <Badge
                 bg="orange.50"
                 color="orange.600"
-                fontSize="10px"
+                fontSize={{ base: "8px", md: "10px" }}
                 fontWeight="extrabold"
-                px={2.5}
+                px={{ base: 1, md: 2.5 }}
                 py={0.5}
               >
                 {t("performance_type_guest")}
@@ -300,12 +358,12 @@ const Card = ({
 
           {/* Concert Name */}
           <Text
-            fontSize="md"
+            fontSize={{ base: "14px", sm: "sm", md: "md" }}
             fontWeight="extrabold"
-            color="gray.800"
+            color="gray.850"
             noOfLines={2}
-            minHeight="2.6rem"
-            lineHeight="shorter"
+            minHeight={{ base: "auto", md: "2.6rem" }}
+            lineHeight="1.3"
             transition="color 0.2s"
             _groupHover={{ color: "brand.main" }}
           >
@@ -313,24 +371,25 @@ const Card = ({
           </Text>
 
           {/* Location & Date info */}
-          <VStack align="start" spacing={1} width="100%">
-            <Text fontSize="xs" fontWeight="semibold" color="gray.600" noOfLines={1}>
+          <VStack align="start" spacing={0.5} width="100%">
+            <Text fontSize={{ base: "12px", md: "xs" }} fontWeight="semibold" color="gray.600" noOfLines={1}>
               {concert.location}
             </Text>
-            <Text fontSize="11px" color="gray.400" noOfLines={1}>
-              {concert.date ? concert.date.join(", ") : ""}
+            <Text fontSize={{ base: "11px", md: "11px" }} color="gray.400" noOfLines={1}>
+              {concert.date ? formatConcertDates(concert.date) : ""}
             </Text>
           </VStack>
         </VStack>
 
-        {/* CTA Button */}
+        {/* CTA Button (Desktop only) */}
         {!isPastEvent && (
           <Button
+            display={{ base: "none", md: "inline-flex" }}
             size="sm"
             width="100%"
-            fontSize="12px"
-            height="36px"
-            mt={2}
+            fontSize={{ base: "9px", md: "12px" }}
+            height={{ base: "26px", md: "36px" }}
+            mt={{ base: 0.5, md: 2 }}
             bgGradient="linear(to-r, brand.main, brand.sub)"
             color="white"
             borderRadius="full"

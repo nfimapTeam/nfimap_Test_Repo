@@ -112,8 +112,9 @@ const DetailPage: React.FC = () => {
   const { isOpen: isDrawerOpen, onOpen: onDrawerOpen, onClose: onDrawerClose } = useDisclosure();
 
   useEffect(() => {
-    if (i18n.language === "ko") {
-      setLang("ko");
+    const baseLang = i18n.language ? i18n.language.split("-")[0] : "ko";
+    if (["ko", "en", "zh", "ja"].includes(baseLang)) {
+      setLang(baseLang);
     } else {
       setLang("en");
     }
