@@ -1,5 +1,12 @@
 export const npart = [
   {
+    "videoId": "5j5wdF5bex0",
+    "title": "N.Flying (엔플라잉) Digital Single [환절기 (換節期)] 환절기 (換節期) 엔퍄트",
+    "thumbnail": "https://i.ytimg.com/vi/5j5wdF5bex0/default.jpg",
+    "url": "https://www.youtube.com/watch?v=5j5wdF5bex0",
+    "publishedAt": "2026-06-03T03:00:08Z"
+  },
+  {
     "videoId": "LC8xWtb1yNg",
     "title": "N.Flying 2nd Album [Everlasting] 뫼비우스 (Moebius) 엔퍄트",
     "thumbnail": "https://i.ytimg.com/vi/LC8xWtb1yNg/default.jpg",

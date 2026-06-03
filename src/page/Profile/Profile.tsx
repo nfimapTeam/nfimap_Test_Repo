@@ -7,8 +7,10 @@ import {
   Flex,
   Grid,
   Stack,
+  VStack,
   Link,
   Icon,
+  Badge,
   useBreakpointValue,
   useColorModeValue,
   useDisclosure,
@@ -17,10 +19,9 @@ import {
   RiTeamLine,
   RiHeart2Line,
   RiMusic2Line,
-  RiLightbulbLine,
   RiStarFill,
-  RiShieldStarLine,
 } from "@remixicon/react";
+import { CalendarDays, Disc, Heart, Sparkles } from "lucide-react";
 import { profileData } from "../../datas/profile";
 import { profileDataEng } from "../../datas/profileEng";
 import dayjs from "dayjs";
@@ -83,37 +84,37 @@ const Profile = () => {
   }, [i18n.language]);
 
   const snsIcons = [
-    { src: "/image/icon/sns/x.png", url: profileState?.official_sites.x },
-    { src: "/image/icon/sns/facebook.jpg", url: profileState?.official_sites.facebook },
-    { src: "/image/icon/sns/instagram.jpg", url: profileState?.official_sites.instagram },
-    { src: "/image/icon/sns/daumcafe.png", url: profileState?.official_sites.daumcafe },
-    { src: "/image/icon/sns/youtube.png", url: profileState?.official_sites.youtube },
+    { src: "/image/icon/sns/x.png", url: profileState?.official_sites.x, name: "X" },
+    { src: "/image/icon/sns/facebook.jpg", url: profileState?.official_sites.facebook, name: "Facebook" },
+    { src: "/image/icon/sns/instagram.jpg", url: profileState?.official_sites.instagram, name: "Instagram" },
+    { src: "/image/icon/sns/daumcafe.png", url: profileState?.official_sites.daumcafe, name: "Daum Cafe" },
+    { src: "/image/icon/sns/youtube.png", url: profileState?.official_sites.youtube, name: "YouTube" },
   ];
 
   const infoCards = [
     {
-      icon: RiLightbulbLine,
+      icon: CalendarDays,
       title: t("Profile.debut_date"),
       value: profileState?.debut_date,
-      color: "blue.500",
+      color: "purple.500",
     },
     {
-      icon: RiMusic2Line,
+      icon: Disc,
       title: t("Profile.debut_song"),
       value: profileState?.debut_song,
-      color: "green.500",
+      color: "cyan.500",
     },
     {
-      icon: RiHeart2Line,
+      icon: Heart,
       title: t("Profile.fandom"),
       value: profileState?.fandom_name,
-      color: "red.500",
+      color: "pink.500",
     },
     {
-      icon: RiTeamLine,
+      icon: Sparkles,
       title: t("Profile.light_stick"),
       value: profileState?.light_stick,
-      color: "purple.500",
+      color: "orange.500",
     },
   ];
 
@@ -160,12 +161,12 @@ const Profile = () => {
                 h="40px"
                 borderRadius="full"
                 border="1px solid transparent"
-                bgGradient="linear(to-r, #9DBCBF, #7AA8A6)" // 수정: 새로운 그라디언트 색상
+                bgGradient="linear(to-r, #9DBCBF, #7AA8A6)"
                 p="2px"
-                boxShadow="0 4px 10px rgba(157, 188, 191, 0.5)" // 수정: #9DBCBF 기반 그림자
+                boxShadow="0 4px 10px rgba(157, 188, 191, 0.5)"
                 _hover={{
                   transform: "scale(1.2)",
-                  boxShadow: "0 8px 20px rgba(157, 188, 191, 0.8)", // 수정: #9DBCBF 기반 호버 그림자
+                  boxShadow: "0 8px 20px rgba(157, 188, 191, 0.8)",
                   filter: "brightness(1.1)",
                 }}
                 transition="all 0.4s ease"
@@ -184,14 +185,24 @@ const Profile = () => {
             />
           </Heading>
         </Flex>
+
         {/* Cover Image */}
-        <Box position="relative" mb={8} borderRadius="lg" overflow="hidden" boxShadow="lg">
+        <Box 
+          position="relative" 
+          mb={10} 
+          borderRadius="3xl" 
+          overflow="hidden" 
+          boxShadow="0 20px 40px -15px rgba(139, 92, 246, 0.12)"
+          role="group"
+        >
           <Image
             src={profileState?.cover_image_url}
             alt={`${profileState?.name} Cover`}
             w="100%"
-            h={{ base: "250px", md: "400px", lg: "500px" }}
+            h={{ base: "240px", md: "400px", lg: "480px" }}
             objectFit="cover"
+            transition="transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)"
+            _groupHover={{ transform: "scale(1.02)" }}
           />
           <Box
             position="absolute"
@@ -199,13 +210,12 @@ const Profile = () => {
             left={0}
             right={0}
             bottom={0}
-            bgGradient="linear(to-t, rgba(0,0,0,0.3), transparent)"
+            bgGradient="linear(to-t, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 60%, transparent 100%)"
           />
         </Box>
 
-        {/* Profile Info */}
+        {/* Profile Info Grid */}
         <Stack w="100%" spacing={6} align="center" mb={10}>
-
           <Grid
             templateColumns={{
               base: "1fr",
@@ -215,31 +225,62 @@ const Profile = () => {
             gap={4}
             w="100%"
           >
-            {infoCards.map((card, index) => (
-              <Flex
-                key={index}
-                direction="column"
-                align="center"
-                p={4}
-                borderRadius="lg"
-                bg={cardBg}
-                boxShadow="sm"
-                border="1px solid"
-                borderColor="gray.100"
-                _hover={{ boxShadow: "md", transform: "translateY(-4px)" }}
-                transition="all 0.2s ease"
-              >
-                <Icon as={card.icon} w={6} h={6} color={card.color} />
-                <Text fontWeight="bold" fontSize="md" color={`${card.color.split(".")[0]}.700`}>
-                  {card.title}
-                </Text>
-                <Text fontSize="sm" color="gray.600">
-                  {card.value || "N/A"}
-                </Text>
-              </Flex>
-            ))}
+            {infoCards.map((card, index) => {
+              const colorPrefix = card.color.split(".")[0];
+              return (
+                <Flex
+                  key={index}
+                  direction="row"
+                  align="center"
+                  p={5}
+                  borderRadius="2xl"
+                  bg={cardBg}
+                  boxShadow="soft"
+                  border="1px solid"
+                  borderColor="purple.50"
+                  _hover={{ 
+                    boxShadow: "card", 
+                    transform: "translateY(-4px)",
+                    borderColor: `${colorPrefix}.300`
+                  }}
+                  transition="all 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
+                  gap={4}
+                >
+                  <Flex
+                    w="44px"
+                    h="44px"
+                    borderRadius="xl"
+                    bg={`${colorPrefix}.50`}
+                    alignItems="center"
+                    justifyContent="center"
+                    flexShrink={0}
+                  >
+                    <Icon as={card.icon} w={5} h={5} color={card.color} />
+                  </Flex>
+                  <Stack spacing={0.5} align="start">
+                    <Text fontSize="11px" fontWeight="bold" color="gray.400" textTransform="uppercase" letterSpacing="widest">
+                      {card.title}
+                    </Text>
+                    <Text fontSize="15px" fontWeight="extrabold" color="gray.800" noOfLines={1}>
+                      {card.value || "N/A"}
+                    </Text>
+                  </Stack>
+                </Flex>
+              );
+            })}
           </Grid>
         </Stack>
+
+        {/* Members Section Header */}
+        <VStack align="center" spacing={2} mt={12} mb={8}>
+          <Text fontSize="xs" fontWeight="bold" color="purple.500" textTransform="uppercase" letterSpacing="widest">
+            {t("Profile.members_subtitle", "MEMBERS")}
+          </Text>
+          <Heading as="h2" size="lg" fontWeight="extrabold" color="gray.850">
+            {t("Profile.members")}
+          </Heading>
+          <Box w="32px" h="3px" bg="purple.400" borderRadius="full" />
+        </VStack>
 
         {/* Members Grid */}
         <Flex
@@ -249,101 +290,118 @@ const Profile = () => {
           gap={6}
           w="100%"
         >
-          {profileState?.members.map((member) => (
-            <Box
-              key={member.name}
-              cursor="pointer"
-              textAlign="center"
-              position="relative"
-              bg={cardBg}
-              borderRadius="lg"
-              boxShadow="0 4px 12px rgba(0, 0, 0, 0.15)"
-              border="1px solid"
-              borderColor={cardBorder}
-              p={3}
-              _hover={{
-                boxShadow: "0 8px 20px rgba(0, 0, 0, 0.25)",
-                transform: "translateY(-6px)",
-              }}
-              transition="all 0.3s ease"
-              onClick={() => handleMemberClick(member)}
-              role="button"
-              aria-label={`View ${member.name}'s profile`}
-              flexBasis={{
-                base: "100%",     // 모바일 1열
-                sm: "100%",       // 작은 화면 1열
-                md: "calc(33.333% - 1rem)", // 중간 화면 3열
-                lg: "calc(19% - 1rem)"      // 큰 화면 5열
-              }}
-              maxW={{
-                base: "100%",
-                sm: "100%",
-                md: "calc(33.333% - 1rem)",
-                lg: "calc(20% - 1rem)"
-              }}
-            >
-              <Box position="relative" w="100%" h="0" paddingBottom="100%" mx="auto">
-                <Image
-                  src={member.imageUrl}
-                  alt={member.name}
-                  w="100%"
-                  h="100%"
-                  position="absolute"
-                  top={0}
-                  left={0}
-                  borderRadius="md"
-                  objectFit="cover"
-                  border="1px solid"
-                  borderColor={cardBorder}
-                  _hover={{ filter: "brightness(0.9)" }}
-                  transition="all 0.3s ease"
-                />
-                {/* Hover Overlay */}
-                <Box
-                  position="absolute"
-                  top={0}
-                  left={0}
-                  right={0}
-                  bottom={0}
-                  bg={overlayBg}
-                  borderRadius="md"
-                  opacity={0}
-                  display="flex"
-                  flexDirection="column"
-                  justifyContent="center"
-                  alignItems="center"
-                  color="white"
-                  _hover={{ opacity: 1 }}
-                  transition="opacity 0.3s ease"
+          {profileState?.members.map((member) => {
+            const isLeader = member.position.includes("Leader") || member.position.includes("리더");
+            const displayPositions = member.position.filter(pos => pos !== "Leader" && pos !== "리더");
+            const primaryPosition = displayPositions[0] || member.position[0];
+
+            return (
+              <Box
+                key={member.name}
+                cursor="pointer"
+                position="relative"
+                bg={cardBg}
+                borderRadius="3xl"
+                boxShadow="soft"
+                border="1px solid"
+                borderColor="purple.50"
+                p={4}
+                role="group"
+                _hover={{
+                  boxShadow: "card",
+                  transform: "translateY(-6px)",
+                  borderColor: "purple.100",
+                }}
+                transition="all 0.4s cubic-bezier(0.16, 1, 0.3, 1)"
+                onClick={() => handleMemberClick(member)}
+                flexBasis={{
+                  base: "100%",
+                  sm: "100%",
+                  md: "calc(33.333% - 1rem)",
+                  lg: "calc(20% - 1rem)"
+                }}
+                maxW={{
+                  base: "100%",
+                  sm: "100%",
+                  md: "calc(33.333% - 1rem)",
+                  lg: "calc(20% - 1rem)"
+                }}
+              >
+                <Box 
+                  position="relative" 
+                  w="100%" 
+                  h="0" 
+                  paddingBottom="100%" 
+                  mx="auto"
+                  borderRadius="2xl"
+                  overflow="hidden"
+                  bg="gray.50"
                 >
-                  <Text fontSize="sm" fontWeight="bold">
-                    {member.mbti || "N/A"}
-                  </Text>
-                  <Text fontSize="xs">{member.position.join(", ") || "N/A"}</Text>
-                  <Text fontSize="xs" mt={2} fontStyle="italic">
-                    View Profile
-                  </Text>
-                </Box>
-                {/* Leader Badge */}
-                {member.position.includes("Leader") && (
+                  <Image
+                    src={member.imageUrl}
+                    alt={member.name}
+                    w="100%"
+                    h="100%"
+                    position="absolute"
+                    top={0}
+                    left={0}
+                    objectFit="cover"
+                    transition="transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)"
+                    _groupHover={{ transform: "scale(1.06)", filter: "brightness(0.9)" }}
+                  />
                   <Box
                     position="absolute"
-                    top={2}
-                    left={2}
-                    bg="yellow.400"
-                    borderRadius="full"
-                    p={1}
-                    title="Group Leader"
+                    top={0}
+                    left={0}
+                    right={0}
+                    bottom={0}
+                    bg="linear-gradient(to top, rgba(139, 92, 246, 0.9) 0%, rgba(139, 92, 246, 0.3) 70%, transparent 100%)"
+                    opacity={0}
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="flex-end"
+                    p={4}
+                    _groupHover={{ opacity: 1 }}
+                    transition="all 0.4s cubic-bezier(0.16, 1, 0.3, 1)"
                   >
-                    <Icon as={RiStarFill} w={4} h={4} color="white" />
+                    <Badge bg="white" color="brand.main" alignSelf="start" mb={1.5} fontSize="10px" borderRadius="full" px={2.5}>
+                      MBTI: {member.mbti || "N/A"}
+                    </Badge>
+                    <Text fontSize="13px" fontWeight="bold" color="white" noOfLines={1} mb={0.5}>
+                      {displayPositions.join(" / ")}
+                    </Text>
+                    <Text fontSize="11px" color="purple.100" fontWeight="medium">
+                      Birth: {dayjs(member.birthdate).format("YYYY.MM.DD")}
+                    </Text>
                   </Box>
-                )}
+                  {isLeader && (
+                    <Box
+                      position="absolute"
+                      top={3}
+                      left={3}
+                      bg="rgba(139, 92, 246, 0.9)"
+                      backdropFilter="blur(4px)"
+                      borderRadius="full"
+                      p={1.5}
+                      boxShadow="lg"
+                      title="Group Leader"
+                      zIndex={1}
+                    >
+                      <Icon as={RiStarFill} w={3.5} h={3.5} color="white" />
+                    </Box>
+                  )}
+                </Box>
+                <VStack align="center" spacing={0.5} mt={3}>
+                  <Text fontWeight="extrabold" fontSize="lg" color="gray.850" _groupHover={{ color: "brand.main" }} transition="color 0.2s">
+                    {member.name}
+                  </Text>
+                  <Text fontSize="11px" fontWeight="bold" color="purple.500" textTransform="uppercase" letterSpacing="wider">
+                    {primaryPosition}
+                  </Text>
+                </VStack>
               </Box>
-              <Text mt={2} fontWeight="medium" fontSize="md" color="gray.700">
-                {member.name}
-              </Text>
-            </Box>
-          ))}
+            );
+          })}
         </Flex>
 
         <ProfileModal isOpen={isOpen} onClose={onClose} selectedMember={selectedMember} />

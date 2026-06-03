@@ -102,6 +102,7 @@ const Card = ({
   const { t } = useTranslation();
   const isMobile = useBreakpointValue({ base: true, md: false });
   const { isOpen: isDrawerOpen, onOpen: onDrawerOpen, onClose: onDrawerClose } = useDisclosure();
+  const showTicketOpen = isTicketOpen && concert.type !== "행사" && concert.type !== "Event";
 
   const formatConcertDates = (dates: string[]) => {
     if (!dates || dates.length === 0) return "";
@@ -139,7 +140,7 @@ const Card = ({
         base: "none",
         md: isTodayEvent
           ? `${borderGlow} 2s ease-in-out infinite`
-          : isTicketOpen
+          : showTicketOpen
             ? `${lavenderGlow} 2s ease-in-out infinite`
             : "none",
       }}
@@ -221,6 +222,17 @@ const Card = ({
             >
               {t("concert_ended")}
             </Badge>
+          ) : showTicketOpen ? (
+            <Badge
+              bg="orange.500"
+              color="white"
+              boxShadow="0 2px 10px rgba(246, 140, 92, 0.4)"
+              fontSize={{ base: "9px", md: "xs" }}
+              px={{ base: 1.5, md: 3 }}
+              py={{ base: 0.5, md: 1 }}
+            >
+              {t("today_ticketing")}
+            </Badge>
           ) : (
             <Badge
               bg="brand.main"
@@ -264,6 +276,18 @@ const Card = ({
                 borderRadius="md"
               >
                 {t("concert_ended")}
+              </Badge>
+            ) : showTicketOpen ? (
+              <Badge
+                bg="orange.50"
+                color="orange.600"
+                fontSize="10px"
+                fontWeight="bold"
+                px={1.5}
+                py={0.5}
+                borderRadius="md"
+              >
+                {t("today_ticketing")}
               </Badge>
             ) : (
               <Badge
@@ -390,13 +414,14 @@ const Card = ({
             fontSize={{ base: "9px", md: "12px" }}
             height={{ base: "26px", md: "36px" }}
             mt={{ base: 0.5, md: 2 }}
-            bgGradient="linear(to-r, brand.main, brand.sub)"
+            bg="#9F7AEA"
             color="white"
             borderRadius="full"
             boxShadow="soft"
             _hover={{
-              bgGradient: "linear(to-r, purple.600, brand.sub)",
+              bg: "brand.main",
               boxShadow: "glow",
+              transform: "translateY(-1px)",
             }}
             onClick={handleTicketButtonClick}
             isDisabled={!concert.ticketLink || concert.ticketLink.length === 0 || concert.ticketLink[0] === ""}

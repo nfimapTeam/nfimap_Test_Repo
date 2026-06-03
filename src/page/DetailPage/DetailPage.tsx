@@ -254,7 +254,7 @@ const DetailPage: React.FC = () => {
   const defaultTabIndex = isLastSetlistDatePast ? 1 : 0;
 
   return (
-    <Box h={isMobileOrTablet ? "calc(100svh - 120px)" : "calc(100svh - 70px)"}>
+    <Box h={isMobileOrTablet ? "calc(100svh - 120px)" : "calc(100svh - 70px)"} overflowY="auto">
       <Box p="16px 16px 100px 16px" width="100%" maxWidth="1200px" mx="auto">
         <Flex direction={{ base: "column", md: "row" }} gap={8} align="stretch">
           <Flex
@@ -397,7 +397,11 @@ const DetailPage: React.FC = () => {
                       onClick={onDrawerOpen}
                       bg="#9F7AEA"
                       color="white"
-                      _hover={{ bg: "#9F7AEA" }}
+                      _hover={{
+                        bg: "brand.main",
+                        boxShadow: "glow",
+                        transform: "translateY(-1px)",
+                      }}
                     >
                       {t("view_ticket_sites")}
                     </Button>
@@ -427,7 +431,11 @@ const DetailPage: React.FC = () => {
                     isExternal
                     bg="#9F7AEA"
                     color="white"
-                    _hover={{ bg: "brand.main" }}
+                    _hover={{
+                      bg: "brand.main",
+                      boxShadow: "glow",
+                      transform: "translateY(-1px)",
+                    }}
                     isDisabled={!augmentedConcertDetail.ticketLink?.[0]}
                   >
                     {getButtonText(augmentedConcertDetail, isPastEvent, timeRemaining)}

@@ -58,6 +58,7 @@ const YouTubePlayer = ({ category, mediaType, scrollToTop }: YouTubePlayerProps)
   const transformWrapperRef = useRef<ReactZoomPanPinchRef>(null); // Proper typing for TransformWrapper
 
   const imageFileNames: { [key: string]: string }[] = [
+    { "Hwanjeolgi.jpeg": "환절기(換節期)" },
     { "Everlasting.jpeg": "만년설(Everlasting)" },
     { "RunLikeThis.jpeg": "Run Like This" },
     { "BornToBe.jpeg": "Born To Be" },

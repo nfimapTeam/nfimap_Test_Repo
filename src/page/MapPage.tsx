@@ -243,7 +243,7 @@ const MapPage = () => {
   }, [query, i18n.language]);
 
   return (
-    <Box display={{ base: "block", md: "flex" }}>
+    <Box display={{ base: "block", md: "flex" }} position="relative" w="100%" h="100%">
       <Helmet>
         <title>{t("map_title")}</title>
         <meta name="description" content={t("map_description")} />
@@ -280,38 +280,56 @@ const MapPage = () => {
       <Box
         display={{ base: "block", md: "none" }}
         position="absolute"
-        top="80px"
+        top="10px"
         left="10px"
         bg="none"
         zIndex="1000"
       >
-        <HStack spacing={2}>
+        <HStack spacing={1.5}>
           <Button
+            size="xs"
+            height="28px"
+            fontSize="11px"
+            px={3}
+            borderRadius="full"
             bg={activeTabIndex === 0 ? "brand.main" : "gray.200"} // 기본 버튼 색상
             color={activeTabIndex === 0 ? "white" : "black"} // 기본 글자 색상
             _hover={{ bg: "brand.main", color: "white" }} // 호버 시 색상
             _active={{ bg: "brand.main", color: "white" }} // 클릭된 상태 (active) 색상
             onClick={() => setActiveTabIndex(0)}
+            boxShadow="sm"
           >
             {t("map_domestic")}
           </Button>
 
           <Button
+            size="xs"
+            height="28px"
+            fontSize="11px"
+            px={3}
+            borderRadius="full"
             bg={activeTabIndex === 1 ? "brand.main" : "gray.200"}
             color={activeTabIndex === 1 ? "white" : "black"}
             _hover={{ bg: "brand.main", color: "white" }}
             _active={{ bg: "brand.main", color: "white" }}
             onClick={() => setActiveTabIndex(1)}
+            boxShadow="sm"
           >
             {t("map_nfiRoad")}
           </Button>
 
           <Button
+            size="xs"
+            height="28px"
+            fontSize="11px"
+            px={3}
+            borderRadius="full"
             bg={activeTabIndex === 2 ? "brand.main" : "gray.200"}
             color={activeTabIndex === 2 ? "white" : "black"}
             _hover={{ bg: "brand.main", color: "white" }}
             _active={{ bg: "brand.main", color: "white" }}
             onClick={() => setActiveTabIndex(2)}
+            boxShadow="sm"
           >
             {t("map_global")}
           </Button>
