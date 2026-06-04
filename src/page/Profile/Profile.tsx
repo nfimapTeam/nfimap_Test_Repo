@@ -29,6 +29,7 @@ import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
 import ProfileModal from "./components/ProfileModal";
 import YouTubePlayer from "../Content/Components/Youtube";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Member {
   name: string;
@@ -123,6 +124,21 @@ const Profile = () => {
     onOpen();
   };
 
+  const coverImages = [
+    "/image/nflying_cover_image_1.webp",
+    "/image/nflying_cover_image_2.webp",
+    "/image/nflying_cover_image_3.webp",
+  ];
+
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveImageIndex((prev) => (prev + 1) % coverImages.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <Box
       h={isMobileOrTablet ? "calc(100svh - 120px)" : "calc(100svh - 70px)"}
@@ -186,32 +202,76 @@ const Profile = () => {
           </Heading>
         </Flex>
 
-        {/* Cover Image */}
+        {/* Cover Image Banner (Carousel) */}
         <Box 
           position="relative" 
           mb={10} 
           borderRadius="3xl" 
           overflow="hidden" 
           boxShadow="0 20px 40px -15px rgba(139, 92, 246, 0.12)"
-          role="group"
+          h={{ base: "240px", md: "400px", lg: "480px" }}
+          w="100%"
         >
-          <Image
-            src={profileState?.cover_image_url}
-            alt={`${profileState?.name} Cover`}
-            w="100%"
-            h={{ base: "240px", md: "400px", lg: "480px" }}
-            objectFit="cover"
-            transition="transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)"
-            _groupHover={{ transform: "scale(1.02)" }}
-          />
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeImageIndex}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8 }}
+              style={{
+                width: "100%",
+                height: "100%",
+                position: "absolute",
+                top: 0,
+                left: 0,
+              }}
+            >
+              <Image
+                src={coverImages[activeImageIndex]}
+                alt="N.Flying Cover Banner"
+                w="100%"
+                h="100%"
+                objectFit="cover"
+              />
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Subtle gradient overlay */}
           <Box
             position="absolute"
             top={0}
             left={0}
             right={0}
             bottom={0}
-            bgGradient="linear(to-t, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 60%, transparent 100%)"
+            bgGradient="linear(to-t, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.05) 60%, transparent 100%)"
+            pointerEvents="none"
+            zIndex={1}
           />
+
+          {/* Indicator dots */}
+          <Flex
+            position="absolute"
+            bottom="16px"
+            left="50%"
+            transform="translateX(-50%)"
+            gap={2.5}
+            zIndex={2}
+          >
+            {coverImages.map((_, index) => (
+              <Box
+                key={index}
+                w={activeImageIndex === index ? "24px" : "8px"}
+                h="8px"
+                borderRadius="full"
+                bg="white"
+                opacity={activeImageIndex === index ? 1 : 0.4}
+                transition="all 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
+                cursor="pointer"
+                onClick={() => setActiveImageIndex(index)}
+              />
+            ))}
+          </Flex>
         </Box>
 
         {/* Profile Info Grid */}

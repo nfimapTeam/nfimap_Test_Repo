@@ -112,5 +112,7 @@
   "content": "コンテンツ",
   "npart": "N-part",
   "setting": "設定",
-  "confirm": "確認"
+  "confirm": "確認",
+  "filter": "フィルター",
+  "birthdate": "生年月日"
 }

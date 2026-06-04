@@ -18,11 +18,12 @@ import {
   MenuItem,
   VStack,
   Text,
+  Collapse,
 } from "@chakra-ui/react";
 import { SearchIcon, CloseIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import moment from "moment";
 import { motion } from "framer-motion";
-import { List as ListIcon, Calendar as CalendarIcon } from "lucide-react";
+import { List as ListIcon, Calendar as CalendarIcon, SlidersHorizontal } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { toggleState } from "../../atom/toggleState";
@@ -40,6 +41,7 @@ import NoData from "../../components/NoData";
 import { useTranslation } from "react-i18next";
 import BirrthDay from "../../components/BirthDay";
 import { useConcertList } from "../../api/concerts/concertsApi";
+import SegmentedToggle from "../../components/SegmentedToggle";
 
 interface RawConcert {
   id: number;
@@ -86,6 +88,12 @@ const Home = () => {
   // Calendar states
   const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [isFilterExpanded, setIsFilterExpanded] = useState(false);
+
+  const viewModeOptions = [
+    { value: "list", label: t("list"), icon: ListIcon },
+    { value: "calendar", label: t("calendar") || "달력", icon: CalendarIcon },
+  ] as const;
 
   const { data: concertsData, refetch: refetchConcertsData } = useConcertList(lang);
 
@@ -352,11 +360,11 @@ const Home = () => {
           <meta property="og:image" content="/image/nfimap.png" />
           <meta property="og:url" content="https://nfimap.co.kr" />
         </Helmet>
-        
+
         {/* Top Search & Filter Panel */}
         <Box mb={6} className="search-filter-panel">
           <BirrthDay />
-          
+
           {/* Rounded Capsule Search Bar */}
           <InputGroup size="lg" mb={4}>
             <Input
@@ -397,8 +405,8 @@ const Home = () => {
           </InputGroup>
 
           {/* Filtering & View Switch Row */}
-          <Flex 
-            width="100%" 
+          <Flex
+            width="100%"
             flexDirection="column"
             gap={3}
             bg="white"
@@ -408,222 +416,179 @@ const Home = () => {
             borderWidth="1px"
             borderColor="purple.50"
           >
-            {/* Row 1: Dropdowns */}
-            <Flex gap={2.5} alignItems="center" justifyContent="flex-start" width="100%">
-              {/* Year Filter Menu */}
-              <Menu>
-                <MenuButton
-                  as={Button}
-                  rightIcon={<ChevronDownIcon />}
-                  borderColor="purple.100"
-                  bg="white"
-                  borderWidth="1px"
-                  color="gray.700"
-                  fontSize="xs"
-                  fontWeight="bold"
-                  height="36px"
-                  minW="110px"
-                  borderRadius="full"
-                  _hover={{
-                    borderColor: "purple.300",
-                    bg: "brand.purpleSoft",
-                  }}
-                  _active={{
-                    bg: "brand.purpleSoft",
-                    borderColor: "brand.main",
-                  }}
-                  textAlign="left"
-                  px={4}
-                >
-                  {selectedYear ? selectedYear : t("all")}
-                </MenuButton>
-                <MenuList>
-                  <MenuItem onClick={() => setSelectedYear("")}>
-                    {t("all")}
-                  </MenuItem>
-                  {yearOptions.map((year) => (
-                    <MenuItem
-                      key={year}
-                      onClick={() => setSelectedYear(year.toString())}
-                    >
-                      {year}
-                    </MenuItem>
-                  ))}
-                </MenuList>
-              </Menu>
-
-              {/* Sort Order Menu */}
-              <Menu>
-                <MenuButton
-                  as={Button}
-                  rightIcon={<ChevronDownIcon />}
-                  borderColor="purple.100"
-                  bg="white"
-                  borderWidth="1px"
-                  color="gray.700"
-                  fontSize="xs"
-                  fontWeight="bold"
-                  height="36px"
-                  minW="110px"
-                  borderRadius="full"
-                  _hover={{
-                    borderColor: "purple.300",
-                    bg: "brand.purpleSoft",
-                  }}
-                  _active={{
-                    bg: "brand.purpleSoft",
-                    borderColor: "brand.main",
-                  }}
-                  textAlign="left"
-                  px={4}
-                >
-                  {t(sortOrder)}
-                </MenuButton>
-                <MenuList>
-                  <MenuItem onClick={() => setSortOrder("latest")}>
-                    {t("latest")}
-                  </MenuItem>
-                  <MenuItem onClick={() => setSortOrder("byName")}>
-                    {t("byName")}
-                  </MenuItem>
-                </MenuList>
-              </Menu>
-            </Flex>
-
-            {/* Row 2: View Switcher (left) & Past Shows Toggle (right) */}
-            <Flex justifyContent="space-between" alignItems="center" width="100%">
+            {/* Row 1: View Switcher (left) & Actions (right) */}
+            <Flex
+              justifyContent="space-between"
+              alignItems="center"
+              width="100%"
+              flexWrap="wrap"
+              gap={2}
+            >
               {/* View Switch ButtonGroup (List / Calendar) */}
-              <Flex 
-                bg="purple.50" 
-                p={{ base: "2px", md: "4px" }} 
-                borderRadius="full" 
-                alignItems="center" 
-                borderWidth="1px" 
-                borderColor="purple.100"
-                boxShadow="inner"
-                position="relative"
-                width={{ base: "170px", md: "210px" }}
-                flexShrink={0}
-                userSelect="none"
-              >
-                {/* List Tab */}
-                <Box
-                  position="relative"
-                  flex={1}
-                  height={{ base: "28px", md: "34px" }}
-                >
-                  <Flex
-                    onClick={() => setViewMode("list")}
-                    height="100%"
-                    alignItems="center"
-                    justifyContent="center"
-                    gap={2}
-                    cursor="pointer"
-                    fontSize={{ base: "11px", md: "xs" }}
-                    fontWeight="extrabold"
-                    color={viewMode === "list" ? "white" : "purple.500"}
-                    transition="color 0.25s"
-                    position="relative"
-                    zIndex={3}
-                    whiteSpace="nowrap"
-                  >
-                    <ListIcon size={isMobile ? 12 : 14} strokeWidth={2.5} />
-                    <Box as="span">{t("list")}</Box>
-                  </Flex>
-                  {viewMode === "list" && (
-                    <motion.div
-                      layoutId="activeTabIndicator"
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        backgroundColor: "#8B5CF6",
-                        borderRadius: "9999px",
-                        boxShadow: "0 4px 12px rgba(139, 92, 246, 0.35)",
-                        zIndex: 2,
-                      }}
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    />
-                  )}
-                </Box>
+              <SegmentedToggle
+                layoutId="homeViewMode"
+                options={viewModeOptions}
+                value={viewMode}
+                onChange={setViewMode}
+              />
 
-                {/* Calendar Tab */}
-                <Box
-                  position="relative"
-                  flex={1}
-                  height={{ base: "28px", md: "34px" }}
+              {/* Actions Group (Past Events Toggle + Filter Toggle) */}
+              <Flex gap={2} alignItems="center">
+                {/* Toggle Switch */}
+
+
+                {/* Filter Toggle Button */}
+                <Button
+                  leftIcon={<SlidersHorizontal size={isMobile ? 12 : 14} />}
+                  onClick={() => setIsFilterExpanded(!isFilterExpanded)}
+                  variant="outline"
+                  size={isMobile ? "xs" : "sm"}
+                  height={isMobile ? "30px" : "36px"}
+                  borderColor={isFilterExpanded ? "brand.main" : "purple.100"}
+                  bg={isFilterExpanded ? "brand.purpleSoft" : "white"}
+                  borderRadius="full"
+                  fontSize={isMobile ? "10px" : "xs"}
+                  fontWeight="extrabold"
+                  color={isFilterExpanded ? "brand.main" : "gray.600"}
+                  _hover={{
+                    borderColor: "brand.main",
+                    bg: "brand.purpleSoft",
+                    color: "brand.main",
+                  }}
+                  _active={{
+                    bg: "brand.purpleSoft",
+                    borderColor: "brand.main",
+                  }}
                 >
-                  <Flex
-                    onClick={() => setViewMode("calendar")}
-                    height="100%"
-                    alignItems="center"
-                    justifyContent="center"
-                    gap={2}
-                    cursor="pointer"
-                    fontSize={{ base: "11px", md: "xs" }}
-                    fontWeight="extrabold"
-                    color={viewMode === "calendar" ? "white" : "purple.500"}
-                    transition="color 0.25s"
-                    position="relative"
-                    zIndex={3}
-                    whiteSpace="nowrap"
-                  >
-                    <CalendarIcon size={isMobile ? 12 : 14} strokeWidth={2.5} />
-                    <Box as="span">{t("calendar") || "달력"}</Box>
-                  </Flex>
-                  {viewMode === "calendar" && (
-                    <motion.div
-                      layoutId="activeTabIndicator"
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        backgroundColor: "#8B5CF6",
-                        borderRadius: "9999px",
-                        boxShadow: "0 4px 12px rgba(139, 92, 246, 0.35)",
-                        zIndex: 2,
-                      }}
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    />
-                  )}
-                </Box>
+                  {t("filter")}
+                </Button>
               </Flex>
-
-              {/* Toggle Switch */}
-              <FormControl 
-                display="flex" 
-                alignItems="center" 
-                width="auto"
-                bg="brand.purpleSoft"
-                px={{ base: 3, md: 4 }}
-                py={{ base: 1, md: 1.5 }}
-                borderRadius="full"
-                m={0}
-              >
-                <FormLabel 
-                  htmlFor="show-past-events" 
-                  mb="0" 
-                  mr={{ base: 2, md: 3 }} 
-                  fontSize={{ base: "10px", md: "xs" }} 
-                  fontWeight="extrabold" 
-                  color="brand.main"
-                  cursor="pointer"
-                >
-                  {t("showPastEvents")}
-                </FormLabel>
-                <Switch
-                  id="show-past-events"
-                  colorScheme="purple"
-                  size={isMobile ? "sm" : "md"}
-                  isChecked={toggle}
-                  onChange={() => setToggle(!toggle)}
-                />
-              </FormControl>
             </Flex>
+
+            {/* Row 2: Collapsible Dropdowns */}
+            <Collapse in={isFilterExpanded} style={{ width: "100%" }}>
+              <Flex
+                gap={2.5}
+                alignItems="center"
+                justifyContent="flex-start"
+                width="100%"
+                pt={3}
+                borderTop="1px solid"
+                borderColor="purple.50"
+              >
+                <Flex w="100%" gap={4}>
+                  {/* Year Filter Menu */}
+                  <Menu>
+                    <MenuButton
+                      as={Button}
+                      rightIcon={<ChevronDownIcon />}
+                      borderColor="purple.100"
+                      bg="white"
+                      borderWidth="1px"
+                      color="gray.700"
+                      fontSize="xs"
+                      fontWeight="bold"
+                      height="36px"
+                      minW="110px"
+                      borderRadius="full"
+                      _hover={{
+                        borderColor: "purple.300",
+                        bg: "brand.purpleSoft",
+                      }}
+                      _active={{
+                        bg: "brand.purpleSoft",
+                        borderColor: "brand.main",
+                      }}
+                      textAlign="left"
+                      px={4}
+                    >
+                      {selectedYear ? selectedYear : t("all")}
+                    </MenuButton>
+                    <MenuList>
+                      <MenuItem onClick={() => setSelectedYear("")}>
+                        {t("all")}
+                      </MenuItem>
+                      {yearOptions.map((year) => (
+                        <MenuItem
+                          key={year}
+                          onClick={() => setSelectedYear(year.toString())}
+                        >
+                          {year}
+                        </MenuItem>
+                      ))}
+                    </MenuList>
+                  </Menu>
+
+                  {/* Sort Order Menu */}
+                  <Menu>
+                    <MenuButton
+                      as={Button}
+                      rightIcon={<ChevronDownIcon />}
+                      borderColor="purple.100"
+                      bg="white"
+                      borderWidth="1px"
+                      color="gray.700"
+                      fontSize="xs"
+                      fontWeight="bold"
+                      height="36px"
+                      minW="110px"
+                      borderRadius="full"
+                      _hover={{
+                        borderColor: "purple.300",
+                        bg: "brand.purpleSoft",
+                      }}
+                      _active={{
+                        bg: "brand.purpleSoft",
+                        borderColor: "brand.main",
+                      }}
+                      textAlign="left"
+                      px={4}
+                    >
+                      {t(sortOrder)}
+                    </MenuButton>
+                    <MenuList>
+                      <MenuItem onClick={() => setSortOrder("latest")}>
+                        {t("latest")}
+                      </MenuItem>
+                      <MenuItem onClick={() => setSortOrder("byName")}>
+                        {t("byName")}
+                      </MenuItem>
+                    </MenuList>
+                  </Menu>
+                </Flex>
+                <Flex w="100%" justifyContent={"flex-end"}>
+                  <FormControl
+                    display="flex"
+                    alignItems="center"
+                    width="auto"
+                    bg="brand.purpleSoft"
+                    px={{ base: 3, md: 4 }}
+                    py={{ base: 1, md: 1.5 }}
+                    borderRadius="full"
+                    m={0}
+                  >
+                    <FormLabel
+                      htmlFor="show-past-events"
+                      mb="0"
+                      mr={{ base: 2, md: 3 }}
+                      fontSize={{ base: "10px", md: "xs" }}
+                      fontWeight="extrabold"
+                      color="brand.main"
+                      cursor="pointer"
+                    >
+                      {t("showPastEvents")}
+                    </FormLabel>
+                    <Switch
+                      id="show-past-events"
+                      colorScheme="purple"
+                      size={isMobile ? "sm" : "md"}
+                      isChecked={toggle}
+                      onChange={() => setToggle(!toggle)}
+                    />
+                  </FormControl>
+                </Flex>
+              </Flex>
+            </Collapse>
           </Flex>
         </Box>
 
@@ -637,12 +602,12 @@ const Home = () => {
         {viewMode === "calendar" ? (
           <VStack spacing={6} align="stretch" width="100%" animation="fadeIn 0.4s ease">
             {/* Calendar Widget Box */}
-            <Box 
-              bg="white" 
-              p={4} 
-              borderRadius="24px" 
-              boxShadow="soft" 
-              borderWidth="1px" 
+            <Box
+              bg="white"
+              p={4}
+              borderRadius="24px"
+              boxShadow="soft"
+              borderWidth="1px"
               borderColor="purple.50"
               overflow="hidden"
             >
@@ -700,13 +665,13 @@ const Home = () => {
 
             {/* Concert Grid filtered by date */}
             {getConcertsOnSelectedDate().length === 0 ? (
-              <Box 
-                py={12} 
-                textAlign="center" 
-                bg="rgba(139, 92, 246, 0.02)" 
-                borderRadius="24px" 
-                borderStyle="dashed" 
-                borderWidth="2px" 
+              <Box
+                py={12}
+                textAlign="center"
+                bg="rgba(139, 92, 246, 0.02)"
+                borderRadius="24px"
+                borderStyle="dashed"
+                borderWidth="2px"
                 borderColor="purple.100"
               >
                 <Text fontSize="sm" color="gray.400" fontWeight="bold">
@@ -729,9 +694,9 @@ const Home = () => {
                   const isTicketOpen = concert.ticketOpen && concert.ticketOpen.date === moment().format("YYYY-MM-DD");
                   const timeRemaining = concert.ticketOpen
                     ? calculateTimeRemaining(
-                        concert.ticketOpen.date,
-                        concert.ticketOpen.time
-                      )
+                      concert.ticketOpen.date,
+                      concert.ticketOpen.time
+                    )
                     : null;
 
                   return (
@@ -762,9 +727,9 @@ const Home = () => {
               const isTicketOpen = concert.ticketOpen && concert.ticketOpen.date === moment().format("YYYY-MM-DD");
               const timeRemaining = concert.ticketOpen
                 ? calculateTimeRemaining(
-                    concert.ticketOpen.date,
-                    concert.ticketOpen.time
-                  )
+                  concert.ticketOpen.date,
+                  concert.ticketOpen.time
+                )
                 : null;
 
               return (

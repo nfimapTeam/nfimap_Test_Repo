@@ -115,5 +115,7 @@
   "install": "설치하기",
   "view_mobile_web": "모바일 웹 보기",
   "setting": "설정",
-  "confirm": "확인"
+  "confirm": "확인",
+  "filter": "필터",
+  "birthdate": "생년월일"
 }

@@ -1,9 +1,10 @@
-import { Box, Button, ButtonGroup, useBreakpointValue, Flex, IconButton, chakra } from "@chakra-ui/react";
+import { Box, useBreakpointValue, Flex, IconButton, chakra } from "@chakra-ui/react";
 import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import YouTubePlayer from "./Components/Youtube";
 import Music from "./Components/Music";
+import SegmentedToggle from "../../components/SegmentedToggle";
 import { ImageIcon, TriangleRightIcon, VideoIcon } from "lucide-react";
 
 const MotionBox = chakra(motion.div)
@@ -14,6 +15,11 @@ const Content = () => {
   const [category, setCategory] = useState<'video' | 'npart' | 'music'>('video');
   const [mediaType, setMediaType] = useState<'videos' | 'images'>('videos');
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const categoryOptions = [
+    { value: "video", label: t("content") },
+    { value: "npart", label: t("npart") },
+  ] as const;
 
   const scrollToTop = () => {
     if (containerRef.current) {
@@ -46,32 +52,15 @@ const Content = () => {
     >
       <Box maxWidth="1200px" margin="auto" pb={12}>
         <Flex justifyContent="center" my={4}>
-          <ButtonGroup isAttached spacing={0}>
-            {/* {["video", "npart", "music"].map((cat) => ( */}
-            {["video", "npart"].map((cat) => (
-              <Button
-                key={cat}
-                onClick={() => {
-                  // setCategory(cat as "video" | "npart" | "music");
-                  setCategory(cat as "video" | "npart");
-                  if (cat !== "npart") setMediaType("videos"); // Reset mediaType for non-npart
-                }}
-                bg={category === cat ? "purple.400" : "white"}
-                color={category === cat ? "white" : "purple.700"}
-                px={{ base: 4, md: 6 }}
-                py={{ base: 2, md: 3 }}
-                fontSize={{ base: "sm", md: "md" }}
-                fontWeight="bold"
-                _hover={{
-                  bg: category === cat ? "purple.400" : "purple.200",
-                }}
-                transition="all 0.3s ease"
-                boxShadow={category === cat ? "0 4px 12px rgba(128, 90, 213, 0.3)" : "none"}
-              >
-                {t(cat === "video" ? "content" : cat)}
-              </Button>
-            ))}
-          </ButtonGroup>
+          <SegmentedToggle
+            layoutId="contentCategory"
+            options={categoryOptions}
+            value={category}
+            onChange={(val) => {
+              setCategory(val);
+              if (val !== "npart") setMediaType("videos");
+            }}
+          />
         </Flex>
         {category === "npart" && (
           <MotionBox

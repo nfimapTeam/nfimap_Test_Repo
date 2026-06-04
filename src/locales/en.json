@@ -111,5 +111,7 @@
   "content": "Content",
   "npart": "N-part",
   "setting": "Settings",
-  "confirm": "Confirm"
+  "confirm": "Confirm",
+  "filter": "Filter",
+  "birthdate": "Birthdate"
 }

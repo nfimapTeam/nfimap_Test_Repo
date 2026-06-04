@@ -1,100 +1,96 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text, useColorModeValue } from "@chakra-ui/react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { RiListUnordered, RiMapPinLine, RiUser3Line, RiMusicLine } from "@remixicon/react";
+import { Calendar, MapPin, User, PlayCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { MdOndemandVideo } from "react-icons/md";
 
 const Footer = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
-  const getLinkColor = (path: string) => {
-    return location.pathname === path ? "purple.400" : "black";
+
+  // Better path matching logic for highlighting active footer items
+  const getActiveTab = () => {
+    const path = location.pathname;
+    if (path === "/map") return "map";
+    if (path === "/profile") return "profile";
+    if (path === "/content") return "content";
+    return "list"; // Default to list for "/" and detail pages
   };
 
-  const getLinkColorIcon = (path: string) => {
-    return location.pathname === path ? "#9F7AEA" : "black";
-  };
+  const activeTab = getActiveTab();
+
+  const activeColor = "brand.main";
+  const inactiveColor = useColorModeValue("gray.450", "gray.500");
+  
+  const bg = useColorModeValue("rgba(255, 255, 255, 0.85)", "rgba(26, 32, 44, 0.85)");
+  const borderColor = useColorModeValue("purple.50", "whiteAlpha.100");
+
+  const navigationItems = [
+    { key: "list", label: t("list"), icon: Calendar, path: "/" },
+    { key: "map", label: t("map"), icon: MapPin, path: "/map" },
+    { key: "profile", label: t("profile"), icon: User, path: "/profile" },
+    { key: "content", label: t("content"), icon: PlayCircle, path: "/content" },
+  ];
 
   return (
-    <Flex
-      direction="row" // Horizontal layout for the footer items
+    <Box
+      position="fixed"
+      bottom={0}
+      left={0}
+      right={0}
+      height="70px"
+      bg={bg}
+      backdropFilter="blur(16px)"
+      borderTop="1px solid"
+      borderColor={borderColor}
+      zIndex={100}
       px={4}
       py={2}
-      bg="white"
-      borderTop="1px solid"
-      borderColor="purple.50"
-      width="100%"
-      height="70px" // Increased height to accommodate the stacked layout
-      zIndex="2"
-      flexShrink={0}
     >
-      <Flex justify="space-between" width="100%">
-        {/* List Item */}
-        <Flex
-          flex="1"
-          direction="column" // Stack icon and text vertically
-          justifyContent="center"
-          alignItems="center"
-          gap="2px" // Small gap between icon and text
-          cursor="pointer"
-          onClick={() => navigate("/")}
-        >
-          <RiListUnordered color={getLinkColorIcon("/")} size={24} />
-          <Text fontSize="sm" color={getLinkColor("/")} fontWeight={600} textAlign="center">
-            {t('list')}
-          </Text>
-        </Flex>
+      <Flex justify="space-between" align="center" h="100%" maxW="600px" mx="auto">
+        {navigationItems.map((item) => {
+          const isActive = activeTab === item.key;
+          const IconComponent = item.icon;
 
-        {/* Map Item */}
-        <Flex
-          flex="1"
-          direction="column"
-          justifyContent="center"
-          alignItems="center"
-          gap="2px"
-          cursor="pointer"
-          onClick={() => navigate("/map")}
-        >
-          <RiMapPinLine color={getLinkColorIcon("/map")} size={24} />
-          <Text fontSize="sm" color={getLinkColor("/map")} fontWeight={600} textAlign="center">
-            {t('map')}
-          </Text>
-        </Flex>
+          return (
+            <Flex
+              key={item.key}
+              flex="1"
+              direction="column"
+              alignItems="center"
+              justifyContent="center"
+              cursor="pointer"
+              onClick={() => navigate(item.path)}
+              transition="all 0.2s ease"
+              _active={{ transform: "scale(0.95)" }}
+              position="relative"
+            >
+              {/* Icon with scale animation when active */}
+              <Box
+                color={isActive ? activeColor : inactiveColor}
+                transform={isActive ? "scale(1.1)" : "scale(1)"}
+                transition="all 0.2s ease"
+                mb="3px"
+              >
+                <IconComponent size={22} strokeWidth={isActive ? 2.5 : 2} />
+              </Box>
 
-        {/* Profile Item */}
-        <Flex
-          flex="1"
-          direction="column"
-          justifyContent="center"
-          alignItems="center"
-          gap="2px"
-          cursor="pointer"
-          onClick={() => navigate("/profile")}
-        >
-          <RiUser3Line color={getLinkColorIcon("/profile")} size={24} />
-          <Text fontSize="sm" color={getLinkColor("/profile")} fontWeight={600} textAlign="center">
-            {t('profile')}
-          </Text>
-        </Flex>
-
-        {/* Music Item */}
-        <Flex
-          flex="1"
-          direction="column"
-          justifyContent="center"
-          alignItems="center"
-          gap="2px"
-          cursor="pointer"
-          onClick={() => navigate("/content")}
-        >
-          <MdOndemandVideo color={getLinkColorIcon("/content")} size={24} />
-          <Text fontSize="sm" color={getLinkColor("/content")} fontWeight={600} textAlign="center">
-            {t('content')}
-          </Text>
-        </Flex>
+              {/* Text Label */}
+              <Text
+                fontSize="10px"
+                fontWeight={isActive ? "black" : "bold"}
+                color={isActive ? activeColor : inactiveColor}
+                transition="all 0.2s ease"
+                textAlign="center"
+                letterSpacing="-0.2px"
+              >
+                {item.label}
+              </Text>
+            </Flex>
+          );
+        })}
       </Flex>
-    </Flex>
+    </Box>
   );
 };
 
