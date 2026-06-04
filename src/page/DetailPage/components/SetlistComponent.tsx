@@ -15,15 +15,14 @@ import {
   useBreakpointValue,
   Image,
   SimpleGrid,
-  BoxProps,
-  IconProps,
-  TextProps,
-  ButtonProps,
   useToast,
+  useColorModeValue,
+  Spacer,
+  IconButton,
 } from '@chakra-ui/react';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
-import { MusicIcon, CameraIcon } from 'lucide-react';
+import { MusicIcon, CameraIcon, Play, Copy } from 'lucide-react';
 
 // Interfaces
 interface Music {
@@ -50,13 +49,6 @@ interface OOTD {
   date: string;
 }
 
-interface AugmentedConcertDetail {
-  setlist: Setlist[];
-  ootd: OOTD[];
-  poster: string;
-  name: string;
-}
-
 interface SetlistComponentProps {
   lang: string;
   augmentedConcertDetail: any;
@@ -72,6 +64,18 @@ const SetlistComponent: React.FC<SetlistComponentProps> = ({
   const toast = useToast();
   const tabFontSize = useBreakpointValue({ base: 'sm', md: 'md' });
   const isDoubleLine: boolean = augmentedConcertDetail.setlist?.length > 10;
+
+  const textColor = useColorModeValue("gray.800", "gray.100");
+  const textColorSec = useColorModeValue("gray.500", "gray.400");
+  const numberColor = useColorModeValue("brand.main", "purple.300");
+  const songBg = useColorModeValue("white", "gray.850");
+  const borderColor = useColorModeValue("purple.50", "whiteAlpha.100");
+  const tabBg = useColorModeValue("purple.50", "whiteAlpha.100");
+  const tabHoverBg = useColorModeValue("purple.100", "whiteAlpha.200");
+  const tabTextColor = useColorModeValue("purple.600", "purple.200");
+  const hoverBg = useColorModeValue("gray.50", "whiteAlpha.100");
+  const placeholderBg = useColorModeValue("gray.50", "whiteAlpha.50");
+  const numberBg = useColorModeValue("purple.50", "whiteAlpha.100");
 
   // Function to copy setlist to clipboard
   const handleCopySetlist = (set: Setlist): void => {
@@ -104,6 +108,32 @@ const SetlistComponent: React.FC<SetlistComponentProps> = ({
       });
   };
 
+  // Function to open all setlist youtube videos as a custom playlist
+  const handleOpenPlaylist = (set: Setlist): void => {
+    const videoIds = set.music
+      .map((song: Song) => {
+        const url = song.music.youtube_url;
+        if (!url) return null;
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+        return (match && match[2].length === 11) ? match[2] : null;
+      })
+      .filter((id): id is string => !!id);
+
+    if (videoIds.length === 0) {
+      toast({
+        title: t('no_youtube_links'),
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    const playlistUrl = `https://www.youtube.com/watch_videos?video_ids=${videoIds.join(',')}`;
+    window.open(playlistUrl, '_blank');
+  };
+
   // Function to get OOTD images for a specific date
   const getOOTDForDate = (date: string): OOTD[] => {
     return augmentedConcertDetail.ootd.filter((ootd: OOTD) => ootd.date === date);
@@ -119,13 +149,11 @@ const SetlistComponent: React.FC<SetlistComponentProps> = ({
     return statusMessages[status] || "";
   };
 
-
   return (
     <>
       {augmentedConcertDetail.setlist &&
         augmentedConcertDetail.setlist.length > 0 && (
-          <Box
-          >
+          <Box>
             <Tabs variant="soft-rounded" colorScheme="purple" size="md">
               <TabList
                 overflowX="auto"
@@ -151,17 +179,20 @@ const SetlistComponent: React.FC<SetlistComponentProps> = ({
                       px={{ base: 4, md: 5 }}
                       py={2}
                       minW="auto"
-                      bg="purple.50"
+                      bg={tabBg}
+                      color={tabTextColor}
                       _selected={{
-                        bg: 'purple.600',
+                        bg: 'brand.main',
                         color: 'white',
+                        boxShadow: 'soft',
                       }}
                       borderRadius="full"
                       display="flex"
                       alignItems="center"
                       mb={isDoubleLine ? 3 : 0}
                       transition="all 0.2s"
-                      _hover={{ bg: 'purple.100' }}
+                      _hover={{ bg: tabHoverBg }}
+                      fontWeight="bold"
                     >
                       {moment(set.date, 'YYYY-MM-DD').format('MM/DD')}
                     </Tab>
@@ -173,57 +204,91 @@ const SetlistComponent: React.FC<SetlistComponentProps> = ({
                 {augmentedConcertDetail.setlist.map(
                   (set: Setlist, index: number) => (
                     <TabPanel key={index} p={0}>
-                      <HStack mb={4} justify="space-between" align="center">
-                        <HStack>
-                          <Icon
-                            as={MusicIcon}
-                            color="purple.500"
-                            boxSize={6}
-                          />
+                      <HStack mb={5} justify="space-between" align="center">
+                        <HStack spacing={3}>
+                          <Flex 
+                            align="center" 
+                            justify="center" 
+                            w="36px" 
+                            h="36px" 
+                            borderRadius="full" 
+                            bg="brand.purpleSoft"
+                          >
+                            <Icon
+                              as={MusicIcon}
+                              color="brand.main"
+                              w="18px"
+                              h="18px"
+                            />
+                          </Flex>
                           <Text
                             fontSize={{ base: 'lg', md: 'xl' }}
-                            fontWeight="bold"
+                            fontWeight="black"
+                            color={textColor}
                           >
                             {t("setlist")}
                           </Text>
                         </HStack>
                         {set.music.length > 0 && (
-                          <Button
-                            size="md"
-                            colorScheme="purple"
-                            borderRadius="full"
-                            px={8}
-                            onClick={() => handleCopySetlist(set)}
-                            leftIcon={<Icon as={MusicIcon} />}
-                            _hover={{ transform: "scale(1.05)" }}
-                            transition="all 0.2s"
-                          >
-                            {t("copy_setlist")}
-                          </Button>
+                          <HStack spacing={2.5}>
+                            <IconButton
+                              aria-label={t("youtube_playlist")}
+                              icon={<Icon as={Play} w="14px" h="14px" fill="white" />}
+                              onClick={() => handleOpenPlaylist(set)}
+                              size="md"
+                              bg="red.500"
+                              color="white"
+                              borderRadius="full"
+                              _hover={{ 
+                                bg: "red.600",
+                                boxShadow: "0 4px 12px rgba(229, 62, 62, 0.3)",
+                                transform: "translateY(-1.5px)" 
+                              }}
+                              _active={{
+                                transform: "translateY(0)"
+                              }}
+                              transition="all 0.2s"
+                            />
+                            <IconButton
+                              aria-label={t("copy_setlist")}
+                              icon={<Icon as={Copy} w="16px" h="16px" />}
+                              onClick={() => handleCopySetlist(set)}
+                              size="md"
+                              bg="brand.main"
+                              color="white"
+                              borderRadius="full"
+                              _hover={{ 
+                                bg: "purple.600",
+                                boxShadow: "glow",
+                                transform: "translateY(-1.5px)" 
+                              }}
+                              _active={{
+                                bg: "purple.750",
+                                transform: "translateY(0)"
+                              }}
+                              transition="all 0.2s"
+                            />
+                          </HStack>
                         )}
                       </HStack>
-                      {/* Setlist Section */}
-
 
                       {set.music.length > 0 ? (
-                        <VStack spacing={4} align="stretch" mb={8}>
+                        <VStack spacing={3} align="stretch" mb={8}>
                           {set.music.map((song: Song, songIndex: number) => (
                             <Box
                               key={songIndex}
-                              py={3}
+                              py={3.5}
                               px={5}
-                              bg="white"
-                              borderRadius="xl"
-                              boxShadow="0 4px 6px rgba(0,0,0,0.05)"
-                              border="1px solid"
-                              borderColor="purple.100"
+                              bg={songBg}
+                              borderRadius="2xl"
+                              boxShadow="soft"
+                              role="group"
                               _hover={{
-                                bg: 'purple.50',
-                                borderColor: 'purple.300',
+                                bg: hoverBg,
                                 transform: 'translateY(-2px)',
-                                boxShadow: '0 6px 12px rgba(0,0,0,0.1)',
+                                boxShadow: 'card',
                               }}
-                              transition="all 0.3s"
+                              transition="all 0.25s cubic-bezier(0.16, 1, 0.3, 1)"
                               onClick={() =>
                                 window.open(song.music.youtube_url, '_blank')
                               }
@@ -232,24 +297,45 @@ const SetlistComponent: React.FC<SetlistComponentProps> = ({
                               alignItems="center"
                               width="100%"
                             >
-                              <Text
-                                fontSize={tabFontSize}
-                                fontWeight="bold"
-                                color="purple.600"
+                              <Flex
+                                align="center"
+                                justify="center"
+                                w="28px"
+                                h="28px"
+                                borderRadius="full"
+                                bg={numberBg}
                                 mr={4}
                                 flexShrink={0}
                               >
-                                {(songIndex + 1).toString().padStart(2, '0')}.
-                              </Text>
+                                <Text
+                                  fontSize="xs"
+                                  fontWeight="bold"
+                                  color={numberColor}
+                                >
+                                  {songIndex + 1}
+                                </Text>
+                              </Flex>
                               <Text
                                 fontSize={tabFontSize}
-                                fontWeight="medium"
-                                color="gray.800"
+                                fontWeight="bold"
+                                color={textColor}
                                 noOfLines={2}
                                 lineHeight="short"
                               >
                                 {song.music.name}{songStatus(song.status)}
                               </Text>
+                              <Spacer />
+                              <Icon 
+                                as={Play} 
+                                color="brand.main" 
+                                opacity={0} 
+                                transform="translateX(-10px)"
+                                _groupHover={{ opacity: 1, transform: "translateX(0)" }} 
+                                transition="all 0.25s cubic-bezier(0.16, 1, 0.3, 1)" 
+                                w="14px" 
+                                h="14px"
+                                fill="brand.main"
+                              />
                             </Box>
                           ))}
                         </VStack>
@@ -258,15 +344,16 @@ const SetlistComponent: React.FC<SetlistComponentProps> = ({
                           w="100%"
                           justifyContent="center"
                           alignItems="center"
-                          p={6}
-                          bg="gray.50"
-                          borderRadius="lg"
+                          p={8}
+                          bg={placeholderBg}
+                          borderRadius="2xl"
                           border="1px dashed"
-                          borderColor="gray.200"
+                          borderColor={borderColor}
                         >
                           <Text
                             fontSize={tabFontSize}
-                            color="gray.500"
+                            color={textColorSec}
+                            fontWeight="medium"
                           >
                             {t('no_setlist_available')}
                           </Text>
@@ -275,28 +362,39 @@ const SetlistComponent: React.FC<SetlistComponentProps> = ({
 
                       {/* OOTD Section - Display OOTD images for the selected tab's date */}
                       <Box mt={8}>
-                        <HStack mb={4}>
-                          <Icon as={CameraIcon} color="pink.500" boxSize={6} />
-                          <Text fontSize={{ base: "lg", md: "xl" }} fontWeight="bold">
+                        <HStack mb={5} spacing={3}>
+                          <Flex 
+                            align="center" 
+                            justify="center" 
+                            w="36px" 
+                            h="36px" 
+                            borderRadius="full" 
+                            bg="pink.50"
+                          >
+                            <Icon as={CameraIcon} color="pink.500" w="18px" h="18px" />
+                          </Flex>
+                          <Text fontSize={{ base: "lg", md: "xl" }} fontWeight="black" color={textColor}>
                             {t("costume")}
                           </Text>
                         </HStack>
                         {getOOTDForDate(set.date).length > 0 ? (
-                          <SimpleGrid columns={{ base: 1 }} spacing={4}>
+                          <SimpleGrid columns={{ base: 1 }} spacing={5}>
                             {getOOTDForDate(set.date).map((ootd: OOTD, ootdIndex: number) => (
                               <Box
                                 key={ootdIndex}
                                 position="relative"
                                 overflow="hidden"
-                                borderRadius="lg"
-                                transition="all 0.3s"
+                                borderRadius="2xl"
+                                boxShadow="soft"
+                                transition="all 0.4s cubic-bezier(0.16, 1, 0.3, 1)"
+                                _hover={{ transform: "translateY(-4px)", boxShadow: "card" }}
                               >
                                 <Image
                                   src={ootd.image}
                                   alt={`Outfit for ${ootd.date}`}
-                                  borderRadius="lg"
-                                  boxShadow="md"
                                   w="100%"
+                                  transition="transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)"
+                                  _hover={{ transform: "scale(1.03)" }}
                                 />
                               </Box>
                             ))}
@@ -306,13 +404,13 @@ const SetlistComponent: React.FC<SetlistComponentProps> = ({
                             w="100%"
                             justifyContent="center"
                             alignItems="center"
-                            p={6}
-                            bg="gray.50"
-                            borderRadius="lg"
+                            p={8}
+                            bg={placeholderBg}
+                            borderRadius="2xl"
                             border="1px dashed"
-                            borderColor="gray.200"
+                            borderColor={borderColor}
                           >
-                            <Text fontSize={tabFontSize} color="gray.500">
+                            <Text fontSize={tabFontSize} color={textColorSec} fontWeight="medium">
                               {t("no_ootd_available")}
                             </Text>
                           </Flex>

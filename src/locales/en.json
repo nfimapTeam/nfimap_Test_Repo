@@ -105,6 +105,8 @@
   "copy_failed": "Copy failed",
   "copy_failed_description": "There was an issue copying the setlist.",
   "no_ootd_available": "The OOTD has not been posted yet",
+  "youtube_playlist": "YouTube Playlist",
+  "no_youtube_links": "No tracks with YouTube links available.",
   "show_details": "Show Details",
   "show_record": "Show Record",
   "selectTicketProvider": "Select Ticket Provider",

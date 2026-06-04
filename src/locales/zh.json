@@ -106,6 +106,8 @@
   "copy_failed": "复制失败",
   "copy_failed_description": "复制歌单时出错了。",
   "no_ootd_available": "OOTD尚未发布",
+  "youtube_playlist": "YouTube播放列表",
+  "no_youtube_links": "没有包含YouTube链接的曲目。",
   "show_details": "演唱会详情",
   "show_record": "演唱会记录",
   "selectTicketProvider": "选择购票渠道",
