@@ -292,8 +292,9 @@ const ProfileModal = ({ isOpen, onClose, selectedMember }: ProfileModalProps) =>
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ duration: 0.2, ease: "easeOut" } as any}
-              onClick={(e) => e.stopPropagation()} // Prevent closing when clicking the image itself
               position="relative"
+              onClick={() => setIsLightboxOpen(false)}
+              cursor="zoom-out"
             >
               <Image
                 src={selectedMember.imageUrl}

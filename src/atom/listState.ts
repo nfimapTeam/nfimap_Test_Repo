@@ -18,6 +18,12 @@ export const selectedYearState = atom<string>({
   default: "",
 });
 
+// 선택된 공연 유형 상태
+export const selectedTypeState = atom<string>({
+  key: "selectedTypeState",
+  default: "",
+});
+
 // 스크롤 위치 상태
 export const scrollPositionState = atom<number>({
   key: "scrollPositionState",

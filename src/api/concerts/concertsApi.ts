@@ -10,7 +10,7 @@ export const getConcertList = async (lang: string = "ko") => {
 
 export const useConcertList = (lang: string = "ko") => {
   return useQuery({
-    queryKey: ["ConcertList"],
+    queryKey: ["ConcertList", lang],
     queryFn: () => getConcertList(lang),
     enabled: false,
   });

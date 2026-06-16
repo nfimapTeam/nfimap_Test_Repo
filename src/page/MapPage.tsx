@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Box, Button, HStack } from "@chakra-ui/react";
+import React, { useState, useEffect, useCallback } from "react";
+import { Box, Button, HStack, VStack } from "@chakra-ui/react";
 import Sidebar from "../components/SideBar";
 import NaverMap from "../components/NaverMap";
 import { nfiRoadData } from "../datas/nfiRoad";
@@ -56,9 +56,7 @@ const MapPage = () => {
   const [globalConcertState, setGlobalConcertState] = useState<Concert[]>([]);
   const [nfiRoadState, setNfiRoadState] = useState<NfiRoad[]>([]);
   const [query, setQuery] = useState<string>("");
-  const [selectedType, setSelectedType] = useState<string>("");
   const [globalQuery, setGlobalQuery] = useState<string>("");
-  const [selectedGlobalType, setSelectedGlobalType] = useState<string>("");
   const [showPastConcerts, setShowPastConcerts] = useState<boolean>(false);
   const [selectedConcert, setSelectedConcert] = useState<Concert | null>(null);
   const [selectedNfiRoad, setSelectedNfiRoad] = useState<NfiRoad | null>(null);
@@ -69,15 +67,17 @@ const MapPage = () => {
     useState<Concert | null>(null);
   const [lang, setLang] = useState("ko");
 
+  // 연도별 필터링을 위한 추가 상태
+  const [years, setYears] = useState<string[]>([]);
+  const [selectedYear, setSelectedYear] = useState<string>("");
+  const [selectedGlobalYear, setSelectedGlobalYear] = useState<string>("");
+
   const { data: concertsData, refetch: refetchConcertsData } = useConcertList(lang);
 
   useEffect(() => {
     const baseLang = i18n.language ? i18n.language.split("-")[0] : "ko";
-    if (["ko", "en", "zh", "ja"].includes(baseLang)) {
-      setLang(baseLang);
-    } else {
-      setLang("en");
-    }
+    // 서버는 ko/en만 지원 — zh/ja는 en으로 폴백
+    setLang(baseLang === "ko" ? "ko" : "en");
   }, [i18n.language]);
 
   useEffect(() => {
@@ -86,7 +86,6 @@ const MapPage = () => {
     }, 50);
   }, [lang]);
 
-
   useEffect(() => {
     if (i18n.language === "ko") {
       setNfiRoadState(nfiRoadData);
@@ -94,21 +93,19 @@ const MapPage = () => {
       setNfiRoadState(nfiRoadDataEng);
     }
   }, [i18n.language]);
-  const translateType = (type: string) => {
-    switch (type.toLowerCase().trim()) {
-      case "콘서트":
-      case "concert":
-        return t("concert");
-      case "페스티벌":
-      case "festival":
-        return t("festival");
-      case "행사":
-      case "event":
-        return t("event");
-      default:
-        return type;
-    }
-  };
+
+  // concertsData에서 동적으로 연도 목록 추출
+  useEffect(() => {
+    if (!concertsData) return;
+    const extractedYears: string[] = Array.from(
+      new Set<string>(
+        concertsData.flatMap((concert: Concert) =>
+          concert.concertDate.map((d) => d.date.substring(0, 4))
+        )
+      )
+    ).sort((a: string, b: string) => b.localeCompare(a));
+    setYears(extractedYears);
+  }, [concertsData]);
 
   useEffect(() => {
     // concertsData가 없으면 종료
@@ -139,11 +136,11 @@ const MapPage = () => {
         latestDate.setHours(0, 0, 0, 0);
         const isUpcomingOrToday: boolean = latestDate >= currentDate;
 
-        const matchesType: boolean = selectedType
-          ? concert.type === translateType(selectedType)
+        const matchesYear: boolean = selectedYear
+          ? concert.concertDate.some((d) => d.date.startsWith(selectedYear))
           : true;
 
-        return matchesQuery && (showPastConcerts ? true : isUpcomingOrToday) && matchesType;
+        return matchesQuery && (showPastConcerts ? true : isUpcomingOrToday) && matchesYear;
       }
     );
 
@@ -166,7 +163,7 @@ const MapPage = () => {
     );
 
     setConcertState(filteredConcerts);
-  }, [concertsData, query, showPastConcerts, selectedType]);
+  }, [concertsData, query, showPastConcerts, selectedYear]);
 
   // 두 번째 useEffect: 해외 콘서트 필터링 및 정렬
   useEffect(() => {
@@ -198,11 +195,11 @@ const MapPage = () => {
         latestDate.setHours(0, 0, 0, 0);
         const isUpcomingOrToday: boolean = latestDate >= currentDate;
 
-        const matchesType: boolean = selectedGlobalType
-          ? concert.type === selectedGlobalType
+        const matchesGlobalYear: boolean = selectedGlobalYear
+          ? concert.concertDate.some((d) => d.date.startsWith(selectedGlobalYear))
           : true;
 
-        return matchesQuery && (showPastConcertsGlobal ? true : isUpcomingOrToday) && matchesType;
+        return matchesQuery && (showPastConcertsGlobal ? true : isUpcomingOrToday) && matchesGlobalYear;
       }
     );
 
@@ -225,7 +222,7 @@ const MapPage = () => {
     );
 
     setGlobalConcertState(filteredGlobalConcerts);
-  }, [concertsData, globalQuery, showPastConcertsGlobal, selectedGlobalType]);
+  }, [concertsData, globalQuery, showPastConcertsGlobal, selectedGlobalYear]);
 
   useEffect(() => {
     let concerts;
@@ -257,12 +254,8 @@ const MapPage = () => {
           nfiRoad={nfiRoadState}
           query={query}
           setQuery={setQuery}
-          selectedType={selectedType}
-          setSelectedType={setSelectedType}
           globalQuery={globalQuery}
           setGlobalQuery={setGlobalQuery}
-          selectedGlobalType={selectedGlobalType}
-          setSelectedGlobalType={setSelectedGlobalType}
           showPastConcerts={showPastConcerts}
           setShowPastConcerts={setShowPastConcerts}
           selectedConcert={selectedConcert}
@@ -275,69 +268,100 @@ const MapPage = () => {
           setShowPastConcertsGlobal={setShowPastConcertsGlobal}
           selectedGlobalConcert={selectedGlobalConcert}
           setSelectedGlobalConcert={setSelectedGlobalConcert}
+          years={years}
+          selectedYear={selectedYear}
+          setSelectedYear={setSelectedYear}
+          selectedGlobalYear={selectedGlobalYear}
+          setSelectedGlobalYear={setSelectedGlobalYear}
         />
       </Box>
-      <Box
-        display={{ base: "block", md: "none" }}
+
+      <VStack
+        display={{ base: "flex", md: "none" }}
         position="absolute"
-        top="10px"
-        left="10px"
-        bg="none"
+        top="12px"
+        left="12px"
+        align="start"
+        spacing={2}
         zIndex="1000"
       >
-        <HStack spacing={1.5}>
+        <HStack spacing={2} w="calc(100vw - 24px)">
           <Button
             size="xs"
-            height="28px"
+            height="30px"
             fontSize="11px"
-            px={3}
+            fontWeight="black"
+            flex={1}
             borderRadius="full"
-            bg={activeTabIndex === 0 ? "brand.main" : "gray.200"} // 기본 버튼 색상
-            color={activeTabIndex === 0 ? "white" : "black"} // 기본 글자 색상
-            _hover={{ bg: "brand.main", color: "white" }} // 호버 시 색상
-            _active={{ bg: "brand.main", color: "white" }} // 클릭된 상태 (active) 색상
+            borderWidth="1px"
+            borderColor={activeTabIndex === 0 ? "brand.main" : "rgba(0, 0, 0, 0.05)"}
+            bg={activeTabIndex === 0 ? "brand.main" : "rgba(255, 255, 255, 0.85)"}
+            color={activeTabIndex === 0 ? "white" : "gray.600"}
+            _hover={{
+              bg: activeTabIndex === 0 ? "brand.main" : "brand.purpleSoft",
+              borderColor: activeTabIndex === 0 ? "brand.main" : "brand.main",
+            }}
+            _active={{ bg: "brand.main", color: "white" }}
             onClick={() => setActiveTabIndex(0)}
-            boxShadow="sm"
+            boxShadow="soft"
+            backdropFilter="blur(10px)"
+            transition="all 0.2s"
           >
             {t("map_domestic")}
           </Button>
 
           <Button
             size="xs"
-            height="28px"
+            height="30px"
             fontSize="11px"
-            px={3}
+            fontWeight="black"
+            flex={1}
             borderRadius="full"
-            bg={activeTabIndex === 1 ? "brand.main" : "gray.200"}
-            color={activeTabIndex === 1 ? "white" : "black"}
-            _hover={{ bg: "brand.main", color: "white" }}
+            borderWidth="1px"
+            borderColor={activeTabIndex === 1 ? "brand.main" : "rgba(0, 0, 0, 0.05)"}
+            bg={activeTabIndex === 1 ? "brand.main" : "rgba(255, 255, 255, 0.85)"}
+            color={activeTabIndex === 1 ? "white" : "gray.600"}
+            _hover={{
+              bg: activeTabIndex === 1 ? "brand.main" : "brand.purpleSoft",
+              borderColor: activeTabIndex === 1 ? "brand.main" : "brand.main",
+            }}
             _active={{ bg: "brand.main", color: "white" }}
             onClick={() => setActiveTabIndex(1)}
-            boxShadow="sm"
+            boxShadow="soft"
+            backdropFilter="blur(10px)"
+            transition="all 0.2s"
           >
-            {t("map_nfiRoad")}
+            {t("map_global")}
           </Button>
 
           <Button
             size="xs"
-            height="28px"
+            height="30px"
             fontSize="11px"
-            px={3}
+            fontWeight="black"
+            flex={1}
             borderRadius="full"
-            bg={activeTabIndex === 2 ? "brand.main" : "gray.200"}
-            color={activeTabIndex === 2 ? "white" : "black"}
-            _hover={{ bg: "brand.main", color: "white" }}
+            borderWidth="1px"
+            borderColor={activeTabIndex === 2 ? "brand.main" : "rgba(0, 0, 0, 0.05)"}
+            bg={activeTabIndex === 2 ? "brand.main" : "rgba(255, 255, 255, 0.85)"}
+            color={activeTabIndex === 2 ? "white" : "gray.600"}
+            _hover={{
+              bg: activeTabIndex === 2 ? "brand.main" : "brand.purpleSoft",
+              borderColor: activeTabIndex === 2 ? "brand.main" : "brand.main",
+            }}
             _active={{ bg: "brand.main", color: "white" }}
             onClick={() => setActiveTabIndex(2)}
-            boxShadow="sm"
+            boxShadow="soft"
+            backdropFilter="blur(10px)"
+            transition="all 0.2s"
           >
-            {t("map_global")}
+            {t("map_nfiRoad")}
           </Button>
         </HStack>
-      </Box>
+      </VStack>
 
       <Box flex="1">
-        {activeTabIndex === 2 ? (
+        {activeTabIndex === 1 ? (
           <GoogleMap
             globalConcerts={globalConcertState}
             setShowPastConcertsGlobal={setShowPastConcertsGlobal}

@@ -9,7 +9,7 @@
   "selectDate": "日付を選択",
   "helmettitle": "N.Fimap - エヌ・フライングのコンサート情報をチェック！",
   "helmetdescription": "N.Fimapはファンダム N.Fiaの情熱を応援します。",
-  "selectConcertType": "コンサートタイプを選択",
+  "selectConcertType": "公演ジャンル",
   "all": "全",
   "performanceInfo": "公演情報",
   "waitingForTicketSchedule": "チケットスケジュール待ち",
@@ -34,7 +34,7 @@
     "mapFestival": "祭",
     "mapEvent": "行事"
   },
-  "mapShowPastConcerts": "過去の公演を表示",
+  "mapShowPastConcerts": "過去の公演",
   "mapNoData": "まだスケジュールがありません！",
   "mapPastConcert": "公演終了",
   "notFound": "ここにはN.Flyingはいません！",
@@ -80,9 +80,16 @@
   "address": "住所",
   "basic_info": "基本情報",
   "performance_details": "公演詳細",
-  "korea_time": "韓国時間基準",
+  "korea_time": "KST",
   "ticket_open": "チケットオープン",
   "performers": "出演者",
+  "location": "場所",
+  "concert_date": "公演日程",
+  "no_date_available": "公演日程がありません。",
+  "no_artists_available": "出演者がいません。",
+  "no_info": "情報がありません。",
+  "note_image": "ノート画像",
+  "close": "閉じる",
   "check_performance_info": "公演情報の確認",
   "waiting_schedule": "予約スケジュール待機中",
   "waiting_ticket_info": "予約情報待機中",
@@ -116,5 +123,6 @@
   "setting": "設定",
   "confirm": "確認",
   "filter": "フィルター",
-  "birthdate": "生年月日"
+  "birthdate": "生年月日",
+  "startTime": "開始時間"
 }

@@ -197,7 +197,7 @@ const NaverMap = ({
 
       // Set the background color for NfiRoad markers
       const backgroundColor =
-        activeTabIndex === 1
+        activeTabIndex === 2
           ? getCategoryBackgroundColor((item as NfiRoad).category)
           : "";
 
@@ -270,45 +270,46 @@ const NaverMap = ({
         map.setCenter(location);
 
         const infoWindowContent = `
-          <div style="width: 300px; font-family: Arial, sans-serif; padding: 10px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); border-radius: 4px;">
-            <div style="display: flex; align-items: center;">
-              <div style="background-color: ${backgroundColor}; width: 70px; height: 70px; min-width: 70px; min-height: 70px; max-width: 70px; max-height: 70px; margin-right: 15px; border-radius: 4px; overflow: hidden;">
+          <div style="width: 280px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 16px; background-color: #fff; box-shadow: rgba(15, 23, 42, 0.08) 0px 8px 30px; border-radius: 20px; border: 1px solid rgba(15, 23, 42, 0.06); box-sizing: border-box;">
+            <div style="display: flex; align-items: center; margin-bottom: 12px;">
+              <div style="background-color: ${backgroundColor}; width: 64px; height: 64px; min-width: 64px; min-height: 64px; max-width: 64px; max-height: 64px; margin-right: 12px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                 <img src="${getPosterImage(item)}" alt="${item.name}" 
-                     style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">
+                     style="width: 100%; height: 100%; object-fit: cover;">
               </div>
-              <div style="flex-grow: 1;">
-              <h3
-                style="
-                  margin: 0;
-                  font-size: 16px;
-                  font-weight: bold;
-                  color: #333;
-                  display: -webkit-box;
-                  -webkit-line-clamp: 1;
-                  -webkit-box-orient: vertical;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                "
-              >
-                ${item.name}
-              </h3>
-              <p
-                style="
-                  margin: 5px 0 0;
-                  font-size: 14px;
-                  color: #666;
-                  display: -webkit-box;
-                  -webkit-line-clamp: 2;
-                  -webkit-box-orient: vertical;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                "
-              >
-                ${item.location}
-              </p>
+              <div style="flex-grow: 1; min-width: 0;">
+                <h3
+                  style="
+                    margin: 0;
+                    font-size: 14px;
+                    font-weight: 800;
+                    color: #1A202C;
+                    line-height: 1.3;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                  "
+                >
+                  ${item.name}
+                </h3>
+                <p
+                  style="
+                    margin: 4px 0 0;
+                    font-size: 11px;
+                    font-weight: 500;
+                    color: #718096;
+                    line-height: 1.4;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                  "
+                >
+                  ${item.location}
+                </p>
+              </div>
             </div>
-            </div>
-            <button class="detailBtn" style="margin-top: 5px; padding: 4px 8px; width: 100%; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; background-color: #9F7AEA; color: white; cursor: pointer; transition: background-color 0.3s, color 0.3s;">
+            <button class="detailBtn" style="width: 100%; border: none; border-radius: 10px; font-size: 11px; font-weight: 800; padding: 8px; background-color: #7C3AED; color: white; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);">
               ${t("View Details")}
             </button>
           </div>
@@ -373,7 +374,7 @@ const NaverMap = ({
 
       // Set the background color for NfiRoad markers
       const backgroundColor =
-        activeTabIndex === 1
+        activeTabIndex === 2
           ? getCategoryBackgroundColor((selectedItem as NfiRoad).category)
           : "";
 

@@ -35,6 +35,8 @@ import {
   Ticket,
   Download,
   Sparkles,
+  ClipboardList,
+  Armchair,
 } from "lucide-react";
 import NotFound from "../../components/NotFound";
 import Card from "../Home/component/Card";
@@ -116,9 +118,14 @@ const DetailPage: React.FC = () => {
   const tabTextColor = useColorModeValue("purple.500", "purple.200");
   const tabHoverBg = useColorModeValue("rgba(139, 92, 246, 0.04)", "rgba(255, 255, 255, 0.02)");
   const scheduleBg = useColorModeValue("gray.50", "whiteAlpha.50");
+  const seatBg = useColorModeValue("cyan.50", "rgba(6, 182, 212, 0.1)");
+  const seatIconColor = useColorModeValue("cyan.500", "cyan.300");
   const currentTime = moment();
   const [allConcerts, setAllConcerts] = useState<Concert[]>([]);
-  const [lang, setLang] = useState(i18n.language);
+  const [lang, setLang] = useState<string>(() => {
+    const baseLang = i18n.language ? i18n.language.split("-")[0] : "ko";
+    return baseLang === "ko" ? "ko" : "en";
+  });
   const isMobileOrTablet = useBreakpointValue({ base: true, md: true, lg: false });
   const { data: concertDetail, refetch: refetchConcertDetail, isLoading } = useConcertDetail(id ?? "", lang);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -129,11 +136,8 @@ const DetailPage: React.FC = () => {
 
   useEffect(() => {
     const baseLang = i18n.language ? i18n.language.split("-")[0] : "ko";
-    if (["ko", "en", "zh", "ja"].includes(baseLang)) {
-      setLang(baseLang);
-    } else {
-      setLang("en");
-    }
+    // 서버는 ko/en만 지원 — zh/ja는 en으로 폴백
+    setLang(baseLang === "ko" ? "ko" : "en");
   }, [i18n.language]);
 
   useEffect(() => {
@@ -147,7 +151,7 @@ const DetailPage: React.FC = () => {
   }
 
   if (!id || !concertDetail) {
-    return <NotFound content="정보가 없습니다." />;
+    return <NotFound content={t("no_info")} />;
   }
 
   // Normalize duration_minutes to number
@@ -276,6 +280,7 @@ const DetailPage: React.FC = () => {
           
           {/* Left Column: Poster Image */}
           <MotionFlex
+            display="flex"
             flex={1}
             justifyContent="center"
             alignItems="center"
@@ -321,8 +326,9 @@ const DetailPage: React.FC = () => {
 
           {/* Right Column: Information Panel */}
           <MotionFlex 
+            display="flex"
             flexDirection="column" 
-            justifyContent="space-between" 
+            justifyContent="flex-start" 
             flex={1} 
             gap={6}
             bg={cardBgColor}
@@ -347,7 +353,10 @@ const DetailPage: React.FC = () => {
                 py={1}
                 borderRadius="full"
               >
-                {augmentedConcertDetail.type}
+                {(augmentedConcertDetail.type === "콘서트" || augmentedConcertDetail.type === "Concert") && t("concert_type_concert")}
+                {(augmentedConcertDetail.type === "페스티벌" || augmentedConcertDetail.type === "Festival") && t("concert_type_festival")}
+                {(augmentedConcertDetail.type === "행사" || augmentedConcertDetail.type === "Event") && t("concert_type_event")}
+                {!["콘서트", "Concert", "페스티벌", "Festival", "행사", "Event"].includes(augmentedConcertDetail.type) && augmentedConcertDetail.type}
               </Badge>
               <Text 
                 fontSize={{ base: "2xl", md: "3xl" }} 
@@ -497,7 +506,7 @@ const DetailPage: React.FC = () => {
             <Divider borderColor={dividerColor} my={1} />
 
             {/* Ticket Open and CTA Area */}
-            <Box>
+            <Box mt={{ base: 0, lg: "auto" }}>
               <Text fontSize="xs" fontWeight="bold" color={textColorSec} mb={3} textTransform="uppercase" letterSpacing="0.5px">
                 {augmentedConcertDetail.type === "행사" || augmentedConcertDetail.type === "Event"
                   ? t("performanceInfo")
@@ -628,9 +637,23 @@ const DetailPage: React.FC = () => {
                     color: "white",
                     bg: "brand.main",
                     boxShadow: "soft",
+                    _hover: {
+                      bg: "brand.main",
+                      color: "white",
+                    },
+                    _active: {
+                      bg: "brand.main",
+                    }
                   }}
                   _hover={{
                     bg: tabHoverBg,
+                    color: tabTextColor,
+                  }}
+                  _active={{
+                    bg: "transparent",
+                  }}
+                  _focus={{
+                    boxShadow: "none",
                   }}
                   borderRadius="full"
                   py={2.5}
@@ -653,9 +676,23 @@ const DetailPage: React.FC = () => {
                     color: "white",
                     bg: "brand.main",
                     boxShadow: "soft",
+                    _hover: {
+                      bg: "brand.main",
+                      color: "white",
+                    },
+                    _active: {
+                      bg: "brand.main",
+                    }
                   }}
                   _hover={{
                     bg: tabHoverBg,
+                    color: tabTextColor,
+                  }}
+                  _active={{
+                    bg: "transparent",
+                  }}
+                  _focus={{
+                    boxShadow: "none",
                   }}
                   borderRadius="full"
                   py={2.5}
@@ -683,7 +720,7 @@ const DetailPage: React.FC = () => {
                             borderRadius="full" 
                             bg="brand.purpleSoft"
                           >
-                            <Icon as={InfoIcon} color="brand.main" w="18px" h="18px" />
+                            <Icon as={ClipboardList} color="brand.main" w="18px" h="18px" />
                           </Flex>
                           <Text fontSize="xl" fontWeight="black" color={textColor}>
                             {t("basic_info")}
@@ -735,7 +772,7 @@ const DetailPage: React.FC = () => {
                                     >
                                       <Image
                                         src={note}
-                                        alt={`노트 이미지 ${index + 1}`}
+                                        alt={`${t("note_image")} ${index + 1}`}
                                         objectFit="cover"
                                         w="100%"
                                       />
@@ -755,17 +792,17 @@ const DetailPage: React.FC = () => {
                           
                           {augmentedConcertDetail?.infoImage &&
                             augmentedConcertDetail.infoImage.length > 0 && (
-                              <Box mt={3}>
-                                <Text fontSize="xs" color="gray.400" fontWeight="bold" textTransform="uppercase" letterSpacing="1px" mb={3.5}>
-                                  {t("seat_map") || "좌석 정보"}
+                              <Box mt={2}>
+                                <Text fontSize="xs" color="gray.400" fontWeight="bold" textTransform="uppercase" letterSpacing="1px" mb={3}>
+                                  {t("performanceInfo")}
                                 </Text>
-                                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+                                <VStack align="stretch" spacing={3}>
                                   {augmentedConcertDetail.infoImage.map((info, index) =>
-                                    info.image && (
-                                      <Box 
-                                        key={index} 
-                                        borderRadius="2xl" 
-                                        overflow="hidden" 
+                                    info.image ? (
+                                      <Box
+                                        key={index}
+                                        borderRadius="2xl"
+                                        overflow="hidden"
                                         boxShadow="soft"
                                         cursor="zoom-in"
                                         onClick={() => setLightboxImage(info.image)}
@@ -774,17 +811,16 @@ const DetailPage: React.FC = () => {
                                       >
                                         <Image
                                           src={info.image}
-                                          alt={`좌석 배치도 ${index + 1}`}
+                                          alt={`${t("performanceInfo")} ${index + 1}`}
                                           objectFit="cover"
                                           w="100%"
                                         />
                                       </Box>
-                                    )
+                                    ) : null
                                   )}
-                                </SimpleGrid>
+                                </VStack>
                               </Box>
-                            )
-                          }
+                            )}
                         </VStack>
                       </Box>
                     )}
@@ -800,9 +836,9 @@ const DetailPage: React.FC = () => {
                               w="36px" 
                               h="36px" 
                               borderRadius="full" 
-                              bg="orange.50"
+                              bg={seatBg}
                             >
-                              <Icon as={UsersIcon} color="orange.500" w="18px" h="18px" />
+                              <Icon as={Armchair} color={seatIconColor} w="18px" h="18px" />
                             </Flex>
                             <Text fontSize="xl" fontWeight="black" color={textColor}>
                               {t("seat_map")}
@@ -824,7 +860,7 @@ const DetailPage: React.FC = () => {
                                   <Image
                                     key={index}
                                     src={seat.image}
-                                    alt={`좌석 배치도 ${index + 1}`}
+                                    alt={`${t("seat_map")} ${index + 1}`}
                                     objectFit="cover"
                                     w="100%"
                                   />
@@ -907,7 +943,7 @@ const DetailPage: React.FC = () => {
                 _hover={{ bg: "whiteAlpha.350" }}
                 transition="all 0.2s"
               >
-                {t("close") || "닫기"}
+                {t("close")}
               </Button>
             </Box>
           </Box>

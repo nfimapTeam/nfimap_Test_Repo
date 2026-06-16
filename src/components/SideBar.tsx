@@ -62,14 +62,15 @@ type SidebarProps = {
   selectedNfiRoad: NfiRoadType | null;
   activeTabIndex: number;
   setActiveTabIndex: (index: number) => void;
-  selectedType: string;
-  setSelectedType: (type: string) => void;
-  selectedGlobalType: string;
-  setSelectedGlobalType: (type: string) => void;
   showPastConcertsGlobal: boolean;
   setShowPastConcertsGlobal: (show: boolean) => void;
   setSelectedGlobalConcert: (concert: Concert) => void;
   selectedGlobalConcert: Concert | null;
+  years: string[];
+  selectedYear: string;
+  setSelectedYear: (year: string) => void;
+  selectedGlobalYear: string;
+  setSelectedGlobalYear: (year: string) => void;
 };
 
 const Sidebar = ({
@@ -86,16 +87,17 @@ const Sidebar = ({
   selectedNfiRoad,
   activeTabIndex,
   setActiveTabIndex,
-  selectedType, // 추가
-  setSelectedType, // 추가
   showPastConcertsGlobal,
   setShowPastConcertsGlobal,
   setSelectedGlobalConcert,
   selectedGlobalConcert,
   globalQuery,
   setGlobalQuery,
-  selectedGlobalType,
-  setSelectedGlobalType,
+  years,
+  selectedYear,
+  setSelectedYear,
+  selectedGlobalYear,
+  setSelectedGlobalYear,
 }: SidebarProps) => {
   const { t, i18n } = useTranslation();
   const isMobileOrTablet = useBreakpointValue({ base: true, md: true, lg: false });
@@ -105,10 +107,12 @@ const Sidebar = ({
       w="340px"
       bg="#fff"
       h={isMobileOrTablet ? "calc(100vh - 120px)" : "calc(100svh - 70px)"}
-      boxShadow="0 0 10px rgba(0, 0, 0, 0.1)"
-      borderRight="1px solid #ddd"
+      boxShadow="soft"
+      borderRight="1px solid"
+      borderColor="gray.100"
       display="flex"
       flexDirection="column"
+      zIndex={10}
     >
       <Tabs
         index={activeTabIndex}
@@ -116,40 +120,50 @@ const Sidebar = ({
         display="flex"
         flexDirection="column"
         height="100%"
+        variant="unstyled"
       >
-        <TabList>
+        <TabList borderBottom="1px solid" borderColor="gray.100" p={2} gap={1}>
           <Tab
-            fontSize="18px"
-            fontWeight="600"
+            fontSize="sm"
+            fontWeight="extrabold"
             textAlign="center"
-            _selected={{ borderBottom: "2px solid #9F7AEA", color: "purple.500" }}
+            borderRadius="full"
+            color="gray.500"
+            _selected={{ bg: "brand.purpleSoft", color: "brand.main" }}
             _focus={{ boxShadow: "none" }}
             flex="1"
-            p="16px 4px"
+            py={2.5}
+            transition="all 0.2s"
           >
             {t("map_domestic")}
           </Tab>
           <Tab
-            fontSize="18px"
-            fontWeight="600"
+            fontSize="sm"
+            fontWeight="extrabold"
             textAlign="center"
-            _selected={{ borderBottom: "2px solid #9F7AEA", color: "purple.500" }}
+            borderRadius="full"
+            color="gray.500"
+            _selected={{ bg: "brand.purpleSoft", color: "brand.main" }}
             _focus={{ boxShadow: "none" }}
             flex="1"
-            p="16px 4px"
-          >
-            {t("map_nfiRoad")}
-          </Tab>
-          <Tab
-            fontSize="18px"
-            fontWeight="600"
-            textAlign="center"
-            _selected={{ borderBottom: "2px solid #9F7AEA", color: "purple.500" }}
-            _focus={{ boxShadow: "none" }}
-            flex="1"
-            p="16px 4px"
+            py={2.5}
+            transition="all 0.2s"
           >
             {t("map_global")}
+          </Tab>
+          <Tab
+            fontSize="sm"
+            fontWeight="extrabold"
+            textAlign="center"
+            borderRadius="full"
+            color="gray.500"
+            _selected={{ bg: "brand.purpleSoft", color: "brand.main" }}
+            _focus={{ boxShadow: "none" }}
+            flex="1"
+            py={2.5}
+            transition="all 0.2s"
+          >
+            {t("map_nfiRoad")}
           </Tab>
         </TabList>
 
@@ -157,7 +171,7 @@ const Sidebar = ({
           <TabPanel
             key={`domestic-${activeTabIndex}`}
             height="100%"
-            padding="20px"
+            p={4}
           >
             <ConcertInfo
               concerts={concerts}
@@ -166,25 +180,15 @@ const Sidebar = ({
               showPastConcerts={showPastConcerts}
               setShowPastConcerts={setShowPastConcerts}
               setSelectedConcert={setSelectedConcert}
-              selectedType={selectedType}
-              setSelectedType={setSelectedType}
-            />
-          </TabPanel>
-          <TabPanel
-            key={`nfiRoad-${activeTabIndex}`}
-            height="100%"
-            padding="20px"
-          >
-            <NfiRoad
-              nfiRoad={nfiRoad}
-              setSelectedNfiRoad={setSelectedNfiRoad}
-              selectedNfiRoad={selectedNfiRoad}
+              years={years}
+              selectedYear={selectedYear}
+              setSelectedYear={setSelectedYear}
             />
           </TabPanel>
           <TabPanel
             key={`global-${activeTabIndex}`}
             height="100%"
-            padding="20px"
+            p={4}
           >
             <ConcertInfo
               concerts={globalConcerts}
@@ -193,8 +197,20 @@ const Sidebar = ({
               showPastConcerts={showPastConcertsGlobal}
               setShowPastConcerts={setShowPastConcertsGlobal}
               setSelectedConcert={setSelectedGlobalConcert}
-              selectedType={selectedGlobalType}
-              setSelectedType={setSelectedGlobalType}
+              years={years}
+              selectedYear={selectedGlobalYear}
+              setSelectedYear={setSelectedGlobalYear}
+            />
+          </TabPanel>
+          <TabPanel
+            key={`nfiRoad-${activeTabIndex}`}
+            height="100%"
+            p={4}
+          >
+            <NfiRoad
+              nfiRoad={nfiRoad}
+              setSelectedNfiRoad={setSelectedNfiRoad}
+              selectedNfiRoad={selectedNfiRoad}
             />
           </TabPanel>
         </TabPanels>

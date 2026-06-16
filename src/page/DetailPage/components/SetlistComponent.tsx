@@ -185,13 +185,29 @@ const SetlistComponent: React.FC<SetlistComponentProps> = ({
                         bg: 'brand.main',
                         color: 'white',
                         boxShadow: 'soft',
+                        _hover: {
+                          bg: 'brand.main',
+                          color: 'white',
+                        },
+                        _active: {
+                          bg: 'brand.main',
+                        }
+                      }}
+                      _hover={{
+                        bg: tabHoverBg,
+                        color: tabTextColor,
+                      }}
+                      _active={{
+                        bg: 'transparent',
+                      }}
+                      _focus={{
+                        boxShadow: 'none',
                       }}
                       borderRadius="full"
                       display="flex"
                       alignItems="center"
                       mb={isDoubleLine ? 3 : 0}
                       transition="all 0.2s"
-                      _hover={{ bg: tabHoverBg }}
                       fontWeight="bold"
                     >
                       {moment(set.date, 'YYYY-MM-DD').format('MM/DD')}

@@ -9,7 +9,7 @@
   "selectDate": "날짜 선택",
   "helmettitle": "엔피맵 - 엔플라잉 콘서트 정보를 확인하세요!",
   "helmetdescription": "N.Fimap은 팬덤 N.Fia의 덕질을 응원합니다.",
-  "selectConcertType": "콘서트 타입 선택",
+  "selectConcertType": "공연 유형",
   "all": "전체",
   "performanceInfo": "공연 정보",
   "waitingForTicketSchedule": "예매 일정 대기 중",
@@ -34,7 +34,7 @@
     "mapFestival": "페스티벌",
     "mapEvent": "행사"
   },
-  "mapShowPastConcerts": "지난 공연 보기",
+  "mapShowPastConcerts": "지난 공연",
   "mapNoData": "아직 일정이 없습니다!",
   "mapPastConcert": "공연종료",
   "notFound": "여기엔 엔플라잉이 없어요!",
@@ -80,9 +80,16 @@
   "address": "주소",
   "basic_info": "기본 정보",
   "performance_details": "공연 상세",
-  "korea_time": "한국시간 기준",
+  "korea_time": "KST",
   "ticket_open": "티켓 오픈",
   "performers": "출연자",
+  "location": "장소",
+  "concert_date": "공연 일정",
+  "no_date_available": "등록된 공연 일정이 없습니다.",
+  "no_artists_available": "등록된 출연자가 없습니다.",
+  "no_info": "정보가 없습니다.",
+  "note_image": "노트 이미지",
+  "close": "닫기",
   "check_performance_info": "공연정보 확인",
   "waiting_schedule": "예매 일정 대기 중",
   "waiting_ticket_info": "예매 정보 대기 중",
@@ -119,5 +126,6 @@
   "setting": "설정",
   "confirm": "확인",
   "filter": "필터",
-  "birthdate": "생년월일"
+  "birthdate": "생년월일",
+  "startTime": "시작 시간"
 }

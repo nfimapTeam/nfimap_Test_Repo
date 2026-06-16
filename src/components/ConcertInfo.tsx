@@ -7,16 +7,21 @@ import {
   Image,
   Text,
   VStack,
+  HStack,
   FormControl,
+  FormLabel,
   Menu,
   MenuButton,
   Button,
   MenuList,
   MenuItem,
+  InputGroup,
+  InputRightElement,
+  Icon,
 } from "@chakra-ui/react";
 import NoData from "./NoData";
-import { useTranslation } from "react-i18next"; // useTranslation 훅 임포트
-import { ChevronDownIcon } from "@chakra-ui/icons";
+import { useTranslation } from "react-i18next";
+import { ChevronDownIcon, SearchIcon } from "@chakra-ui/icons";
 
 interface ConcertDate {
   date: string;
@@ -55,8 +60,9 @@ type ConcertInfoProps = {
   showPastConcerts: boolean;
   setShowPastConcerts: (show: boolean) => void;
   setSelectedConcert: (concert: Concert) => void;
-  selectedType: string;
-  setSelectedType: (type: string) => void;
+  years: string[];
+  selectedYear: string;
+  setSelectedYear: (year: string) => void;
 };
 
 const ConcertInfo = ({
@@ -66,8 +72,9 @@ const ConcertInfo = ({
   showPastConcerts,
   setShowPastConcerts,
   setSelectedConcert,
-  selectedType,
-  setSelectedType,
+  years,
+  selectedYear,
+  setSelectedYear,
 }: ConcertInfoProps) => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const { t } = useTranslation(); // 번역 함수 초기화
@@ -93,122 +100,100 @@ const ConcertInfo = ({
 
   return (
     <VStack spacing={4} align="start" height="100%">
-      <Input
-        borderColor="purple.200"
-        ref={searchInputRef}
-        placeholder={t("mapSearchPlaceholder")} // JSON 파일에서 번역된 문자열
-        value={query}
-        focusBorderColor="purple.500"
-        onChange={handleInputChange}
-        size="md"
-      />
-      <Flex width="100%" align="center" justifyContent="space-between">
-        <Menu>
-          <MenuButton
-            minW="100px"
-            as={Button}
-            rightIcon={<ChevronDownIcon />}
-            bg="white"
-            borderWidth="1px"
-            borderColor="purple.200"
-            color="gray.800"
-            fontSize="sm"
-            fontWeight="medium"
-            height="40px"
-            borderRadius="md"
-            boxShadow="sm"
-            _hover={{
-              borderColor: "purple.400",
-              boxShadow: "md",
-            }}
-            _active={{
-              bg: "purple.50",
-              borderColor: "purple.500",
-            }}
-            _focus={{
-              borderColor: "purple.500",
-              boxShadow: "0 0 0 1px #9F7AEA",
-            }}
-            textAlign="left"
-            justifyContent="space-between"
-            px={3}
-          >
-            {t(selectedType) || t("mapSelectPlaceholder")}
-          </MenuButton>
-          <MenuList
-            bg="white"
-            borderColor="purple.200"
-            borderRadius="md"
-            boxShadow="lg"
-            minW="200px"
-            zIndex={10}
-            py={1}
-            mt={1}
-          >
-            <MenuItem
-              onClick={() => setSelectedType("")}
-              bg="white"
-              color="gray.800"
-              fontSize="sm"
-              _hover={{ bg: "purple.50", color: "purple.700" }}
-              _focus={{ bg: "purple.50" }}
+      <InputGroup size="md">
+        <Input
+          borderColor="gray.200"
+          ref={searchInputRef}
+          placeholder={t("mapSearchPlaceholder")}
+          value={query}
+          focusBorderColor="brand.main"
+          onChange={handleInputChange}
+          borderRadius="full"
+          boxShadow="soft"
+          _hover={{ borderColor: "gray.300" }}
+          pl={5}
+          pr={11}
+          transition="all 0.3s ease"
+          _focus={{
+            boxShadow: "glow",
+            transform: "translateY(-1px)"
+          }}
+        />
+        <InputRightElement width="3rem">
+          <Icon as={SearchIcon} color="gray.400" />
+        </InputRightElement>
+      </InputGroup>
+      <Flex width="100%" align="center" gap={2} flexWrap="wrap" justifyContent="space-between">
+        <HStack spacing={2}>
+          {/* Year Filter */}
+          <Menu>
+            <MenuButton
+              as={Button}
+              rightIcon={<ChevronDownIcon />}
+              borderColor={selectedYear ? "brand.main" : "gray.200"}
+              bg={selectedYear ? "brand.purpleSoft" : "white"}
+              borderWidth="1px"
+              color={selectedYear ? "brand.main" : "gray.700"}
+              fontSize="xs"
+              fontWeight="extrabold"
+              height="36px"
+              minW="90px"
+              borderRadius="full"
+              _hover={{
+                borderColor: "brand.main",
+                bg: "brand.purpleSoft",
+              }}
+              _active={{
+                bg: "brand.purpleSoft",
+                borderColor: "brand.main",
+              }}
+              textAlign="left"
               px={4}
-              py={2}
             >
-              {t("mapTypeOptions.mapAll")}
-            </MenuItem>
-            <MenuItem
-              onClick={() => setSelectedType("concert")}
-              bg="white"
-              color="gray.800"
-              fontSize="sm"
-              _hover={{ bg: "purple.50", color: "purple.700" }}
-              _focus={{ bg: "purple.50" }}
-              px={4}
-              py={2}
-            >
-              {t("mapTypeOptions.mapConcert")}
-            </MenuItem>
-            <MenuItem
-              onClick={() => setSelectedType("festival")}
-              bg="white"
-              color="gray.800"
-              fontSize="sm"
-              _hover={{ bg: "purple.50", color: "purple.700" }}
-              _focus={{ bg: "purple.50" }}
-              px={4}
-              py={2}
-            >
-              {t("mapTypeOptions.mapFestival")}
-            </MenuItem>
-            <MenuItem
-              onClick={() => setSelectedType("event")}
-              bg="white"
-              color="gray.800"
-              fontSize="sm"
-              _hover={{ bg: "purple.50", color: "purple.700" }}
-              _focus={{ bg: "purple.50" }}
-              px={4}
-              py={2}
-            >
-              {t("mapTypeOptions.mapEvent")}
-            </MenuItem>
-          </MenuList>
-        </Menu>
+              {selectedYear === "" ? t("mapTypeOptions.mapAll") : selectedYear}
+            </MenuButton>
+            <MenuList>
+              <MenuItem onClick={() => setSelectedYear("")}>
+                {t("mapTypeOptions.mapAll")}
+              </MenuItem>
+              {years.map((y) => (
+                <MenuItem key={y} onClick={() => setSelectedYear(y)}>
+                  {y}
+                </MenuItem>
+              ))}
+            </MenuList>
+          </Menu>
+        </HStack>
 
-        <Flex align="center" gap={1}>
-          <Text fontSize="10px">{t("mapShowPastConcerts")}</Text>
+        <FormControl
+          display="flex"
+          alignItems="center"
+          width="auto"
+          bg="brand.purpleSoft"
+          px={3}
+          py={1.5}
+          borderRadius="full"
+          m={0}
+        >
+          <FormLabel
+            htmlFor="show-past-events"
+            mb="0"
+            mr={2}
+            fontSize="10px"
+            fontWeight="extrabold"
+            color="brand.main"
+            cursor="pointer"
+          >
+            {t("mapShowPastConcerts")}
+          </FormLabel>
           <Switch
             id="show-past-events"
+            colorScheme="purple"
+            size="sm"
             isChecked={showPastConcerts}
             onChange={() => setShowPastConcerts(!showPastConcerts)}
-            sx={{
-              ".chakra-switch__track": {
-                bg: showPastConcerts ? "#9F7AEA" : "gray.200",
-              },
-            }}
           />
-        </Flex>
+        </FormControl>
       </Flex>
       <Box
         flex="1"
@@ -231,15 +216,22 @@ const ConcertInfo = ({
               key={index}
               onClick={() => handleOpenModal(concert)}
               cursor="pointer"
-              p="10px"
-              margin="10px 0"
-              border="1px solid #eee"
-              borderColor="purple.200"
-              borderRadius="4px"
+              p={3}
+              margin="12px 0"
+              border="1px solid"
+              borderColor="gray.100"
+              borderRadius="2xl"
               w="100%"
-              _hover={{ boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}
+              boxShadow="soft"
               position="relative"
-              bg={past ? "rgba(0, 0, 0, 0.35)" : "#fff"}
+              bg={past ? "rgba(249, 250, 251, 0.85)" : "#fff"}
+              opacity={past ? 0.75 : 1}
+              transition="all 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
+              _hover={{ 
+                transform: "translateY(-2px)", 
+                boxShadow: "card", 
+                borderColor: "brand.main" 
+              }}
             >
               <Box
                 width="70px"
@@ -249,7 +241,8 @@ const ConcertInfo = ({
                 mr="15px"
                 position="relative"
                 overflow="hidden"
-                borderRadius="4px"
+                borderRadius="xl"
+                boxShadow="xs"
               >
                 <Image
                   src={concert.poster && concert.poster.trim() !== '' ? concert.poster : '/image/logo/logo.svg'}
@@ -262,29 +255,37 @@ const ConcertInfo = ({
                   objectFit="cover"
                 />
                 {past && (
-                  <Text
+                  <Box
                     position="absolute"
-                    fontSize="12px"
-                    fontWeight="bold"
-                    color="#fff"
-                    bg="rgba(0, 0, 0, 0.7)"
-                    borderRadius="4px"
-                    p="4px 12px"
-                    textAlign="center"
-                    left="50%"
-                    top="50%"
-                    transform="translate(-50%, -50%)"
-                    w="100%"
+                    top="0"
+                    left="0"
+                    width="100%"
+                    height="100%"
+                    bg="rgba(0, 0, 0, 0.4)"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
                   >
-                    {t("mapPastConcert")}
-                  </Text>
+                    <Text
+                      fontSize="9px"
+                      fontWeight="black"
+                      color="#fff"
+                      bg="rgba(0, 0, 0, 0.75)"
+                      borderRadius="full"
+                      py="2px"
+                      px="8px"
+                      textAlign="center"
+                    >
+                      {t("mapPastConcert")}
+                    </Text>
+                  </Box>
                 )}
               </Box>
-              <Box flexGrow={1}>
-                <Text fontSize="16px" fontWeight="bold" mb="5px" noOfLines={1}>
+              <Box flexGrow={1} display="flex" flexDirection="column" justifyContent="center">
+                <Text fontSize="15px" fontWeight="black" color={past ? "gray.500" : "gray.800"} mb="4px" noOfLines={1}>
                   {concert.name}
                 </Text>
-                <Text fontSize="14px" color="#666" noOfLines={1}>
+                <Text fontSize="12px" fontWeight="medium" color={past ? "gray.400" : "gray.500"} noOfLines={1}>
                   {concert.location}
                 </Text>
               </Box>

@@ -10,7 +10,7 @@ export const getConcertDetail = async (id: string, lang: string) => {
 
 export const useConcertDetail = (id: string, lang: string) => {
   return useQuery({
-    queryKey: ["ConcertDetail", id],
+    queryKey: ["ConcertDetail", id, lang],
     queryFn: () => getConcertDetail(id, lang),
   });
 };

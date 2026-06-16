@@ -22,15 +22,14 @@ import {
 } from "@chakra-ui/react";
 import { SearchIcon, CloseIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import moment from "moment";
-import { motion } from "framer-motion";
 import { List as ListIcon, Calendar as CalendarIcon, SlidersHorizontal } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { toggleState } from "../../atom/toggleState";
 import {
   searchQueryState,
-  sortOrderState,
   selectedYearState,
+  selectedTypeState,
   scrollPositionState
 } from "../../atom/listState";
 import Card from "./component/Card";
@@ -68,6 +67,7 @@ interface Concert extends RawConcert {
 
 const Home = () => {
   const { t, i18n } = useTranslation();
+  const currentLang = i18n.language ? i18n.language.split("-")[0] : "ko";
 
   // 2-column on mobile, 2-column on small screens, 3-column on tablet, 4-column on desktop
   const columns = useBreakpointValue({ base: 1, md: 3, lg: 4 });
@@ -76,7 +76,7 @@ const Home = () => {
   const [currentTime, setCurrentTime] = useState(moment());
 
   const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState);
-  const [sortOrder, setSortOrder] = useRecoilState(sortOrderState);
+  const [selectedType, setSelectedType] = useRecoilState(selectedTypeState);
   const [selectedYear, setSelectedYear] = useRecoilState(selectedYearState);
   const [scrollPosition, setScrollPosition] = useRecoilState(scrollPositionState);
 
@@ -105,18 +105,15 @@ const Home = () => {
 
   useEffect(() => {
     const baseLang = i18n.language ? i18n.language.split("-")[0] : "ko";
-    if (["ko", "en", "zh", "ja"].includes(baseLang)) {
-      setLang(baseLang);
-    } else {
-      setLang("en");
-    }
+    // 서버는 ko/en만 지원 — zh/ja는 en으로 폴백
+    setLang(baseLang === "ko" ? "ko" : "en");
   }, [i18n.language]);
 
   useEffect(() => {
     setTimeout(() => {
       refetchConcertsData();
     }, 50);
-  }, [lang]);
+  }, [lang, refetchConcertsData]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -124,18 +121,6 @@ const Home = () => {
     }, 60000);
     return () => clearInterval(interval);
   }, []);
-
-  useEffect(() => {
-    if (sortOrder !== "latest" && sortOrder !== "byName") {
-      setSortOrder("latest");
-    }
-  }, [sortOrder, setSortOrder]);
-
-  useEffect(() => {
-    if (toggle) {
-      setSortOrder("latest");
-    }
-  }, [toggle, setSortOrder]);
 
   useEffect(() => {
     if (scrollContainerRef.current && scrollPosition > 0 && viewMode === "list") {
@@ -237,52 +222,44 @@ const Home = () => {
       if (ticketOpenA && !ticketOpenB) return -1;
       if (!ticketOpenA && ticketOpenB) return 1;
 
-      if (sortOrder === "latest") {
-        const dateA = moment(
-          a.date.reduce((earliest, date) =>
-            moment(date, "YYYY-MM-DD").isBefore(moment(earliest, "YYYY-MM-DD"))
-              ? date
-              : earliest
-          ),
-          "YYYY-MM-DD"
-        );
-        const dateB = moment(
-          b.date.reduce((earliest, date) =>
-            moment(date, "YYYY-MM-DD").isBefore(moment(earliest, "YYYY-MM-DD"))
-              ? date
-              : earliest
-          ),
-          "YYYY-MM-DD"
-        );
-        return dateA.diff(dateB);
-      } else if (sortOrder === "byName") {
-        return a.name.localeCompare(b.name);
-      }
-      return 0;
+      const dateA = moment(
+        a.date.reduce((earliest, date) =>
+          moment(date, "YYYY-MM-DD").isBefore(moment(earliest, "YYYY-MM-DD"))
+            ? date
+            : earliest
+        ),
+        "YYYY-MM-DD"
+      );
+      const dateB = moment(
+        b.date.reduce((earliest, date) =>
+          moment(date, "YYYY-MM-DD").isBefore(moment(earliest, "YYYY-MM-DD"))
+            ? date
+            : earliest
+        ),
+        "YYYY-MM-DD"
+      );
+      return dateA.diff(dateB);
     };
 
     upcomingConcerts.sort(sortFunction);
     pastConcerts.sort((a, b) => {
-      if (sortOrder === "latest") {
-        const dateA = moment(
-          a.date.reduce((latest, date) =>
-            moment(date, "YYYY-MM-DD").isAfter(moment(latest, "YYYY-MM-DD"))
-              ? date
-              : latest
-          ),
-          "YYYY-MM-DD"
-        );
-        const dateB = moment(
-          b.date.reduce((latest, date) =>
-            moment(date, "YYYY-MM-DD").isAfter(moment(latest, "YYYY-MM-DD"))
-              ? date
-              : latest
-          ),
-          "YYYY-MM-DD"
-        );
-        return dateB.diff(dateA);
-      }
-      return sortFunction(a, b);
+      const dateA = moment(
+        a.date.reduce((latest, date) =>
+          moment(date, "YYYY-MM-DD").isAfter(moment(latest, "YYYY-MM-DD"))
+            ? date
+            : latest
+        ),
+        "YYYY-MM-DD"
+      );
+      const dateB = moment(
+        b.date.reduce((latest, date) =>
+          moment(date, "YYYY-MM-DD").isAfter(moment(latest, "YYYY-MM-DD"))
+            ? date
+            : latest
+        ),
+        "YYYY-MM-DD"
+      );
+      return dateB.diff(dateA);
     });
 
     return [...upcomingConcerts, ...pastConcerts];
@@ -300,15 +277,23 @@ const Home = () => {
         return year === parseInt(selectedYear);
       }));
 
+    const matchesType =
+      selectedType === "" ||
+      (concert.type &&
+        (concert.type.toLowerCase() === selectedType.toLowerCase() ||
+          (selectedType === "concert" && concert.type === "콘서트") ||
+          (selectedType === "festival" && concert.type === "페스티벌") ||
+          (selectedType === "event" && concert.type === "행사")));
+
     const isFutureOrToday = concert.concertDate && concert.concertDate.some((item) =>
       moment(item.date, "YYYY-MM-DD").isSameOrAfter(currentTime, "day")
     );
     const isPastEvent = !isFutureOrToday;
 
     if (toggle) {
-      return matchesSearch && isPastEvent && matchesYear;
+      return matchesSearch && isPastEvent && matchesYear && matchesType;
     } else {
-      return matchesSearch && isFutureOrToday && matchesYear;
+      return matchesSearch && isFutureOrToday && matchesYear && matchesType;
     }
   }).map((concert: RawConcert): Concert => ({
     ...concert,
@@ -319,7 +304,7 @@ const Home = () => {
 
   // 캘린더 전용 헬퍼 함수
   const hasConcertOnDate = (date: Date) => {
-    const dateStr = moment(date).format("YYYY-MM-DD");
+    const dateStr = moment(date).utcOffset(9).format("YYYY-MM-DD");
     return sortedConcerts.some((concert) => concert.date && concert.date.includes(dateStr));
   };
 
@@ -333,7 +318,7 @@ const Home = () => {
   };
 
   const getConcertsOnSelectedDate = () => {
-    const dateStr = moment(selectedDate).format("YYYY-MM-DD");
+    const dateStr = moment(selectedDate).utcOffset(9).format("YYYY-MM-DD");
     return sortedConcerts.filter((concert) => concert.date && concert.date.includes(dateStr));
   };
 
@@ -519,15 +504,15 @@ const Home = () => {
                     </MenuList>
                   </Menu>
 
-                  {/* Sort Order Menu */}
+                  {/* 공연 유형 필터 드롭다운 */}
                   <Menu>
                     <MenuButton
                       as={Button}
                       rightIcon={<ChevronDownIcon />}
-                      borderColor="purple.100"
-                      bg="white"
+                      borderColor={selectedType ? "brand.main" : "purple.100"}
+                      bg={selectedType ? "brand.purpleSoft" : "white"}
                       borderWidth="1px"
-                      color="gray.700"
+                      color={selectedType ? "brand.main" : "gray.700"}
                       fontSize="xs"
                       fontWeight="bold"
                       height="36px"
@@ -544,14 +529,26 @@ const Home = () => {
                       textAlign="left"
                       px={4}
                     >
-                      {t(sortOrder)}
+                      {selectedType === "" 
+                        ? t("selectConcertType") 
+                        : selectedType === "concert" 
+                          ? t("concert") 
+                          : selectedType === "festival" 
+                            ? t("festival") 
+                            : t("event")}
                     </MenuButton>
                     <MenuList>
-                      <MenuItem onClick={() => setSortOrder("latest")}>
-                        {t("latest")}
+                      <MenuItem onClick={() => setSelectedType("")}>
+                        {t("all")}
                       </MenuItem>
-                      <MenuItem onClick={() => setSortOrder("byName")}>
-                        {t("byName")}
+                      <MenuItem onClick={() => setSelectedType("concert")}>
+                        {t("concert")}
+                      </MenuItem>
+                      <MenuItem onClick={() => setSelectedType("festival")}>
+                        {t("festival")}
+                      </MenuItem>
+                      <MenuItem onClick={() => setSelectedType("event")}>
+                        {t("event")}
                       </MenuItem>
                     </MenuList>
                   </Menu>
@@ -622,18 +619,18 @@ const Home = () => {
                 value={selectedDate}
                 tileContent={tileContent}
                 locale={
-                  lang === "ko"
+                  currentLang === "ko"
                     ? "ko-KR"
-                    : lang === "ja"
+                    : currentLang === "ja"
                       ? "ja-JP"
-                      : lang === "zh"
+                      : currentLang === "zh"
                         ? "zh-CN"
                         : "en-US"
                 }
                 formatMonthYear={(locale, date) => {
-                  if (lang === "ko") return moment(date).format("YYYY년 M월");
-                  if (lang === "ja" || lang === "zh") return moment(date).format("YYYY年 M月");
-                  return moment(date).format("MMMM YYYY");
+                  if (currentLang === "ko") return moment(date).utcOffset(9).format("YYYY년 M월");
+                  if (currentLang === "ja" || currentLang === "zh") return moment(date).utcOffset(9).format("YYYY年 M월");
+                  return moment(date).utcOffset(9).format("MMMM YYYY");
                 }}
                 formatShortWeekday={(locale, date) => {
                   const day = date.getDay();
@@ -641,25 +638,25 @@ const Home = () => {
                   const enDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
                   const jaDays = ["日", "月", "火", "水", "木", "金", "土"];
                   const zhDays = ["日", "一", "二", "三", "四", "五", "六"];
-                  if (lang === "ko") return koDays[day];
-                  if (lang === "ja") return jaDays[day];
-                  if (lang === "zh") return zhDays[day];
+                  if (currentLang === "ko") return koDays[day];
+                  if (currentLang === "ja") return jaDays[day];
+                  if (currentLang === "zh") return zhDays[day];
                   return enDays[day];
                 }}
-                formatDay={(locale, date) => moment(date).format("D")}
+                formatDay={(locale, date) => moment(date).utcOffset(9).format("D")}
               />
             </Box>
 
             {/* Selected Date Header */}
             <Box borderLeft="4px solid" borderColor="brand.main" pl={3.5} py={1} mt={2}>
               <Text fontSize="md" fontWeight="black" color="gray.800">
-                {lang === "ko"
-                  ? moment(selectedDate).format("YYYY년 MM월 DD일 공연 일정")
-                  : lang === "ja"
-                    ? moment(selectedDate).format("YYYY年 MM月 DD日 公演日程")
-                    : lang === "zh"
-                      ? moment(selectedDate).format("YYYY年 MM月 DD日 演出日程")
-                      : moment(selectedDate).format("YYYY-MM-DD Concert Schedule")}
+                {currentLang === "ko"
+                  ? `${moment(selectedDate).utcOffset(9).format("YYYY년 MM월 DD일")} 공연 일정`
+                  : currentLang === "ja"
+                    ? `${moment(selectedDate).utcOffset(9).format("YYYY年 MM月 DD日")} 公演日程`
+                    : currentLang === "zh"
+                      ? `${moment(selectedDate).utcOffset(9).format("YYYY年 MM月 DD日")} 演出日程`
+                      : `${moment(selectedDate).utcOffset(9).format("YYYY-MM-DD")} Concert Schedule`}
               </Text>
             </Box>
 
@@ -675,11 +672,11 @@ const Home = () => {
                 borderColor="purple.100"
               >
                 <Text fontSize="sm" color="gray.400" fontWeight="bold">
-                  {lang === "ko"
+                  {currentLang === "ko"
                     ? "해당 날짜에 예정된 공연이 없습니다."
-                    : lang === "ja"
+                    : currentLang === "ja"
                       ? "該当日に予定されている公演はありません。"
-                      : lang === "zh"
+                      : currentLang === "zh"
                         ? "该日期没有排定的演出。"
                         : "No concerts scheduled on this date."}
                 </Text>

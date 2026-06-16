@@ -3,20 +3,20 @@ import { extendTheme } from "@chakra-ui/react";
 const theme = extendTheme({
   colors: {
     brand: {
-      main: "#8B5CF6", // Vivid violet
-      sub: "#FF2E93",  // Neon pink
+      main: "#7C3AED", // Modern Premium Violet (toned down, less neon)
+      sub: "#EC4899",  // Muted pink
       sub2: "#06B6D4", // Cyan
       purpleLight: "#F5F3FF",
-      purpleSoft: "rgba(139, 92, 246, 0.08)",
-      glass: "rgba(255, 255, 255, 0.75)",
-      bg: "#F8F7FC",   // Light violet-tinted white
+      purpleSoft: "rgba(124, 58, 237, 0.05)", // Soft brand violet tint
+      glass: "rgba(255, 255, 255, 0.8)",
+      bg: "#FAFAFE",   // Pure off-white
     },
   },
   shadows: {
-    soft: "0 4px 20px rgba(139, 92, 246, 0.05), 0 2px 8px rgba(0, 0, 0, 0.02)",
-    card: "0 10px 30px -10px rgba(139, 92, 246, 0.12), 0 1px 3px rgba(0, 0, 0, 0.02)",
-    elevated: "0 20px 40px -15px rgba(139, 92, 246, 0.2), 0 0 1px rgba(139, 92, 246, 0.1)",
-    glow: "0 0 20px rgba(139, 92, 246, 0.25)",
+    soft: "0 4px 18px rgba(15, 23, 42, 0.03), 0 1px 4px rgba(0, 0, 0, 0.01)",
+    card: "0 12px 28px -8px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(0, 0, 0, 0.01)",
+    elevated: "0 20px 40px -12px rgba(15, 23, 42, 0.08), 0 0 1px rgba(15, 23, 42, 0.04)",
+    glow: "0 0 15px rgba(124, 58, 237, 0.12)", // Very soft, refined brand glow
   },
   components: {
     Button: {
@@ -30,17 +30,17 @@ const theme = extendTheme({
           bg: "brand.main",
           color: "white",
           _hover: {
-            bg: "purple.600",
+            bg: "brand.main",
+            opacity: 0.9,
             transform: "translateY(-1px)",
-            boxShadow: "0 8px 20px rgba(139, 92, 246, 0.3)",
+            boxShadow: "0 8px 20px rgba(124, 58, 237, 0.2)",
           },
           _active: {
-            bg: "purple.700",
             transform: "translateY(0)",
           },
         },
         outline: {
-          borderColor: "purple.200",
+          borderColor: "gray.200",
           color: "brand.main",
           _hover: {
             bg: "brand.purpleSoft",
@@ -63,8 +63,8 @@ const theme = extendTheme({
         list: {
           bg: "white",
           borderWidth: "1px",
-          borderColor: "purple.100",
-          boxShadow: "0 10px 25px rgba(139, 92, 246, 0.08)",
+          borderColor: "gray.100",
+          boxShadow: "0 10px 25px rgba(15, 23, 42, 0.06)",
           borderRadius: "xl",
           py: 2,
           minW: "180px",
